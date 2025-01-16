@@ -22,7 +22,8 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
     @Override
     public Boolean tryAddMove(ChessPosition position, ChessPosition newPosition) {
         if(!isOutOfBounds(newPosition)) {
-            addMove(new ChessMove(newPosition, position, BISHOP));
+            addMove(new ChessMove(position, newPosition, null));
+            // System.out.print(newPosition.toString() + " ");
             return true;
         }
         return false;
@@ -44,13 +45,13 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
         int col = position.getColumn();
 
         for (int i = 1; i < 8; i++) {
-            // Towards A8
+            // Towards (8,1)
             boolean addedTowardsA8 = tryAddMove(position, new ChessPosition(row + i, col - i));
-            // Towards H8
+            // Towards (8,8)
             boolean addedTowardsH8 = tryAddMove(position, new ChessPosition(row + i, col + i));
-            // Towards H1
+            // Towards (1,8)
             boolean addedTowardsH1 = tryAddMove(position, new ChessPosition(row - i, col + i));
-            // Towards A1
+            // Towards (1,1)
             boolean addedTowardsA1 = tryAddMove(position, new ChessPosition(row - i, col - i));
 
             if(addedTowardsA1 || addedTowardsA8 || addedTowardsH1 || addedTowardsH8) { continue; }

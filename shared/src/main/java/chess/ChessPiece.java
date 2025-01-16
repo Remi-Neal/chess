@@ -3,6 +3,7 @@ package chess;
 import chess.movesCalculator.BishopMovesCalculator;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -11,7 +12,20 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessPiece {
-
+// Generate Code -----------------------------------------
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
+    }
+// --------------------------------------------------------------------------
     private final ChessGame.TeamColor pieceColor;
     private final PieceType type;
 
