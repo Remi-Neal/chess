@@ -4,6 +4,7 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
+import chess.movesCalculator.PieceMovesCalculator.PositionStatus;
 
 import java.util.*;
 
@@ -34,10 +35,9 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
      * @return A boolean value. True if a move was added or false if not.
      */
     @Override
-    public Boolean tryAddMove(ChessBoard board, ChessGame.TeamColor color, ChessPosition position, ChessPosition newPosition) {
-        if(!isOutOfBounds(newPosition)) {
-            addMove(new ChessMove(position, newPosition, null));
-        PositionStatus status = isBlockedOrCapture(board, ChessGame.TeamColor color, newPositionposition)
+    public PositionStatus tryAddMove(ChessBoard board, ChessGame.TeamColor color, ChessPosition position, ChessPosition newPosition) {
+        if(isOutOfBounds(newPosition)) return PositionStatus.INECCESSIBLE;
+        PositionStatus status = isOccupied(board,  color, newPosition);
             // TODO: add capture functionality canCapture(board, color, ChessPosition
             // TODO: add same color blocking to parent class isBlocked(board, color, ChessPosition)
             return true;
@@ -63,7 +63,7 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
      * @return An enum Position status: OPEN, BLOCKED, CAPTURABLE
      */
     @Override
-    public PositionStatus isBlockedOrCapture(ChessBoard board, ChessGame.TeamColor color, ChessPosition position) {
+    public PositionStatus isOccupied(ChessBoard board, ChessGame.TeamColor color, ChessPosition position) {
         if(board.getPiece(position) == null ) return PositionStatus.OPEN;
         if(board.getPiece(position).getTeamColor() == color) { return PositionStatus.BLOCKED; }
         return PositionStatus.CAPTURABLE;
@@ -78,6 +78,8 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
 
         int row = position.getRow();
         int col = position.getColumn();
+        // TODO: add code to get piece's color
+        ChessGame.TeamColor pieceColor = board.getPiece(position).getTeamColor();
 
         for (int i = 1; i < 8; i++) {
             // Towards (8,1)

@@ -15,11 +15,12 @@ public interface PieceMovesCalculator {
         OPEN,
         BLOCKED,
         CAPTURABLE,
+        INECCESSIBLE,
     }
     default void addMove(ChessMove move) {}
-    default Boolean tryAddMove(ChessPosition position, ChessPosition newPosition) { return false; }
+    default PositionStatus tryAddMove(ChessPosition position, ChessPosition newPosition) { return null; }
     default Boolean isOutOfBounds(ChessPosition position){ return null; }
-    default PositionStatus isBlockedOrCapture(ChessBoard board, ChessGame.TeamColor color, ChessPosition position) { return null; }
+    default PositionStatus isOccupied(ChessBoard board, ChessGame.TeamColor color, ChessPosition position) { return null; }
     /**
      * The calculator for all possible moves a given piece can make
      * @param board Current state of the game board.
