@@ -18,7 +18,7 @@ public interface PieceMovesCalculator {
         INECCESSIBLE,
     }
     default void addMove(ChessMove move) {}
-    default PositionStatus tryAddMove(ChessPosition position, ChessPosition newPosition) { return null; }
+    default Boolean tryAddMove(ChessBoard board, ChessGame.TeamColor color, ChessPosition position, ChessPosition newPosition) { return null; }
     default Boolean isOutOfBounds(ChessPosition position){ return null; }
     default PositionStatus isOccupied(ChessBoard board, ChessGame.TeamColor color, ChessPosition position) { return null; }
     /**

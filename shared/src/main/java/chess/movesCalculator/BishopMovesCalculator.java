@@ -4,7 +4,6 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
-import chess.movesCalculator.PieceMovesCalculator.PositionStatus;
 
 import java.util.*;
 
@@ -12,11 +11,9 @@ import static chess.ChessPiece.PieceType.BISHOP;
 
 public class BishopMovesCalculator implements PieceMovesCalculator {
     private List<ChessMove> moves;
-    private List<ChessPosition> blockedPositions;
 
     public BishopMovesCalculator() {
         this.moves = new ArrayList<>();
-        blockedPositions = new ArrayList<>();
     }
 
     /**
@@ -32,17 +29,27 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
      * A wrapper class for addMove to validate if a move is valid.
      * @param position The current position the bishop piece.
      * @param newPosition The new position we wish to validate.
-     * @return A boolean value. True if a move was added or false if not.
+     * @return A boolean value. True to continue testing positions and false if an obstruction is met.
      */
     @Override
-    public PositionStatus tryAddMove(ChessBoard board, ChessGame.TeamColor color, ChessPosition position, ChessPosition newPosition) {
-        if(isOutOfBounds(newPosition)) return PositionStatus.INECCESSIBLE;
+    public Boolean tryAddMove(ChessBoard board, ChessGame.TeamColor color, ChessPosition position, ChessPosition newPosition) {
+        if(isOutOfBounds(newPosition)) return false;
         PositionStatus status = isOccupied(board,  color, newPosition);
-            // TODO: add capture functionality canCapture(board, color, ChessPosition
-            // TODO: add same color blocking to parent class isBlocked(board, color, ChessPosition)
-            return true;
-        }
-        return false;
+        return switch (status) {
+            case PositionStatus.OPEN -> {
+                addMove(new ChessMove(position, newPosition, null));
+                yield true;
+            }
+            case PositionStatus.CAPTURABLE -> {
+                addMove(new ChessMove(position, newPosition, null));
+                yield false;
+            }
+            case PositionStatus.BLOCKED -> false;
+            default ->
+                    throw new RuntimeException("Unknown position status. Expected: 'OPEN', 'BLOCKED', 'CAPTURABLE', or 'INECCESSIBLE'.");
+        };
+        // TODO: add capture functionality canCapture(board, color, ChessPosition
+        // TODO: add same color blocking to parent class isBlocked(board, color, ChessPosition)
     }
 
     /**
@@ -84,28 +91,26 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
         for (int i = 1; i < 8; i++) {
             // Towards (8,1)
             ChessPosition newPosition = new ChessPosition(row + i, col - i);
-            if(!isOutOfBounds(newPosition)) {
-                addMove(new ChessMove(position, newPosition, null));
-                PositionStatus status = isBlockedOrCapture(board, ChessGame.TeamColor color, newPositionposition)
-                // TODO: add capture functionality canCapture(board, color, ChessPosition
-                // TODO: add same color blocking to parent class isBlocked(board, color, ChessPosition)
-                return true;
-            }
+            if(tryAddMove(board, pieceColor, position, newPosition)) continue;
+            break;
         }
+
         for (int i = 1; i < 8; i++) {
             // Towards (8,8)
-            boolean addedTowardsH8 = tryAddMove(position, new ChessPosition(row + i, col + i));
+            ChessPosition newPosition = new ChessPosition(row + i, col + i);
+            if(tryAddMove(board, pieceColor, position, newPosition)) continue;
+            break;
         }
         for (int i = 1; i < 8; i++) {
             // Towards (1,8)
-            boolean addedTowardsH1 = tryAddMove(position, new ChessPosition(row - i, col + i));
+            ChessPosition newPosition = new ChessPosition(row - i, col + i);
+            if(tryAddMove(board, pieceColor, position, newPosition)) continue;
+            break;
         }
         for (int i = 1; i < 8; i++) {
             // Towards (1,1)
-            boolean addedTowardsA1 = tryAddMove(position, new ChessPosition(row - i, col - i));
-        }
-
-            if(addedTowardsA1 || addedTowardsA8 || addedTowardsH1 || addedTowardsH8) { continue; }
+            ChessPosition newPosition = new ChessPosition(row - i, col - i);
+            if(tryAddMove(board, pieceColor, position, newPosition)) continue;
             break;
         }
 
