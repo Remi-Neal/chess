@@ -1,6 +1,7 @@
 package chess;
 
 import chess.movesCalculator.BishopMovesCalculator;
+import chess.movesCalculator.PawnMovesCalculator;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -68,15 +69,16 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> moves = null;
         switch (this.type) {
             case BISHOP -> {
                 BishopMovesCalculator calc = new BishopMovesCalculator();
                 return calc.pieceMoves(board, myPosition);
             }
-            default -> {
-                throw new RuntimeException("Not implemented");
+            case PAWN -> {
+                PawnMovesCalculator calc = new PawnMovesCalculator();
+                return calc.pieceMoves(board, myPosition);
             }
+            default -> throw new RuntimeException("Not implemented");
         }
     }
 }
