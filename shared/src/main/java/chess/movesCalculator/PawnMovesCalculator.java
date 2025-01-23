@@ -103,6 +103,6 @@ public class PawnMovesCalculator extends PieceMovesCalculator{
             tryAddCapture(board, pieceColor, position, newPosition);
         }
 
-        return moves;
+        return this.moves;
     }
 }

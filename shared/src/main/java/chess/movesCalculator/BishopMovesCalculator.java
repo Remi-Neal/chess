@@ -7,8 +7,6 @@ import chess.ChessPosition;
 
 import java.util.*;
 
-import static chess.ChessPiece.PieceType.BISHOP;
-
 public class BishopMovesCalculator extends PieceMovesCalculator {
     private List<ChessMove> moves;
 
@@ -34,7 +32,6 @@ public class BishopMovesCalculator extends PieceMovesCalculator {
 
         int row = position.getRow();
         int col = position.getColumn();
-        // TODO: add code to get piece's color
         ChessGame.TeamColor pieceColor = board.getPiece(position).getTeamColor();
 
         for (int i = 1; i < 8; i++) {
