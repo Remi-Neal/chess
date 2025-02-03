@@ -52,8 +52,12 @@ public class ChessBoard {
     private ChessPiece[][] squares = new ChessPiece[8][8];
     public ChessBoard() {
     }
-    public ChessBoard(ChessBoard primeBoard){
-        this.squares = primeBoard.squares;
+    public ChessBoard(ChessBoard clone){
+        for(int row = 0; row < 8; row++){
+            for(int col = 0; col < 8; col++){
+                squares[row][col] = clone.squares[row][col];
+            }
+        }
     }
 
     /**

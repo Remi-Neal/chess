@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -54,14 +55,38 @@ public class ChessGame {
     }
 
     /**
+     *
+     * @param move chess move to check
+     * @throws InvalidMoveException if move is invalid
+     */
+    public void checkInvalidMoves(ChessMove move) throws InvalidMoveException{
+        ChessPiece movedPiece = this.gameBoard.getPiece(move.getStartPosition());
+        if(movedPiece == null){ throw new InvalidMoveException(); }
+        if(teamTurn != movedPiece.getTeamColor()){ throw new InvalidMoveException(); }
+        Collection<ChessMove> valid = validMoves(move.getStartPosition());
+        if(!valid.contains(move)){ throw new InvalidMoveException();}
+
+        if(isInCheck(teamTurn)){ throw new InvalidMoveException(); }
+    }
+    /**
      * Makes a move in a chess game
      *
      * @param move chess move to preform
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        // TODO: make a deep copy of current board then add move and replace current board with new board
-        throw new RuntimeException("Not implemented");
+        checkInvalidMoves(move);
+
+        ChessPiece movedPiece = this.gameBoard.getPiece(move.getStartPosition());
+        ChessBoard newBoard = new ChessBoard(this.gameBoard);
+        newBoard.addPiece(move.getStartPosition(), null);
+        if(movedPiece.getPieceType() == ChessPiece.PieceType.PAWN && move.getPromotionPiece() != null){
+            newBoard.addPiece(move.getEndPosition(), new ChessPiece(this.teamTurn, move.getPromotionPiece()));
+        }
+        else{ newBoard.addPiece(move.getEndPosition(), movedPiece); }
+
+        setBoard(newBoard);
+        this.teamTurn = this.teamTurn == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE;
     }
 
     /**
@@ -71,6 +96,7 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
+        //TODO: Check current team's king to see if any pieces are placing it in check
         throw new RuntimeException("Not implemented");
     }
 
@@ -110,6 +136,6 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return gameBoard;
     }
 }
