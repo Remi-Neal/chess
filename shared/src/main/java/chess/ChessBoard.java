@@ -51,7 +51,9 @@ public class ChessBoard {
 
     private ChessPiece[][] squares = new ChessPiece[8][8];
     public ChessBoard() {
-        
+    }
+    public ChessBoard(ChessBoard primeBoard){
+        this.squares = primeBoard.squares;
     }
 
     /**
