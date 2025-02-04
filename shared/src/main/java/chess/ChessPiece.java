@@ -70,28 +70,28 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         switch (this.type) {
             case KING -> {
-                KingMovesCalculator calc = new KingMovesCalculator();
-                return calc.pieceMoves(board, myPosition);
+                KingMovesCalc calc = new KingMovesCalc();
+                return calc.getMoves(board, myPosition);
             }
             case QUEEN -> {
-                QueenMoveCaculator calc = new QueenMoveCaculator();
-                return calc.pieceMoves(board, myPosition);
+                QueenMovesCalc calc = new QueenMovesCalc();
+                return calc.getMoves(board, myPosition);
             }
             case BISHOP -> {
-                BishopMovesCalculator calc = new BishopMovesCalculator();
-                return calc.pieceMoves(board, myPosition);
+                BishopMovesCalc calc = new BishopMovesCalc();
+                return calc.getMoves(board, myPosition);
             }
             case ROOK -> {
-                RookMovesCalculator calc = new RookMovesCalculator();
-                return calc.pieceMoves(board, myPosition);
+                RookMovesCalc calc = new RookMovesCalc();
+                return calc.getMoves(board, myPosition);
             }
             case KNIGHT -> {
-                KnightMovesCalculator calc = new KnightMovesCalculator();
-                return calc.pieceMoves(board, myPosition);
+                KnightMovesCalc calc = new KnightMovesCalc();
+                return calc.getMoves(board, myPosition);
             }
             case PAWN -> {
-                PawnMovesCalculator calc = new PawnMovesCalculator();
-                return calc.pieceMoves(board, myPosition);
+                PawnMovesCalc calc = new PawnMovesCalc();
+                return calc.getMoves(board, myPosition);
             }
             default -> throw new RuntimeException("Not implemented");
         }

@@ -96,7 +96,22 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        //TODO: Check current team's king to see if any pieces are placing it in check
+        ChessPosition kingsPosition;
+        for(int i = 0; i < 8; i++){
+            for(int j = 0; j < 8; j++){
+                ChessPiece piece = gameBoard.getPiece(new ChessPosition(i,j));
+                if(piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamTurn){
+                    kingsPosition = new ChessPosition(i,j);
+                }
+            }
+        }
+
+        // TODO: calc diags
+        // are any bishops, queens, or pawns on the diag?
+        // TODO: calc straights
+        // are any rooks or queens on the straights
+        // TODO: calc the Ls
+        // are any knights on the Ls
         throw new RuntimeException("Not implemented");
     }
 
