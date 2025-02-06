@@ -2,14 +2,12 @@ package chess;
 
 import chess.movesCalculator.KingMovesCalc;
 import chess.movesCalculator.KnightMovesCalc;
-import chess.movesCalculator.PawnMovesCalc;
 import chess.movesCalculator.basic_moves.BasicMovesCalc;
 import chess.movesCalculator.basic_moves.DiagMovesCalc;
 import chess.movesCalculator.basic_moves.StraightMovesCalc;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -77,12 +75,12 @@ public class ChessGame {
         if(isInCheck(teamTurn)){ throw new InvalidMoveException(); }
     }
 
-    public ChessPosition findKing(ChessBoard board, TeamColor teamColor){
+    public ChessPosition findPiece(ChessBoard board, TeamColor teamColor, ChessPiece.PieceType pieceType){
         for(int i = 1; i <= 8; i++){
             for(int j = 1; j <= 8; j++){
-                ChessPiece piece = gameBoard.getPiece(new ChessPosition(i,j));
+                ChessPiece piece = board.getPiece(new ChessPosition(i,j));
                 if(piece == null) continue;
-                if(piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor){
+                if(piece.getPieceType() == pieceType && piece.getTeamColor() == teamColor){
                     return new ChessPosition(i,j);
                 }
             }
@@ -120,12 +118,11 @@ public class ChessGame {
         return pieceCheck.getTeamColor() != teamColor && pieceCheck.getPieceType() == type;
     }
 
-    public boolean checkCheck(TeamColor teamColor, ChessBoard board){
-        ChessPosition kingsPosition = findKing(board,teamColor);
+    public boolean isThreatened(TeamColor teamColor, ChessPosition piecePosition, ChessBoard board){ //TODO: Refactor to allow any piece be tested instead of just King
 
         // King test
         BasicMovesCalc checkMoves = new KingMovesCalc();
-        Collection<ChessMove> squareChecks = checkMoves.getMoves(board, kingsPosition);
+        Collection<ChessMove> squareChecks = checkMoves.getMoves(board, piecePosition);
         for(ChessMove move : squareChecks){
             ChessPiece pieceCheck = board.getPiece(move.getEndPosition());
             if(pieceCheck == null) continue;
@@ -137,7 +134,7 @@ public class ChessGame {
 
         // Bishop and Queen test
         checkMoves = new DiagMovesCalc();
-        Collection<ChessMove> diagChecks = checkMoves.getMoves(board, kingsPosition);
+        Collection<ChessMove> diagChecks = checkMoves.getMoves(board, piecePosition);
         for(ChessMove move : diagChecks){
             ChessPiece pieceCheck = board.getPiece(move.getEndPosition());
             if(pieceCheck == null) continue;
@@ -149,7 +146,7 @@ public class ChessGame {
 
         // Rook and Queen test
         checkMoves = new StraightMovesCalc();
-        Collection<ChessMove> strightChecks = checkMoves.getMoves(board, kingsPosition);
+        Collection<ChessMove> strightChecks = checkMoves.getMoves(board, piecePosition);
         for(ChessMove move : strightChecks){
             ChessPiece pieceCheck = board.getPiece(move.getEndPosition());
             if(pieceCheck == null) continue;
@@ -161,7 +158,7 @@ public class ChessGame {
 
         // Knight test
         checkMoves = new KnightMovesCalc();
-        Collection<ChessMove> knightChecks = checkMoves.getMoves(board, kingsPosition);
+        Collection<ChessMove> knightChecks = checkMoves.getMoves(board, piecePosition);
         for(ChessMove move : knightChecks){
             ChessPiece pieceCheck = board.getPiece(move.getEndPosition());
             if(pieceCheck == null) continue;
@@ -173,11 +170,14 @@ public class ChessGame {
 
         // Pawn test
         int pawnDir = teamColor == TeamColor.WHITE ? 1 : -1;
-        ChessPosition positionCheck = new ChessPosition(kingsPosition.getRow() + pawnDir, kingsPosition.getColumn() + 1);
-        if(pieceEqualPosition(board, positionCheck, teamColor, ChessPiece.PieceType.PAWN)) return true;
-        positionCheck = new ChessPosition(kingsPosition.getRow() + pawnDir, kingsPosition.getColumn() - 1);
-        if(pieceEqualPosition(board, positionCheck, teamColor, ChessPiece.PieceType.PAWN)) return true;
-
+        ChessPosition positionCheck = new ChessPosition(piecePosition.getRow() + pawnDir, piecePosition.getColumn() + 1);
+        if(!checkMoves.outOfBounds(positionCheck)) {
+            if (pieceEqualPosition(board, positionCheck, teamColor, ChessPiece.PieceType.PAWN)) return true;
+        }
+        positionCheck = new ChessPosition(piecePosition.getRow() + pawnDir, piecePosition.getColumn() - 1);
+        if(!checkMoves.outOfBounds(positionCheck)) {
+            if (pieceEqualPosition(board, positionCheck, teamColor, ChessPiece.PieceType.PAWN)) return true;
+        }
         return false;
     }
     /**
@@ -187,7 +187,7 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        return checkCheck(teamColor, this.gameBoard);
+        return isThreatened(teamColor, findPiece(this.gameBoard,teamColor, ChessPiece.PieceType.KING), this.gameBoard);
     }
 
     /**
@@ -197,14 +197,17 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
+        if(!isInCheck(teamColor)) return false;
+        //TODO: Test if threatening piece is threatened then check again
+
         BasicMovesCalc kingCalc = new KingMovesCalc();
-        Collection<ChessMove> kingMoveOutOfCheck = kingCalc.getMoves(this.gameBoard,findKing(this.gameBoard,teamColor));
+        Collection<ChessMove> kingMoveOutOfCheck = kingCalc.getMoves(this.gameBoard,findPiece(this.gameBoard,teamColor, ChessPiece.PieceType.KING));
         Collection<ChessBoard> testBoards = new ArrayList<>();
         for(ChessMove move : kingMoveOutOfCheck){
             testBoards.add(makeNewBoard(move, this.gameBoard));
         }
         for(ChessBoard board : testBoards){
-            if(!checkCheck(teamColor, board)) return false;
+            if(!isThreatened(teamColor, findPiece(board,teamColor, ChessPiece.PieceType.KING),board)) return false;
         }
         return true;
     }
