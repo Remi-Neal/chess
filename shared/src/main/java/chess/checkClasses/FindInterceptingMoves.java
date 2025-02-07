@@ -1,14 +1,48 @@
 package chess.checkClasses;
 
 import chess.ChessBoard;
+import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
+import chess.movesCalculator.*;
+import chess.movesCalculator.basic_moves.BasicMovesCalc;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FindInterceptingPiece {
-    public FindInterceptingPiece() {
+public class FindInterceptingMoves {
+    public FindInterceptingMoves() {
+    }
+
+    public BasicMovesCalc getCalc(ChessPiece piece){
+        switch(piece.getPieceType()){
+            case KING -> {
+                return new KingMovesCalc();
+            }
+            case QUEEN -> {
+                return new QueenMovesCalc();
+            }
+            case ROOK -> {
+                return new RookMovesCalc();
+            }
+            case BISHOP -> {
+                return new BishopMovesCalc();
+            }
+            case KNIGHT -> {
+                return new KnightMovesCalc();
+            }
+            case PAWN -> {
+                return new PawnMovesCalc();
+            }
+        }
+        throw new RuntimeException("Unknown piece type in getCalc in FindInterceptingPiece.java");
+    }
+
+    public ChessPosition findIntersection(List<ChessPosition> path, List<ChessPosition> blocking){
+        for(ChessPosition position : path){
+            if(blocking.contains(position)) return position;
+        }
+        return null;
     }
 
     /**
@@ -72,13 +106,31 @@ public class FindInterceptingPiece {
      * @param gameBoard The game board to use
      * @return A list of the positions that can intercept the attacking piece
      */
-    public List<ChessPosition> findPieces(ChessPosition attPiece, ChessPosition vicPiece, ChessBoard gameBoard) {
+    public List<ChessMove> findMoves(ChessPosition attPiece, ChessPosition vicPiece, ChessBoard gameBoard) {
         ChessPiece.PieceType attPieceType = gameBoard.getPiece(attPiece).getPieceType();
         if(attPieceType == ChessPiece.PieceType.KING ||
                 attPieceType == ChessPiece.PieceType.KNIGHT ||
                 attPieceType == ChessPiece.PieceType.PAWN) return null; // Pieces cannot be blocked
         List<ChessPosition> attPath = findPath(attPiece, vicPiece);
-        throw new RuntimeException("findPieces in FindInterseptingPiece.java not implemented");
-        // TODO: Implement for loops to find pieces and paths to test if they can block attacking piece
+
+        List<ChessMove> blockingMoves = new ArrayList<>();
+        for(int i = 1; i <= 8; i++){
+            for(int j = 1; j <= 8; j++){
+                ChessPosition position = new ChessPosition(i,j);
+                ChessPiece piece = gameBoard.getPiece(position);
+                if(piece == null) continue;
+                BasicMovesCalc movesCalc = getCalc(piece);
+
+                List<ChessPosition> endPositions = new ArrayList<>();
+                for(ChessMove move : movesCalc.getMoves(gameBoard,position)){
+                    endPositions.add(move.getEndPosition());
+                }
+
+                ChessPosition intersect = findIntersection(attPath, endPositions);
+                if(intersect != null) blockingMoves.add(new ChessMove(position,intersect,null));
+            }
+        }
+
+        return blockingMoves;
     }
 }

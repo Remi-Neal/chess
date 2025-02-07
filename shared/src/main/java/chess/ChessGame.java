@@ -1,5 +1,6 @@
 package chess;
 
+import chess.checkClasses.FindInterceptingMoves;
 import chess.checkClasses.FindPiecePosition;
 import chess.checkClasses.ThreateningPieceFinder;
 import chess.movesCalculator.KingMovesCalc;
@@ -61,7 +62,27 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece selectedPiece = this.gameBoard.getPiece(startPosition);
-        return selectedPiece.pieceMoves(this.gameBoard, startPosition);
+        List<ChessMove> moves = (List<ChessMove>) selectedPiece.pieceMoves(this.gameBoard, startPosition);
+        List<ChessMove> valid = new ArrayList<>();
+        for(ChessMove move : moves){
+            ChessBoard newBoard = makeNewBoard(move,this.gameBoard);
+            if(selectedPiece.getPieceType() == ChessPiece.PieceType.KING){
+                if(!threatPieceFinder.isThreatened(
+                        selectedPiece.getTeamColor(),
+                        move.getEndPosition(),
+                        newBoard)){
+                    valid.add(move);
+                }
+            } else {
+                if(!threatPieceFinder.isThreatened(
+                        selectedPiece.getTeamColor(),
+                        findPiece.findPiece(newBoard,teamTurn, ChessPiece.PieceType.KING),
+                        newBoard)){
+                    valid.add(move);
+                }
+            }
+        }
+        return valid;
     }
 
     /**
@@ -131,10 +152,11 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
+        ChessPosition kingPosition = findPiece.findPiece(this.gameBoard,teamColor, ChessPiece.PieceType.KING);
         List<ChessPosition> threateningPieces =
                 threatPieceFinder.findPieces(
                         teamColor,
-                        findPiece.findPiece(this.gameBoard,teamColor, ChessPiece.PieceType.KING),
+                        kingPosition,
                         this.gameBoard);
         if(threateningPieces.isEmpty()) return false; // Not in check
 
@@ -143,12 +165,30 @@ public class ChessGame {
             TeamColor opponentColor = teamColor == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE;
             List<ChessPosition> captureOutOfCheck =
                     threatPieceFinder.findPieces(opponentColor, threateningPieces.getFirst(),this.gameBoard);
+
+            // Capture threatening piece
             if(captureOutOfCheck.size() == 1){
                 if(this.gameBoard.getPiece(captureOutOfCheck.getFirst()).getPieceType() == ChessPiece.PieceType.KING){
                     if(threatPieceFinder.findPieces(teamColor,captureOutOfCheck.getFirst(),this.gameBoard).isEmpty()) return false;
                 }
+            } else if (captureOutOfCheck.size() > 1) {
+                return false;
             }
-            else return false;
+
+            // Block threatening piece
+            FindInterceptingMoves calcBlock = new FindInterceptingMoves();
+            List<ChessMove> blockingMoves = calcBlock.findMoves(threateningPieces.getFirst(),kingPosition,this.gameBoard);
+            if(blockingMoves != null) {
+                for(ChessMove move : blockingMoves){
+                    ChessBoard newBoard = makeNewBoard(move, this.gameBoard);
+                    if(threatPieceFinder.findPieces(
+                            teamColor,
+                            findPiece.findPiece(newBoard,teamColor, ChessPiece.PieceType.KING),
+                            newBoard).isEmpty()){
+                        return false;
+                    }
+                }
+            }
         }
 
         // Threatening piece can be blocked
@@ -156,6 +196,7 @@ public class ChessGame {
         TODO: add logic to test if threatening piece can be blocked
         Find current team's piece who's move set overlaps threatening piece's line of sight
          */
+
 
         // Multiple threatening piece
         // Test if king can move out of check
@@ -183,7 +224,43 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if(isInCheck(teamColor)) return false;
+        // TODO: Find out if there are any more valid moves
+        for(int i = 1; i <= 8; i++){
+            for(int j = 1; j <= 8; j++){
+                ChessPiece piece = gameBoard.getPiece(new ChessPosition(i,j));
+                if(piece == null) continue;
+                if(piece.getTeamColor() == teamColor){
+                    FindInterceptingMoves getCalc = new FindInterceptingMoves();
+                    BasicMovesCalc calc = getCalc.getCalc(piece);
+                    List<ChessMove> moves = calc.getMoves(this.gameBoard, new ChessPosition(i,j));
+
+                    if(!moves.isEmpty()){
+                        // If King is it in check after moving
+                        if(piece.getPieceType() == ChessPiece.PieceType.KING){
+                            for(ChessMove move : moves){
+                                ChessBoard newBoard = makeNewBoard(move, this.gameBoard);
+                                if(threatPieceFinder.findPieces(teamColor,move.getEndPosition(),newBoard).isEmpty()) return false;
+
+                            }
+                        } else {
+                            for(ChessMove move : moves){
+                                ChessBoard newBoard = makeNewBoard(move, this.gameBoard);
+                                if(!threatPieceFinder.findPieces(
+                                        teamColor,
+                                        findPiece.findPiece(newBoard, teamColor, ChessPiece.PieceType.KING),
+                                        newBoard).isEmpty()) continue;
+                                return false;
+                            }
+                        }
+                        // If not king, does moving put king in check
+
+                       // return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**

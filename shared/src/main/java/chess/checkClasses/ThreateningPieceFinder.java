@@ -113,4 +113,8 @@ public class ThreateningPieceFinder {
         if(pieceCheck == null)  return false;
         return pieceCheck.getTeamColor() != teamColor && pieceCheck.getPieceType() == type;
     }
+
+    public boolean isThreatened(ChessGame.TeamColor teamColor, ChessPosition piecePosition, ChessBoard board){
+        return !findPieces(teamColor,piecePosition,board).isEmpty();
+    }
 }
