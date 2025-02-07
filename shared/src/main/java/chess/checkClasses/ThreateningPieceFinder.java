@@ -2,17 +2,26 @@ package chess.checkClasses;
 
 import chess.*;
 import chess.movesCalculator.*;
-import chess.movesCalculator.basic_moves.BasicMovesCalc;
-import chess.movesCalculator.basic_moves.DiagMovesCalc;
-import chess.movesCalculator.basic_moves.StraightMovesCalc;
+import chess.movesCalculator.basic_moves.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Class to calculate threatening pieces for a given chess position and team color
+ */
 public class ThreateningPieceFinder {
     ChessBoard gameBoard;
     public ThreateningPieceFinder(ChessBoard gameBoard){// TODO: see if this gameBoard is the same as ChessGame gameBoard
+        this.gameBoard = gameBoard;
+    }
+
+    /**
+     * Sets current working game board
+     * @param gameBoard new chess board
+     */
+    public void setGameBoard(ChessBoard gameBoard){
         this.gameBoard = gameBoard;
     }
 
@@ -20,6 +29,13 @@ public class ThreateningPieceFinder {
         return findPieces(teamColor, piecePosition, this.gameBoard);
     }
 
+    /**
+     * Finds which positions are threatening a given piece
+     * @param teamColor Current team color
+     * @param piecePosition Position to test if threatened
+     * @param board Any game board
+     * @return A list of chest positions that threaten your given position and color
+     */
     public List<ChessPosition> findPieces(ChessGame.TeamColor teamColor, ChessPosition piecePosition, ChessBoard board){
         // TODO: refactor to help readability
         List<ChessPosition> threateningPieces = new ArrayList<>();
@@ -84,6 +100,14 @@ public class ThreateningPieceFinder {
         return threateningPieces;
     }
 
+    /**
+     * Tests if the piece at a given position is the desired piece
+     * @param board Any game board
+     * @param position Position on the board to check
+     * @param teamColor Team color to check for
+     * @param type Piece type to test for
+     * @return True if the piece and color match desired piece and color
+     */
     public boolean pieceEqualPosition(ChessBoard board, ChessPosition position, ChessGame.TeamColor teamColor, ChessPiece.PieceType type){
         ChessPiece pieceCheck = board.getPiece(position);
         if(pieceCheck == null)  return false;

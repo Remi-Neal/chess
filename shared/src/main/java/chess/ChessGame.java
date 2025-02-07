@@ -79,6 +79,12 @@ public class ChessGame {
         if(isInCheck(teamTurn)){ throw new InvalidMoveException(); }
     }
 
+    /**
+     * Makes a new chess board based on give board and given move
+     * @param move Move to add to the board
+     * @param board Any game board
+     * @return A new chess board with move added
+     */
     public ChessBoard makeNewBoard(ChessMove move, ChessBoard board){
         ChessPiece movedPiece = board.getPiece(move.getStartPosition());
         ChessBoard newBoard = new ChessBoard(board);
@@ -145,6 +151,12 @@ public class ChessGame {
             else return false;
         }
 
+        // Threatening piece can be blocked
+        /*
+        TODO: add logic to test if threatening piece can be blocked
+        Find current team's piece who's move set overlaps threatening piece's line of sight
+         */
+
         // Multiple threatening piece
         // Test if king can move out of check
         BasicMovesCalc kingCalc = new KingMovesCalc();
@@ -181,6 +193,7 @@ public class ChessGame {
      */
     public void setBoard(ChessBoard board) {
         this.gameBoard = board;
+        this.threatPieceFinder.setGameBoard(board);
     }
 
     /**
