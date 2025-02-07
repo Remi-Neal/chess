@@ -19,8 +19,8 @@ import java.util.List;
 public class ChessGame {
     private TeamColor teamTurn;
     private ChessBoard gameBoard;
-    private ThreateningPieceFinder threatPieceFinder;
-    private FindPiecePosition findPiece;
+    private final ThreateningPieceFinder threatPieceFinder;
+    private final FindPiecePosition findPiece;
     public ChessGame() {
         this.teamTurn = TeamColor.WHITE;
         this.gameBoard = new ChessBoard();
@@ -76,7 +76,7 @@ public class ChessGame {
             } else {
                 if(!threatPieceFinder.isThreatened(
                         selectedPiece.getTeamColor(),
-                        findPiece.findPiece(newBoard,teamTurn, ChessPiece.PieceType.KING),
+                        findPiece.findPiece(newBoard,selectedPiece.getTeamColor(), ChessPiece.PieceType.KING),
                         newBoard)){
                     valid.add(move);
                 }
