@@ -11,6 +11,6 @@ public class AuthtokenData{
         this.userName = userName;
     }
 
-    public static String getAuthToken() { return authToken; }
+    public String getAuthToken() { return authToken; }
     public static String getUserName(){ return userName; }
 }

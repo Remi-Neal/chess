@@ -20,7 +20,7 @@ public class GameData {
     public static void setGame(ChessGame game){ chessGame = game; }
 
     // Getters
-    public static int getGameId(){ return gameId; }
+    public int getGameId(){ return gameId; }
     public static String getWhiteUserName(){ return whiteUserName; }
     public static String getBlackUserName(){ return blackUserName; }
     public static String getGameName(){ return gameName; }

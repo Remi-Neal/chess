@@ -16,34 +16,62 @@ public class DataBase {
         userData = new ArrayList<>();
     }
 
-    public void addAuthData(AuthtokenData data){
-        authData.add(data);
-    }
-    public void addGameData(GameData data){
-        gameData.add(data);
-    }
-    public void addUserData(UserData data){
-        userData.add(data);
+    public class AuthDataBase {
+        public void addAuthData(AuthtokenData data){
+            authData.add(data);
+        }
+        public void removeAuthData(String data) {
+            for (AuthtokenData token : authData) {
+                if (token.getAuthToken().equals(data)) {
+                    authData.remove(token);
+                    break;
+                }
+            }
+        }
+        public Boolean validAuthData(String data){
+            for(AuthtokenData token : authData){
+                if(token.getAuthToken().equals(data)) return true;
+            }
+            return false;
+        }
     }
 
-    public void updateAuthData(AuthtokenData data){
-        throw new UnsupportedOperationException("DataBase.updateAuthData not implemented");
-    }
-    public void updateGameData(GameData data){
-        throw new UnsupportedOperationException("DataBase.updateGameData not implemented");
-    }
-    public void updateUserData(UserData data){
-        throw new UnsupportedOperationException("DataBase.updateUserData not implemented");
+    public class GameDataBase{
+        public void addGameData(GameData data){
+            gameData.add(data);
+        }
+        public void updateGameData(GameData data) {
+            for (GameData game : gameData) {
+                if (game.getGameId() == data.getGameId()) {
+                    gameData.remove(game);
+                    gameData.add(data);
+                }
+            }
+        }
+        public List<GameData> listGame(){
+            return gameData;
+        }
+        public GameData findGame(int data){
+            for(GameData game : gameData){
+                if(game.getGameId() == data){
+                    return game;
+                }
+            }
+            return null;
+        }
     }
 
-    public AuthtokenData getAuthData(){
-        throw new UnsupportedOperationException("DataBase.getAuthData not implemented");
-    }
-    public GameData getGameData(){
-        throw new UnsupportedOperationException("DataBase.getAGameData not implemented");
-    }
-    public UserData getUserData(){
-        throw new UnsupportedOperationException("DataBase.getUserData not implemented");
+    public class UserDataBase{
+        public void addUserData(UserData data){
+            userData.add(data);
+        }
+        public UserData getUserData(String name){
+            for(UserData user : userData){
+                if(user.getUserName().equals(name)) return user;
+            }
+            return null;
+        }
+
     }
 
     public static class ClearDataBase{
