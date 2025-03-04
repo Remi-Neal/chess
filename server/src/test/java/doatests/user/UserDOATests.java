@@ -1,18 +1,18 @@
 package doatests.user;
 
-import dataaccess.DOA;
+import dataaccess.MemoryDAO;
 import dataaccess.resetdata.ResetDataBase;
-import dataaccess.userdata.UserDOA;
+import dataaccess.userdata.UserMemoryDAO;
 import database.datatypes.UserDataType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class UserDOATests {
-    final UserDOA userDOA;
+    final UserMemoryDAO userDOA;
     final ResetDataBase resetDB;
     public UserDOATests(){
-        DOA doa = new DOA();
+        MemoryDAO doa = new MemoryDAO();
         userDOA = doa.makeUserDOA();
         resetDB = doa.makeClearer();
     }

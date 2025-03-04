@@ -3,11 +3,11 @@ package dataaccess.authdata;
 import database.DataBase.AuthDataBase;
 import database.datatypes.AuthtokenDataType;
 
-public class AuthDOA {
-    //TODO: Implement AuthDOA
-    //TODO: Create tests for AuthDOA
+public class AuthMemoryDAO implements AuthDAO {
+    //TODO: Implement AuthMemoryDAO
+    //TODO: Create tests for AuthMemoryDAO
     private final AuthDataBase dataBase;
-    public AuthDOA(AuthDataBase db){
+    public AuthMemoryDAO(AuthDataBase db){
         dataBase = db;
     }
     public final AuthtokenDataType getAuth(String token){

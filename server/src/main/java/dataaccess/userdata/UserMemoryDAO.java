@@ -3,10 +3,10 @@ package dataaccess.userdata;
 import database.DataBase.UserDataBase;
 import database.datatypes.UserDataType;
 
-public final class UserDOA {
-    //TODO: write tests for UserDOA
+public final class UserMemoryDAO implements UserDAO {
+    //TODO: write tests for UserMemoryDAO
     private final UserDataBase dataBase;
-    public UserDOA(UserDataBase db){
+    public UserMemoryDAO(UserDataBase db){
         dataBase = db;
     }
     public UserDataType getUser(String name){

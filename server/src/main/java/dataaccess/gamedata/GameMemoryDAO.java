@@ -5,10 +5,10 @@ import database.datatypes.GameDataType;
 
 import java.util.List;
 
-public class GameDOA {
-    //TODO: write tests for GameDOA
+public class GameMemoryDAO implements GameDAO {
+    //TODO: write tests for GameMemoryDAO
     private final GameDataBase dataBase;
-    public GameDOA(GameDataBase db){
+    public GameMemoryDAO(GameDataBase db){
         dataBase = db;
     }
     public List<GameDataType> gameList(){

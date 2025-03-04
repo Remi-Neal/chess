@@ -1,7 +1,7 @@
 package doatests.auth;
 
-import dataaccess.DOA;
-import dataaccess.authdata.AuthDOA;
+import dataaccess.MemoryDAO;
+import dataaccess.authdata.AuthMemoryDAO;
 import dataaccess.resetdata.ResetDataBase;
 import database.datatypes.AuthtokenDataType;
 import org.junit.jupiter.api.Assertions;
@@ -9,10 +9,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class TestAuthDOA {
-    AuthDOA authDOA;
+    AuthMemoryDAO authDOA;
     ResetDataBase reset;
     public TestAuthDOA(){
-        DOA doa = new DOA();
+        MemoryDAO doa = new MemoryDAO();
         authDOA = doa.makeAuthDOA();
         reset = doa.makeClearer();
     }

@@ -1,7 +1,7 @@
 package doatests.game;
 
-import dataaccess.DOA;
-import dataaccess.gamedata.GameDOA;
+import dataaccess.MemoryDAO;
+import dataaccess.gamedata.GameMemoryDAO;
 import dataaccess.resetdata.ResetDataBase;
 import database.datatypes.GameDataType;
 import org.junit.jupiter.api.Assertions;
@@ -12,10 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TestGameDOA {
-    GameDOA gameDOA;
+    GameMemoryDAO gameDOA;
     ResetDataBase reset;
     public TestGameDOA(){
-        DOA doa = new DOA();
+        MemoryDAO doa = new MemoryDAO();
         gameDOA = doa.makeGameDOA();
         reset = doa.makeClearer();
     }
