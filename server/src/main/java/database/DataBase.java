@@ -73,7 +73,7 @@ public class DataBase {
 
     }
 
-    public static class ClearDataBase{
+    public class ClearDataBase{
         public void clearAuthData(){
             authData.clear();
         }
