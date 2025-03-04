@@ -1,6 +1,7 @@
 package doatests.auth;
 
 import dataaccess.MemoryDAO;
+import dataaccess.authdata.AuthDAO;
 import dataaccess.authdata.AuthMemoryDAO;
 import dataaccess.resetdata.ResetDataBase;
 import database.datatypes.AuthtokenDataType;
@@ -13,7 +14,7 @@ public class TestAuthDOA {
     ResetDataBase reset;
     public TestAuthDOA(){
         MemoryDAO doa = new MemoryDAO();
-        authDOA = doa.makeAuthDOA();
+        authDOA = (AuthMemoryDAO) doa.makeAuthDAO();
         reset = doa.makeClearer();
     }
 

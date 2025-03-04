@@ -16,7 +16,7 @@ public class TestGameDOA {
     ResetDataBase reset;
     public TestGameDOA(){
         MemoryDAO doa = new MemoryDAO();
-        gameDOA = doa.makeGameDOA();
+        gameDOA = (GameMemoryDAO) doa.makeGameDAO();
         reset = doa.makeClearer();
     }
 

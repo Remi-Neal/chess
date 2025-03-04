@@ -13,7 +13,7 @@ public class UserDOATests {
     final ResetDataBase resetDB;
     public UserDOATests(){
         MemoryDAO doa = new MemoryDAO();
-        userDOA = doa.makeUserDOA();
+        userDOA = (UserMemoryDAO) doa.makeUserDAO();
         resetDB = doa.makeClearer();
     }
 
