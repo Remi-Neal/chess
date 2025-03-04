@@ -19,19 +19,19 @@ public class DataBase {
         public void addAuthData(AuthtokenDataType data){
             authData.add(data);
         }
-        public void removeAuthData(String data) {
-            for (AuthtokenDataType token : authData) {
-                if (token.getAuthToken().equals(data)) {
-                    authData.remove(token);
+        public void removeAuthData(String token) {
+            for (AuthtokenDataType data : authData) {
+                if (data.getAuthToken().equals(token)) {
+                    authData.remove(data);
                     break;
                 }
             }
         }
-        public Boolean validAuthData(String data){
-            for(AuthtokenDataType token : authData){
-                if(token.getAuthToken().equals(data)) return true;
+        public AuthtokenDataType getAuthData(String token){
+            for(AuthtokenDataType data : authData){
+                if(data.getAuthToken().equals(token)) return data;
             }
-            return false;
+            return null;
         }
     }
 
