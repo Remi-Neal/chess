@@ -5,7 +5,7 @@ import dataaccess.gamedata.GameDAO;
 import dataaccess.userdata.UserDAO;
 
 public interface DAO {
-    public UserDAO makeUserDAO();
-    public GameDAO makeGameDAO();
-    public AuthDAO makeAuthDAO();
+    UserDAO makeUserDAO();
+    GameDAO makeGameDAO();
+    AuthDAO makeAuthDAO();
 }
