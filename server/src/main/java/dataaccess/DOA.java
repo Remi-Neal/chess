@@ -1,5 +1,6 @@
 package dataaccess;
 
+import dataaccess.authdata.AuthDOA;
 import dataaccess.resetdata.ResetDataBase;
 import database.DataBase;
 import dataaccess.userdata.UserDOA;
@@ -19,6 +20,11 @@ public class DOA{
         DataBase.GameDataBase gameDB = db.new GameDataBase();
         return new GameDOA(gameDB);
     }
+    public AuthDOA makeAuthDOA(){
+        DataBase.AuthDataBase authDB = db.new AuthDataBase();
+        return new AuthDOA(authDB);
+    }
+
     public ResetDataBase makeClearer(){
         DataBase.ClearDataBase clearer = db.new ClearDataBase();
         return new ResetDataBase(clearer);

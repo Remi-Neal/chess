@@ -14,13 +14,13 @@ public class GameDOA {
     public List<GameDataType> gameList(){
         return dataBase.listGame();
     }
-    public void newGame(int gameId, String gameName){
-        dataBase.addGameData(new GameDataType(gameId, gameName));
+    public void newGame(GameDataType gameData){
+        dataBase.addGameData(gameData);
     }
     public GameDataType findGame(int gameId){
         return dataBase.findGame(gameId);
     }
-    public void updateGameData(GameDataType gameData){
-        dataBase.updateGameData(gameData);
+    public void updateGameData(GameDataType oldData, GameDataType newData){
+        dataBase.updateGameData(oldData, newData);
     }
 }

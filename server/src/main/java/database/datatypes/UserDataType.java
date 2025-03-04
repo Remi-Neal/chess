@@ -11,6 +11,20 @@ public class UserDataType {
         this.email = email;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public String toString(){
+        return "{\n" +
+                "\r\t'userName': " + userName +
+                "\r\t'password': " + password +
+                "\r\t'email': " + email +
+                "\n}";
+    }
+
     public static String getUserName(){ return userName; }
     public static String getPassword(){ return password; }
     public static String getEmail(){ return email; }

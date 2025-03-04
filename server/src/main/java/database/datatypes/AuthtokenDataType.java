@@ -11,6 +11,14 @@ public class AuthtokenDataType {
         this.userName = userName;
     }
 
+    @Override
+    public String toString(){
+        return "{\n" +
+                "\r\t'authToken': " + authToken +
+                "\r\t'userName: " + userName +
+                "\n}";
+    }
+
     public String getAuthToken() { return authToken; }
     public static String getUserName(){ return userName; }
 }

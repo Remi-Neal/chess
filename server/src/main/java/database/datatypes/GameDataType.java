@@ -14,15 +14,26 @@ public class GameDataType {
         gameName = name;
     }
 
+    @Override
+    public String toString(){
+        return "{\n" +
+                "\r\t'gameId': " + gameId +
+                "\r\t'whiteUserName': " + whiteUserName +
+                "\r\t'blackUserName': " + blackUserName +
+                "\r\t'gameName': " + gameName +
+                "\r\t'chessGame': " + chessGame +
+                "\n}";
+    }
+
     // Setters
-    public static void setWhite(String name){ whiteUserName = name; }
-    public static void setBlack(String name){ blackUserName = name; }
-    public static void setGame(ChessGame game){ chessGame = game; }
+    public void setWhite(String name){ whiteUserName = name; }
+    public void setBlack(String name){ blackUserName = name; }
+    public void setGame(ChessGame game){ chessGame = game; }
 
     // Getters
     public int getGameId(){ return gameId; }
-    public static String getWhiteUserName(){ return whiteUserName; }
-    public static String getBlackUserName(){ return blackUserName; }
-    public static String getGameName(){ return gameName; }
-    public static ChessGame getChessGame(){ return chessGame; }
+    public String getWhiteUserName(){ return whiteUserName; }
+    public String getBlackUserName(){ return blackUserName; }
+    public String getGameName(){ return gameName; }
+    public ChessGame getChessGame(){ return chessGame; }
 }

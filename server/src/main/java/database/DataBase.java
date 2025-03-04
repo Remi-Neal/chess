@@ -39,13 +39,9 @@ public class DataBase {
         public void addGameData(GameDataType data){
             gameData.add(data);
         }
-        public void updateGameData(GameDataType data) {
-            for (GameDataType game : gameData) {
-                if (game.getGameId() == data.getGameId()) {
-                    gameData.remove(game);
-                    gameData.add(data);
-                }
-            }
+        public void updateGameData(GameDataType oldData, GameDataType newData) {
+            gameData.remove(oldData);
+            gameData.add(newData);
         }
         public List<GameDataType> listGame(){
             return gameData;
