@@ -3,14 +3,7 @@ package database.datatypes;
 /**
  * Data class storing Authorization data for Chess Game API
  */
-public class AuthtokenDataType {
-    private static String authToken;
-    private static String userName;
-    public AuthtokenDataType(String authToken, String userName){
-        this.authToken = authToken;
-        this.userName = userName;
-    }
-
+public record AuthtokenDataType(String authToken, String userName) {
     @Override
     public String toString(){
         return "{\n" +
@@ -19,6 +12,6 @@ public class AuthtokenDataType {
                 "\n}";
     }
 
-    public String getAuthToken() { return authToken; }
-    public static String getUserName(){ return userName; }
+    public String getAuthToken() { return this.authToken; }
+    public String getUserName(){ return this.userName; }
 }

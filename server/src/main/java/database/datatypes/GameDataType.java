@@ -2,17 +2,10 @@ package database.datatypes;
 
 import chess.ChessGame;
 
-public class GameDataType {
-    private static int gameId;
+public record GameDataType(int gameId, String gameName) {
     private static String whiteUserName = "";
     private static String blackUserName = "";
-    private static String gameName = "";
     private static ChessGame chessGame;
-
-    public GameDataType(int id, String name){
-        gameId = id;
-        gameName = name;
-    }
 
     @Override
     public String toString(){
