@@ -67,7 +67,7 @@ public class StandardAPITests {
 
     @Test
     @Order(2)
-    @DisplayName("Normal User Login")
+    @DisplayName("Normal UserHandler Login")
     public void successLogin() {
         TestAuthResult loginResult = serverFacade.login(existingUser);
 
@@ -79,7 +79,7 @@ public class StandardAPITests {
 
     @Test
     @Order(3)
-    @DisplayName("Login Invalid User")
+    @DisplayName("Login Invalid UserHandler")
     public void loginInvalidUser() {
         TestAuthResult loginResult = serverFacade.login(newUser);
 
@@ -101,7 +101,7 @@ public class StandardAPITests {
 
     @Test
     @Order(4)
-    @DisplayName("Normal User Registration")
+    @DisplayName("Normal UserHandler Registration")
     public void successRegister() {
         //submit register request
         TestAuthResult registerResult = serverFacade.register(newUser);
@@ -114,7 +114,7 @@ public class StandardAPITests {
 
     @Test
     @Order(5)
-    @DisplayName("Re-Register User")
+    @DisplayName("Re-Register UserHandler")
     public void registerTwice() {
         //submit register request trying to register existing user
         TestAuthResult registerResult = serverFacade.register(existingUser);
@@ -184,7 +184,7 @@ public class StandardAPITests {
 
     @Test
     @Order(10)
-    @DisplayName("Join Created Game")
+    @DisplayName("Join Created GameHandler")
     public void goodJoin() {
         //create game
         TestCreateResult createResult = serverFacade.createGame(createRequest, existingAuth);
@@ -258,7 +258,7 @@ public class StandardAPITests {
 
     @Test
     @Order(11)
-    @DisplayName("Join Bad Game ID")
+    @DisplayName("Join Bad GameHandler ID")
     public void badGameIDJoin() {
         //create game
         createRequest = new TestCreateRequest("Bad Join");

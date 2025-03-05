@@ -1,5 +1,6 @@
 package service.gameservice;
 
+import chess.ChessGame;
 import dataaccess.authdata.AuthDAO;
 import dataaccess.gamedata.GameDAO;
 import database.datatypes.AuthtokenDataType;
@@ -15,5 +16,10 @@ public class CreateGameService {
     }
     public static void addGame(GameDAO gameDAO, GameDataType game){
         gameDAO.newGame(game);
+    }
+    public static void addNewBoard(GameDAO gameDAO, int gameId){
+        GameDataType game = gameDAO.findGame(gameId);
+        GameDataType gameWtihBoard = game.copy();
+        gameWtihBoard.setGameBoard(new ChessGame());
     }
 }

@@ -19,26 +19,27 @@ public class GameService implements ServiceInterface{
     }
 
     public List<GameDataType> listGames(AuthtokenDataType authData){
-        if(Authenticator.validAuth(authDAO, authData.getAuthToken())) {
+        if(Authenticator.validAuth(authDAO, authData.authToken())) {
             return ListGamesService.listGames(gameDAO);
         }
         return null;
     }
     public GameDataType createGame(AuthtokenDataType authData, String gameName){
-        if(Authenticator.validAuth(authDAO, authData.getAuthToken())) {
+        if(Authenticator.validAuth(authDAO, authData.authToken())) {
             GameDataType newGame = CreateGameService.createGame(gameDAO, gameName);
-            newGame.setGame(new ChessGame());
             CreateGameService.addGame(gameDAO, newGame);
+            CreateGameService.addNewBoard(gameDAO, newGame.gameId());
             return newGame;
         }
         return null;
     }
-    public void joinGame(AuthtokenDataType authData, int gameId, String userName, String color) throws IllegalArgumentException{
-        if(Authenticator.validAuth(authDAO, authData.getAuthToken())) {
+    public void joinGame(String authToken, int gameId, String color) throws IllegalArgumentException{
+        AuthtokenDataType authData = authDAO.getAuth(authToken);
+        if(authData != null) {
             if(color.equalsIgnoreCase("black")){
-                JoinGameService.blackJoin(gameDAO, userName, gameId);
+                JoinGameService.blackJoin(gameDAO, authData.username(), gameId);
             } else if (color.equalsIgnoreCase("white")) {
-                JoinGameService.whiteJoin(gameDAO, userName, gameId);
+                JoinGameService.whiteJoin(gameDAO, authData.username(), gameId);
             } else {
                 throw new IllegalArgumentException("Must choose 'black' or 'white' piece color.");
             }

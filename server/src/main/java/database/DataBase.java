@@ -21,7 +21,7 @@ public class DataBase {
         }
         public void removeAuthData(String token) {
             for (AuthtokenDataType data : authData) {
-                if (data.getAuthToken().equals(token)) {
+                if (data.authToken().equals(token)) {
                     authData.remove(data);
                     break;
                 }
@@ -29,7 +29,7 @@ public class DataBase {
         }
         public AuthtokenDataType getAuthData(String token){
             for(AuthtokenDataType data : authData){
-                if(data.getAuthToken().equals(token)) return data;
+                if(data.authToken().equals(token)) return data;
             }
             return null;
         }
@@ -48,7 +48,7 @@ public class DataBase {
         }
         public GameDataType findGame(int data){
             for(GameDataType game : gameData){
-                if(game.getGameId() == data){
+                if(game.gameId() == data){
                     return game;
                 }
             }

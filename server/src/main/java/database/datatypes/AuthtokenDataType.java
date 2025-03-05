@@ -1,17 +1,14 @@
 package database.datatypes;
 
 /**
- * Data class storing Authorization data for Chess Game API
+ * Data class storing Authorization data for Chess GameHandler API
  */
-public record AuthtokenDataType(String authToken, String userName) {
+public record AuthtokenDataType(String authToken, String username) {
     @Override
     public String toString(){
         return "{\n" +
                 "\r\t'authToken': " + authToken +
-                "\r\t'userName: " + userName +
+                "\r\t'userName: " + username +
                 "\n}";
     }
-
-    public String getAuthToken() { return this.authToken; }
-    public String getUserName(){ return this.userName; }
 }

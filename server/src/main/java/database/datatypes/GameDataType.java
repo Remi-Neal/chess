@@ -22,7 +22,7 @@ public record GameDataType(int gameId, String gameName) {
     // Setters
     public void setWhite(String name){ whiteUserName = name; }
     public void setBlack(String name){ blackUserName = name; }
-    public void setGame(ChessGame game){ chessGame = game; }
+    public void setGameBoard(ChessGame game){ chessGame = game; }
 
     // Getters
     public String getWhiteUserName(){ return whiteUserName; }
@@ -33,7 +33,7 @@ public record GameDataType(int gameId, String gameName) {
         GameDataType newGameData = new GameDataType(gameId, gameName);
         newGameData.setBlack(blackUserName);
         newGameData.setWhite(whiteUserName);
-        newGameData.setGame(chessGame);
+        newGameData.setGameBoard(chessGame);
         return newGameData;
     }
 }
