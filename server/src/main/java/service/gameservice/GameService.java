@@ -20,13 +20,13 @@ public class GameService implements ServiceInterface{
 
     public List<GameDataType> listGames(AuthtokenDataType authData){
         if(Authenticator.validAuth(authDAO, authData.getAuthToken())) {
-            return ListGamesService.listGames(gameDAO, authDAO, authData);
+            return ListGamesService.listGames(gameDAO);
         }
         return null;
     }
     public GameDataType createGame(AuthtokenDataType authData, String gameName){
         if(Authenticator.validAuth(authDAO, authData.getAuthToken())) {
-            GameDataType newGame = CreateGameService.createGame(gameDAO, authDAO, authData, gameName);
+            GameDataType newGame = CreateGameService.createGame(gameDAO, gameName);
             newGame.setGame(new ChessGame());
             CreateGameService.addGame(gameDAO, newGame);
             return newGame;
