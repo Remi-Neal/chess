@@ -10,9 +10,6 @@ import java.util.List;
 
 public class ListGamesService {
     public static List<GameDataType> listGames(GameDAO gameDAO, AuthDAO authDAO, AuthtokenDataType authData){
-        if(Authenticator.validAuth(authDAO, authData.getAuthToken())){
-            return gameDAO.gameList();
-        }
-        return null;
+        return gameDAO.gameList();
     }
 }

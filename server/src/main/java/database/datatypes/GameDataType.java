@@ -18,15 +18,22 @@ public record GameDataType(int gameId, String gameName) {
                 "\n}";
     }
 
+
     // Setters
     public void setWhite(String name){ whiteUserName = name; }
     public void setBlack(String name){ blackUserName = name; }
     public void setGame(ChessGame game){ chessGame = game; }
 
     // Getters
-    public int getGameId(){ return gameId; }
     public String getWhiteUserName(){ return whiteUserName; }
     public String getBlackUserName(){ return blackUserName; }
-    public String getGameName(){ return gameName; }
     public ChessGame getChessGame(){ return chessGame; }
+
+    public GameDataType copy(){
+        GameDataType newGameData = new GameDataType(gameId, gameName);
+        newGameData.setBlack(blackUserName);
+        newGameData.setWhite(whiteUserName);
+        newGameData.setGame(chessGame);
+        return newGameData;
+    }
 }

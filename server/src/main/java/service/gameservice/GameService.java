@@ -1,14 +1,16 @@
 package service.gameservice;
 
+import chess.ChessGame;
 import dataaccess.authdata.AuthDAO;
 import dataaccess.gamedata.GameDAO;
 import database.datatypes.AuthtokenDataType;
 import database.datatypes.GameDataType;
 import service.ServiceInterface;
+import service.userservice.methods.Authenticator;
 
 import java.util.List;
 
-public class GameService implements ServiceInterface {
+public class GameService implements ServiceInterface{
     private final GameDAO gameDAO;
     private final AuthDAO authDAO;
     public GameService(){
@@ -17,9 +19,29 @@ public class GameService implements ServiceInterface {
     }
 
     public List<GameDataType> listGames(AuthtokenDataType authData){
-        return ListGamesService.listGames(gameDAO, authDAO, authData);
+        if(Authenticator.validAuth(authDAO, authData.getAuthToken())) {
+            return ListGamesService.listGames(gameDAO, authDAO, authData);
+        }
+        return null;
     }
     public GameDataType createGame(AuthtokenDataType authData, String gameName){
-        return CreateGameService.createGame(gameDAO, authDAO, authData, gameName);
+        if(Authenticator.validAuth(authDAO, authData.getAuthToken())) {
+            GameDataType newGame = CreateGameService.createGame(gameDAO, authDAO, authData, gameName);
+            newGame.setGame(new ChessGame());
+            CreateGameService.addGame(gameDAO, newGame);
+            return newGame;
+        }
+        return null;
+    }
+    public void joinGame(AuthtokenDataType authData, int gameId, String userName, String color) throws IllegalArgumentException{
+        if(Authenticator.validAuth(authDAO, authData.getAuthToken())) {
+            if(color.equalsIgnoreCase("black")){
+                JoinGameService.blackJoin(gameDAO, userName, gameId);
+            } else if (color.equalsIgnoreCase("white")) {
+                JoinGameService.whiteJoin(gameDAO, userName, gameId);
+            } else {
+                throw new IllegalArgumentException("Must choose 'black' or 'white' piece color.");
+            }
+        }
     }
 }
