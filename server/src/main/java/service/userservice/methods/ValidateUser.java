@@ -6,7 +6,8 @@ import database.datatypes.UserDataType;
 public class ValidateUser {
     public static Boolean validateUserData(UserDAO userDAO, UserDataType userData){
         UserDataType userInfo = userDAO.getUser(userData.userName());
-        return userInfo.equals(userData);
+        if(userInfo == null) return false;
+        return userInfo.password().equals(userData.password());
     }
 
     public static Boolean isUniqueUserName(UserDAO userDAO, String userName){

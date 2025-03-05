@@ -1,19 +1,13 @@
 package server;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import jdk.jshell.spi.ExecutionControl;
 import service.ServiceExceptions.ExceptionHandler;
 import spark.*;
-import server.UserHandler;
-import server.GameHandler;
 
 import java.util.Map;
 
 public class Server {
     ClearDatabase reset = new ClearDatabase();
-    UserHandler userHandler = new UserHandler();
-    GameHandler gameHandler = new GameHandler();
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -57,64 +51,64 @@ public class Server {
     private Object reset(Request req, Response res) {
         try {
             reset.reset();
-            return new Gson().toJson(Map.of("", ""));
+            return new Gson().toJson(Map.of());
         } catch (Exception e) {
             exceptionHandler(e, res);
-            return null;
+            return res.body();
         }
     }
 
     private Object register(Request req, Response res) {
         try {
-            return UserHandler.register(req, res);
+            return UserHandler.register(req);
         } catch (Exception e) {
             exceptionHandler(e, res);
-            return null;
+            return res.body();
         }
     }
 
     private Object login(Request req, Response res) {
         try {
-            return UserHandler.login(req, res);
+            return UserHandler.login(req);
         } catch (Exception e) {
             exceptionHandler(e, res);
-            return null;
+            return res.body();
         }
     }
 
     private Object logout(Request req, Response res) {
         try {
-            return UserHandler.logout(req, res);
+            return UserHandler.logout(req);
         } catch (Exception e) {
             exceptionHandler(e, res);
-            return null;
+            return res.body();
         }
     }
 
     private Object gameList(Request req, Response res) {
         try {
-            return GameHandler.gameList(req, res);
+            return GameHandler.gameList(req);
         } catch (Exception e) {
             exceptionHandler(e, res);
-            return null;
+            return res.body();
         }
     }
 
     private Object createGame(Request req, Response res) {
         try {
-            return GameHandler.createGame(req, res);
+            return GameHandler.createGame(req);
         } catch (Exception e) {
             exceptionHandler(e, res);
-            return null;
+            return res.body();
         }
     }
 
     private Object joinGame(Request req, Response res) {
         try {
-            return GameHandler.joinGame(req, res);
+            return GameHandler.joinGame(req);
         } catch (Exception e) {
             exceptionHandler(e, res);
-            return null;
+            return res.body();
         }
     }
 }

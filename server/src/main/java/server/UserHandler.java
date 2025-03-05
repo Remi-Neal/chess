@@ -5,10 +5,10 @@ import com.google.gson.Gson;
 import database.datatypes.AuthtokenDataType;
 import database.datatypes.UserDataType;
 import server.models.UserModel;
+import service.ServiceExceptions.Unauthorized;
 import service.ServiceExceptions.UsernameTaken;
 import service.userservice.UserService;
 import spark.Request;
-import spark.Response;
 
 import java.util.Map;
 
@@ -20,7 +20,7 @@ public class UserHandler {
 
     //TODO: Add error handling to methods to return the proper err messages
 
-    public static Object register(Request req, Response res){
+    public static Object register(Request req){
         //TODO: Add Error handling
         var registration = new Gson().fromJson(req.body(), UserModel.class);
         UserDataType newUser = new UserDataType(
@@ -32,7 +32,7 @@ public class UserHandler {
         return new Gson().toJson(authData);
     }
 
-    public static Object login(Request req, Response res){
+    public static Object login(Request req){
         //TODO: Add Error handling
         var login = new Gson().fromJson(req.body(), UserModel.class);
         UserDataType loginUser = new UserDataType(
@@ -40,19 +40,16 @@ public class UserHandler {
                 login.password(),
                 "");
         AuthtokenDataType authData = userService.login(loginUser);
-        return new Gson().toJson(authData);
+        if(authData == null) throw new Unauthorized();
+        return new Gson().toJson(Map.of("username", authData.username(), "authToken", authData.authToken()));
     }
 
-    public static Object logout(Request req, Response res){
+    public static Object logout(Request req){
         AuthtokenDataType auth = new AuthtokenDataType(
                 req.headers("authorization"),
                 ""
                 );
-        if(userService.logout(auth)){
-            return new Gson().toJson(null);
-        } else {
-            res.status(401);
-            return new Gson().toJson(Map.of("message", "Error: Unauthorized"));
-        }
+        if(!userService.logout(auth)) throw new Unauthorized();
+        return new Gson().toJson(Map.of());
     }
 }

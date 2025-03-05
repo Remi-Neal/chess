@@ -3,25 +3,32 @@ package service.ServiceExceptions;
 import com.google.gson.Gson;
 import spark.Response;
 
+import java.util.Map;
+
 
 public class ExceptionHandler {
     public static void handleEx(Exception e, Response res){
         switch (e) {
-            case BadRequest badRequest -> {
+            case BadRequest ignored -> {
                 res.status(400);
-                res.body(new Gson().toJson(e));
+                BadRequest err = (BadRequest) e;
+                res.body(err.toJson());
             }
-            case Unauthorized unauthorized -> {
+            case Unauthorized ignored -> {
                 res.status(401);
-                res.body(new Gson().toJson(e));
+                Unauthorized err = (Unauthorized) e;
+                res.body(err.toJson());
             }
-            case UsernameTaken usernameTaken -> {
+            case UsernameTaken ignored -> {
                 res.status(403);
-                res.body(new Gson().toJson(e));
+                UsernameTaken err = (UsernameTaken) e;
+                res.body(err.toJson());
             }
             case null, default -> {
                 res.status(500);
-                res.body(new Gson().toJson(e));
+                assert e != null;
+                String errMessage = e.getMessage();
+                res.body(new Gson().toJson(Map.of("message:", "Error: " + errMessage)));
             }
         }
     }
