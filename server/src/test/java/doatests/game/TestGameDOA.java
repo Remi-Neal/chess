@@ -27,19 +27,17 @@ public class TestGameDOA {
 
     @Test
     public void positiveTestGameDOA(){
-        GameDataType hitch = new GameDataType(42, "Hitchhiker's");
+        GameDataType hitch = new GameDataType(42, "","","Hitchhiker's");
         gameDOA.newGame(hitch);
         GameDataType doaReturn = gameDOA.findGame(42);
         Assertions.assertEquals(hitch, doaReturn, "Positive return game failed!");
 
-        GameDataType newHitch = new GameDataType(42, "Hitchhiker's");
-        newHitch.setWhite("Arthur");
-        newHitch.setBlack("Marvin");
+        GameDataType newHitch = new GameDataType(42, "Arthur","Marvin","Hitchhiker's");
         gameDOA.updateGameData(hitch, newHitch);
         doaReturn = gameDOA.findGame(42);
         Assertions.assertEquals(newHitch, doaReturn, "Positive update game failed!");
 
-        GameDataType friday = new GameDataType(13, "Friday");
+        GameDataType friday = new GameDataType(13, "","","Friday");
         gameDOA.newGame(friday);
         List<GameDataType> testGameList = new ArrayList<>();
         testGameList.add(newHitch);
@@ -50,19 +48,17 @@ public class TestGameDOA {
 
     @Test
     public void negativeTestGameDOA(){
-        GameDataType hitch = new GameDataType(42, "Hitchhiker's");
+        GameDataType hitch = new GameDataType(42, "","","Hitchhiker's");
         gameDOA.newGame(hitch);
         GameDataType doaReturn = gameDOA.findGame(420);
         Assertions.assertNotEquals(hitch, doaReturn, "Negative return game failed!");
 
-        GameDataType newHitch = new GameDataType(42, "Hitchhiker's");
-        newHitch.setWhite("Arthur");
-        newHitch.setBlack("Marvin");
+        GameDataType newHitch = new GameDataType(42, "Arthur","Marvin","Hitchhiker's");
         gameDOA.updateGameData(hitch, newHitch);
         doaReturn = gameDOA.findGame(42);
         Assertions.assertNotEquals(hitch, doaReturn, "Negative update game failed!");
 
-        GameDataType friday = new GameDataType(13, "Friday");
+        GameDataType friday = new GameDataType(13, "","","Friday");
         gameDOA.newGame(friday);
         List<GameDataType> testGameList = new ArrayList<>();
         testGameList.add(hitch);
