@@ -10,8 +10,8 @@ public class UserService {
     private final UserDAO userDAO;
     private final AuthDAO authDAO;
     public UserService(){
-        this.userDAO = ServiceInterface.daoRecord.getUserDAO();
-        this.authDAO = ServiceInterface.daoRecord.getAuthDAO();
+        this.userDAO = ServiceInterface.DAO_RECORD.getUserDAO();
+        this.authDAO = ServiceInterface.DAO_RECORD.getAuthDAO();
     }
 
 

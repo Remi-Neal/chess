@@ -1,7 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
-import service.ServiceExceptions.ExceptionHandler;
+import service.exceptions.ExceptionHandler;
 import spark.*;
 
 import java.util.Map;
@@ -41,13 +41,6 @@ public class Server {
         ExceptionHandler.handleEx(e, res);
     }
 
-    // TODO: Add error handling for the following errors
-    /*
-        500: {"message": ""}
-        400: {"message": "Error: bad request"}
-        401: { "message": "Error: unauthorized" }
-        403: { "message": "Error: already taken" }
-     */
     private Object reset(Request req, Response res) {
         try {
             reset.reset();

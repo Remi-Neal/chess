@@ -1,7 +1,7 @@
-package chess.movesCalculator;
+package chess.movescalculator;
 
 import chess.*;
-import chess.movesCalculator.basic_moves.BasicMovesCalc;
+import chess.movescalculator.basicmoves.BasicMovesCalc;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,12 +34,13 @@ public class PawnMovesCalc extends BasicMovesCalc {
         ChessPosition newPosition = move.getEndPosition();
         ChessGame.TeamColor pieceColor = board.getPiece(move.getStartPosition()).getTeamColor(); // ick
 
-        if(outOfBounds(move.getEndPosition())) return false;
+        if(outOfBounds(move.getEndPosition())){ return false; }
         if(board.getPiece(newPosition) == null){
             if(newPosition.getRow() == 8 || newPosition.getRow() == 1){
                 this.moves.addAll(addPromotions(move));
+            } else {
+                addMove(move);
             }
-            else addMove(move);
             return true;
         }
 
@@ -50,13 +51,14 @@ public class PawnMovesCalc extends BasicMovesCalc {
         ChessPosition newPosition = move.getEndPosition();
         ChessGame.TeamColor pieceColor = board.getPiece(move.getStartPosition()).getTeamColor(); // ick
 
-        if(outOfBounds(move.getEndPosition()) || board.getPiece(newPosition) == null) return;
+        if(outOfBounds(move.getEndPosition()) || board.getPiece(newPosition) == null) { return; }
 
         if(board.getPiece(newPosition).getTeamColor() != pieceColor) {
             if(newPosition.getRow() == 8 || newPosition.getRow() == 1){
                 this.moves.addAll(addPromotions(move));
+            } else {
+                addMove(move);
             }
-            else addMove(move);
         }
     }
 

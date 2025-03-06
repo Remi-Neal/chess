@@ -5,15 +5,15 @@ import com.google.gson.Gson;
 import database.datatypes.AuthtokenDataType;
 import database.datatypes.UserDataType;
 import server.models.UserModel;
-import service.ServiceExceptions.Unauthorized;
-import service.ServiceExceptions.Forbidden;
+import service.exceptions.Unauthorized;
+import service.exceptions.Forbidden;
 import service.userservice.UserService;
 import spark.Request;
 
 import java.util.Map;
 
 public class UserHandler {
-    final static UserService userService = new UserService();
+    final static UserService USER_SERVICE = new UserService();
     //TODO: Add methods to handle major User functions
     // Methods receive GSON data, unpack it, then format it to call service endpoints
     // Finally methods will turn returned data back into GSON and send it back to the server
@@ -27,7 +27,7 @@ public class UserHandler {
                 registration.username(),
                 registration.password(),
                 registration.email());
-        AuthtokenDataType authData = userService.register(newUser);
+        AuthtokenDataType authData = USER_SERVICE.register(newUser);
         if(authData == null) throw new Forbidden();
         return new Gson().toJson(authData);
     }
@@ -39,7 +39,7 @@ public class UserHandler {
                 login.username(),
                 login.password(),
                 "");
-        AuthtokenDataType authData = userService.login(loginUser);
+        AuthtokenDataType authData = USER_SERVICE.login(loginUser);
         if(authData == null) throw new Unauthorized();
         return new Gson().toJson(Map.of("username", authData.username(), "authToken", authData.authToken()));
     }
@@ -49,7 +49,7 @@ public class UserHandler {
                 req.headers("authorization"),
                 ""
                 );
-        if(!userService.logout(auth)) throw new Unauthorized();
+        if(!USER_SERVICE.logout(auth)) throw new Unauthorized();
         return new Gson().toJson(Map.of());
     }
 }

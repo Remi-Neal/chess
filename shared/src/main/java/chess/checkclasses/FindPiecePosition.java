@@ -1,4 +1,4 @@
-package chess.checkClasses;
+package chess.checkclasses;
 
 import chess.ChessBoard;
 import chess.ChessGame;

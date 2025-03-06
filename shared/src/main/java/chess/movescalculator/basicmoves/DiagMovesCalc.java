@@ -1,4 +1,4 @@
-package chess.movesCalculator.basic_moves;
+package chess.movescalculator.basicmoves;
 
 import chess.ChessBoard;
 import chess.ChessMove;
@@ -17,25 +17,25 @@ public class DiagMovesCalc extends BasicMovesCalc {
         // To (8,8)
         for(int i=1; i < 9; i++){
             ChessPosition newPosition = new ChessPosition(startingPosition.getRow() + i, startingPosition.getColumn() + i);
-            if(tryAddMove(board, new ChessMove(startingPosition, newPosition, null))) continue;
+            if(tryAddMove(board, new ChessMove(startingPosition, newPosition, null))){ continue; }
             break;
         }
         // To (8,1)
         for(int i=1; i < 9; i++){
             ChessPosition newPosition = new ChessPosition(startingPosition.getRow() + i, startingPosition.getColumn() - i);
-            if(tryAddMove(board, new ChessMove(startingPosition, newPosition, null))) continue;
+            if(tryAddMove(board, new ChessMove(startingPosition, newPosition, null))){ continue; }
             break;
         }
         // To (1,8)
         for(int i=1; i < 9; i++){
             ChessPosition newPosition = new ChessPosition(startingPosition.getRow() - i, startingPosition.getColumn() + i);
-            if(tryAddMove(board, new ChessMove(startingPosition, newPosition, null))) continue;
+            if(tryAddMove(board, new ChessMove(startingPosition, newPosition, null))){ continue; }
             break;
         }
         // To (1,1)
         for(int i=1; i < 9; i++){
             ChessPosition newPosition = new ChessPosition(startingPosition.getRow() - i, startingPosition.getColumn() - i);
-            if(tryAddMove(board, new ChessMove(startingPosition, newPosition, null))) continue;
+            if(tryAddMove(board, new ChessMove(startingPosition, newPosition, null))){ continue; }
             break;
         }
 

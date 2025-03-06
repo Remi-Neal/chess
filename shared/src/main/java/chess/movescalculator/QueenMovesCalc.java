@@ -1,11 +1,11 @@
-package chess.movesCalculator;
+package chess.movescalculator;
 
 import chess.ChessBoard;
 import chess.ChessMove;
 import chess.ChessPosition;
-import chess.movesCalculator.basic_moves.BasicMovesCalc;
-import chess.movesCalculator.basic_moves.DiagMovesCalc;
-import chess.movesCalculator.basic_moves.StraightMovesCalc;
+import chess.movescalculator.basicmoves.BasicMovesCalc;
+import chess.movescalculator.basicmoves.DiagMovesCalc;
+import chess.movescalculator.basicmoves.StraightMovesCalc;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,10 +1,10 @@
 package chess;
 
-import chess.checkClasses.FindInterceptingMoves;
-import chess.checkClasses.FindPiecePosition;
-import chess.checkClasses.ThreateningPieceFinder;
-import chess.movesCalculator.KingMovesCalc;
-import chess.movesCalculator.basic_moves.BasicMovesCalc;
+import chess.checkclasses.FindInterceptingMoves;
+import chess.checkclasses.FindPiecePosition;
+import chess.checkclasses.ThreateningPieceFinder;
+import chess.movescalculator.KingMovesCalc;
+import chess.movescalculator.basicmoves.BasicMovesCalc;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -225,38 +225,33 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         if(isInCheck(teamColor)) return false;
-        // TODO: Find out if there are any more valid moves
         for(int i = 1; i <= 8; i++){
             for(int j = 1; j <= 8; j++){
                 ChessPiece piece = gameBoard.getPiece(new ChessPosition(i,j));
                 if(piece == null) continue;
-                if(piece.getTeamColor() == teamColor){
-                    FindInterceptingMoves getCalc = new FindInterceptingMoves();
-                    BasicMovesCalc calc = getCalc.getCalc(piece);
-                    List<ChessMove> moves = calc.getMoves(this.gameBoard, new ChessPosition(i,j));
+                if(piece.getTeamColor() != teamColor) continue;
 
-                    if(!moves.isEmpty()){
-                        // If King is it in check after moving
-                        if(piece.getPieceType() == ChessPiece.PieceType.KING){
-                            for(ChessMove move : moves){
-                                ChessBoard newBoard = makeNewBoard(move, this.gameBoard);
-                                if(threatPieceFinder.findPieces(teamColor,move.getEndPosition(),newBoard).isEmpty()) return false;
+                FindInterceptingMoves getCalc = new FindInterceptingMoves();
+                BasicMovesCalc calc = getCalc.getCalc(piece);
+                List<ChessMove> moves = calc.getMoves(this.gameBoard, new ChessPosition(i,j));
+                if(moves.isEmpty()) continue;
 
-                            }
-                        } else {
-                            for(ChessMove move : moves){
-                                ChessBoard newBoard = makeNewBoard(move, this.gameBoard);
-                                if(!threatPieceFinder.findPieces(
-                                        teamColor,
-                                        findPiece.findPiece(newBoard, teamColor, ChessPiece.PieceType.KING),
-                                        newBoard).isEmpty()) continue;
-                                return false;
-                            }
-                        }
-                        // If not king, does moving put king in check
-
-                       // return false;
+                // If King is it in check after moving
+                if(piece.getPieceType() == ChessPiece.PieceType.KING){
+                    for(ChessMove move : moves){
+                        ChessBoard newBoard = makeNewBoard(move, this.gameBoard);
+                        if(threatPieceFinder.findPieces(teamColor,move.getEndPosition(),newBoard).isEmpty()) return false;
                     }
+                    continue;
+                }
+
+                for(ChessMove move : moves){
+                    ChessBoard newBoard = makeNewBoard(move, this.gameBoard);
+                    if(!threatPieceFinder.findPieces(
+                            teamColor,
+                            findPiece.findPiece(newBoard, teamColor, ChessPiece.PieceType.KING),
+                            newBoard).isEmpty()) continue;
+                    return false;
                 }
             }
         }

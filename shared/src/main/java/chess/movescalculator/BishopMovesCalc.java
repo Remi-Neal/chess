@@ -1,31 +1,29 @@
-package chess.movesCalculator;
+package chess.movescalculator;
 
 import chess.ChessBoard;
 import chess.ChessMove;
 import chess.ChessPosition;
-import chess.movesCalculator.basic_moves.BasicMovesCalc;
-import chess.movesCalculator.basic_moves.StraightMovesCalc;
+import chess.movescalculator.basicmoves.BasicMovesCalc;
+import chess.movescalculator.basicmoves.DiagMovesCalc;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RookMovesCalc extends BasicMovesCalc {
+public class BishopMovesCalc extends BasicMovesCalc {
     List<ChessMove> moves;
-    public RookMovesCalc(){
+    public BishopMovesCalc(){
         this.moves = new ArrayList<>();
     }
+
     @Override
     public List<ChessMove> getMoves(ChessBoard board, ChessPosition startingPosition) {
-
-        StraightMovesCalc straightMoves = new StraightMovesCalc();
-        addMove(straightMoves.getMoves(board, startingPosition));
+        DiagMovesCalc diagMoves = new DiagMovesCalc();
+        addMove(diagMoves.getMoves(board, startingPosition));
         return this.moves;
     }
     public void addMove(List<ChessMove> validMoves){
         this.moves.addAll(validMoves);
     }
     @Override
-    public void addMove(ChessMove move) {
-
-    }
+    public void addMove(ChessMove move) {}
 }

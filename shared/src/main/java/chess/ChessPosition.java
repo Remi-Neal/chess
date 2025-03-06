@@ -31,12 +31,7 @@ public class ChessPosition {
         this.row = row;
         this.col = col;
     }
-/*
-    @Override
-    public String toString() {
-        return String.format("(%g,%g)",this.row,this.col);
-    }
-*/
+
     /**
      * @return which row this position is in
      * 1 codes for the bottom row

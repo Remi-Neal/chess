@@ -1,8 +1,8 @@
-package chess.checkClasses;
+package chess.checkclasses;
 
 import chess.*;
-import chess.movesCalculator.*;
-import chess.movesCalculator.basic_moves.*;
+import chess.movescalculator.*;
+import chess.movescalculator.basicmoves.*;
 
 import java.util.ArrayList;
 import java.util.Collection;

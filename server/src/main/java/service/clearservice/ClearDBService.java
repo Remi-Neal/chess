@@ -5,7 +5,7 @@ import service.ServiceInterface;
 
 public class ClearDBService {
     public void clearDB(){
-        ResetDataBase reset = ServiceInterface.daoRecord.getDatabaseReset();
+        ResetDataBase reset = ServiceInterface.DAO_RECORD.getDatabaseReset();
         reset.run();
     }
 }

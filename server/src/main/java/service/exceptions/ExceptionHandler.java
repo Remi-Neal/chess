@@ -1,4 +1,4 @@
-package service.ServiceExceptions;
+package service.exceptions;
 
 import com.google.gson.Gson;
 import spark.Response;

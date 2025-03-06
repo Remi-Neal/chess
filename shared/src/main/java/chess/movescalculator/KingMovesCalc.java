@@ -1,9 +1,9 @@
-package chess.movesCalculator;
+package chess.movescalculator;
 
 import chess.ChessBoard;
 import chess.ChessMove;
 import chess.ChessPosition;
-import chess.movesCalculator.basic_moves.BasicMovesCalc;
+import chess.movescalculator.basicmoves.BasicMovesCalc;
 import java.util.List;
 import java.util.Arrays;
 
@@ -22,7 +22,7 @@ public class KingMovesCalc extends BasicMovesCalc {
         int col = startingPosition.getColumn();
         for(int i : directions){
             for(int j : directions){
-                if(i == 0 && j == 0) continue;
+                if(i == 0 && j == 0){ continue; }
                 ChessMove move = new ChessMove(startingPosition, new ChessPosition(row + i, col + j), null);
                 tryAddMove(board, move);
             }

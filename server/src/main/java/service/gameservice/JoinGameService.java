@@ -2,8 +2,8 @@ package service.gameservice;
 
 import dataaccess.gamedata.GameDAO;
 import database.datatypes.GameDataType;
-import service.ServiceExceptions.BadRequest;
-import service.ServiceExceptions.Forbidden;
+import service.exceptions.BadRequest;
+import service.exceptions.Forbidden;
 import service.gameservice.methods.GameValidator;
 
 public class JoinGameService {
