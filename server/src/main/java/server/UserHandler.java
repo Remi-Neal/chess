@@ -6,7 +6,7 @@ import database.datatypes.AuthtokenDataType;
 import database.datatypes.UserDataType;
 import server.models.UserModel;
 import service.ServiceExceptions.Unauthorized;
-import service.ServiceExceptions.UsernameTaken;
+import service.ServiceExceptions.Forbidden;
 import service.userservice.UserService;
 import spark.Request;
 
@@ -28,7 +28,7 @@ public class UserHandler {
                 registration.password(),
                 registration.email());
         AuthtokenDataType authData = userService.register(newUser);
-        if(authData == null) throw new UsernameTaken();
+        if(authData == null) throw new Forbidden();
         return new Gson().toJson(authData);
     }
 

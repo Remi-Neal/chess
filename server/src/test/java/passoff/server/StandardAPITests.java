@@ -11,7 +11,7 @@ import java.util.Comparator;
 import java.util.Locale;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class StandardAPITests {
+public class  StandardAPITests {
 
     private static TestUser existingUser;
 

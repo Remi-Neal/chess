@@ -28,7 +28,7 @@ public class GameHandler {
         var reqBody = new Gson().fromJson(req.body(), GameModel.class);
         String gameName = reqBody.gameName();
         GameDataType newGame = gameService.createGame(authToken, gameName);
-        return new Gson().toJson(Map.of("gameID",newGame.gameId()));
+        return new Gson().toJson(Map.of("gameID",newGame.gameID()));
     }
     public static Object joinGame(Request req) {
         String authToken = req.headers("authorization");

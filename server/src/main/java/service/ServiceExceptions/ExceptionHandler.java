@@ -19,9 +19,9 @@ public class ExceptionHandler {
                 Unauthorized err = (Unauthorized) e;
                 res.body(err.toJson());
             }
-            case UsernameTaken ignored -> {
+            case Forbidden ignored -> {
                 res.status(403);
-                UsernameTaken err = (UsernameTaken) e;
+                Forbidden err = (Forbidden) e;
                 res.body(err.toJson());
             }
             case null, default -> {

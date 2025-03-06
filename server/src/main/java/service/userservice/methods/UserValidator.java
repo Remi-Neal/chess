@@ -3,7 +3,7 @@ package service.userservice.methods;
 import dataaccess.userdata.UserDAO;
 import database.datatypes.UserDataType;
 
-public class ValidateUser {
+public class UserValidator {
     public static Boolean validateUserData(UserDAO userDAO, UserDataType userData){
         UserDataType userInfo = userDAO.getUser(userData.userName());
         if(userInfo == null) return false;

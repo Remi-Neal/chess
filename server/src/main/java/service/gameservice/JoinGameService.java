@@ -2,23 +2,29 @@ package service.gameservice;
 
 import dataaccess.gamedata.GameDAO;
 import database.datatypes.GameDataType;
-import service.ServiceExceptions.Unauthorized;
+import service.ServiceExceptions.BadRequest;
+import service.ServiceExceptions.Forbidden;
+import service.gameservice.methods.GameValidator;
 
 public class JoinGameService {
     public static void blackJoin(GameDAO gameDAO, String userName, int gameId){
+        if(!GameValidator.validateGame(gameDAO, gameId)) throw new BadRequest();
         GameDataType game = gameDAO.findGame(gameId);
-        if(!game.blackUsername().isEmpty()) throw new Unauthorized();
-        GameDataType blackGame = new GameDataType(game.gameId(), game.whiteUsername(), userName, game.gameName());
+        if(game.blackUsername() != null) throw new Forbidden();
+        GameDataType blackGame = new GameDataType(game.gameID(), game.whiteUsername(), userName, game.gameName());
         blackGame.setGameBoard(game.getChessGame());
         gameDAO.updateGameData(game, blackGame);
         //TODO: Check if there is already a black player
     }
     public static void whiteJoin(GameDAO gameDAO, String userName, int gameId){
+        if(!GameValidator.validateGame(gameDAO, gameId)) throw new BadRequest();
         GameDataType game = gameDAO.findGame(gameId);
-        if(!game.whiteUsername().isEmpty()) throw new Unauthorized();
-        GameDataType whiteGame = new GameDataType(game.gameId(), userName, game.blackUsername(), game.gameName());
+        if(game.whiteUsername() != null) throw new Forbidden();
+        GameDataType whiteGame = new GameDataType(game.gameID(), userName, game.blackUsername(), game.gameName());
         whiteGame.setGameBoard(game.getChessGame());
         gameDAO.updateGameData(game, whiteGame);
         //TODO: Check if there is already a white player
     }
+
+
 }

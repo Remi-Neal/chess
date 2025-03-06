@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 
 import java.util.Map;
 
-public class UsernameTaken extends RuntimeException {
-    public UsernameTaken() { super("Error: already taken"); }
+public class Forbidden extends RuntimeException {
+    public Forbidden() { super("Error: already taken"); }
 
     public String toJson(){
         return new Gson().toJson(Map.of("message", getMessage()));

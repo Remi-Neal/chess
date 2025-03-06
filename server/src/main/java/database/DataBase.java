@@ -48,7 +48,7 @@ public class DataBase {
         }
         public GameDataType findGame(int data){
             for(GameDataType game : gameData){
-                if(game.gameId() == data){
+                if(game.gameID() == data){
                     return game;
                 }
             }

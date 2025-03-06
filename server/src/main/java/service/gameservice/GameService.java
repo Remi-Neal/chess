@@ -4,6 +4,7 @@ import dataaccess.authdata.AuthDAO;
 import dataaccess.gamedata.GameDAO;
 import database.datatypes.AuthtokenDataType;
 import database.datatypes.GameDataType;
+import service.ServiceExceptions.BadRequest;
 import service.ServiceExceptions.Unauthorized;
 import service.ServiceInterface;
 import service.userservice.methods.Authenticator;
@@ -31,12 +32,13 @@ public class GameService implements ServiceInterface{
     public void joinGame(String authToken, int gameId, String color) throws IllegalArgumentException{
         AuthtokenDataType authData = authDAO.getAuth(authToken);
         if(!Authenticator.validAuth(authDAO, authToken)) throw new Unauthorized();
+        if(color == null) throw new BadRequest();
         if(color.equalsIgnoreCase("black")){
             JoinGameService.blackJoin(gameDAO, authData.username(), gameId);
         } else if (color.equalsIgnoreCase("white")) {
             JoinGameService.whiteJoin(gameDAO, authData.username(), gameId);
         } else {
-            throw new IllegalArgumentException("Must choose 'black' or 'white' piece color.");
+            throw new BadRequest();
         }
 
     }

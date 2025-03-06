@@ -8,7 +8,7 @@ import database.datatypes.GameDataType;
 public class CreateGameService {
     public static GameDataType createGame(String gameName){
         int gameID = (int) (Math.random() * 2147483647);
-        GameDataType newGame = new GameDataType(gameID, "", "", gameName);
+        GameDataType newGame = new GameDataType(gameID, null, null, gameName);
         addNewBoard(newGame);
         return newGame;
     }
