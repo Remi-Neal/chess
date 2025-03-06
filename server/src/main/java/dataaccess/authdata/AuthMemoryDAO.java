@@ -4,8 +4,6 @@ import database.DataBase.AuthDataBase;
 import database.datatypes.AuthtokenDataType;
 
 public class AuthMemoryDAO implements AuthDAO {
-    //TODO: Implement AuthMemoryDAO
-    //TODO: Create tests for AuthMemoryDAO
     private final AuthDataBase dataBase;
     public AuthMemoryDAO(AuthDataBase db){
         dataBase = db;

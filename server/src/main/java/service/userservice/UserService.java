@@ -20,7 +20,6 @@ public class UserService {
         return registration.register(userDAO, authDAO, registrationRequest);
     }
 
-    //TODO: Refactor and Add authentication to this level
     public AuthtokenDataType login(UserDataType loginRequest){
         return LoginService.login(userDAO, authDAO, loginRequest);
     }

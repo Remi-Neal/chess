@@ -29,7 +29,7 @@ public class DataBase {
         }
         public AuthtokenDataType getAuthData(String token){
             for(AuthtokenDataType data : authData){
-                if(data.authToken().equals(token)) return data;
+                if(data.authToken().equals(token)){ return data; }
             }
             return null;
         }
@@ -62,7 +62,7 @@ public class DataBase {
         }
         public UserDataType getUserData(String name){
             for(UserDataType user : userData){
-                if(user.getUserName().equals(name)) return user;
+                if(user.getUserName().equals(name)){ return user; }
             }
             return null;
         }

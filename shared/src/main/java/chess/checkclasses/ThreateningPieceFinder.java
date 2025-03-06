@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class ThreateningPieceFinder {
     ChessBoard gameBoard;
-    public ThreateningPieceFinder(ChessBoard gameBoard){// TODO: see if this gameBoard is the same as ChessGame gameBoard
+    public ThreateningPieceFinder(ChessBoard gameBoard){
         this.gameBoard = gameBoard;
     }
 
@@ -37,15 +37,14 @@ public class ThreateningPieceFinder {
      * @return A list of chest positions that threaten your given position and color
      */
     public List<ChessPosition> findPieces(ChessGame.TeamColor teamColor, ChessPosition piecePosition, ChessBoard board){
-        // TODO: refactor to help readability
         List<ChessPosition> threateningPieces = new ArrayList<>();
         // King test
         BasicMovesCalc checkMoves = new KingMovesCalc();
         Collection<ChessMove> squareChecks = checkMoves.getMoves(board, piecePosition);
         for(ChessMove move : squareChecks){
             ChessPiece pieceCheck = board.getPiece(move.getEndPosition());
-            if(pieceCheck == null) continue;
-            if(pieceCheck.getTeamColor() == teamColor ) continue;
+            if(pieceCheck == null){ continue; }
+            if(pieceCheck.getTeamColor() == teamColor ){ continue; }
             if(pieceCheck.getPieceType() == ChessPiece.PieceType.KING){
                 threateningPieces.add(move.getEndPosition());
             }
@@ -56,8 +55,8 @@ public class ThreateningPieceFinder {
         Collection<ChessMove> diagChecks = checkMoves.getMoves(board, piecePosition);
         for(ChessMove move : diagChecks){
             ChessPiece pieceCheck = board.getPiece(move.getEndPosition());
-            if(pieceCheck == null) continue;
-            if(pieceCheck.getTeamColor() == teamColor ) continue;
+            if(pieceCheck == null){ continue; }
+            if(pieceCheck.getTeamColor() == teamColor ){ continue; }
             if(pieceCheck.getPieceType() == ChessPiece.PieceType.BISHOP || pieceCheck.getPieceType() == ChessPiece.PieceType.QUEEN){
                 threateningPieces.add(move.getEndPosition());
             }
@@ -68,8 +67,8 @@ public class ThreateningPieceFinder {
         Collection<ChessMove> strightChecks = checkMoves.getMoves(board, piecePosition);
         for(ChessMove move : strightChecks){
             ChessPiece pieceCheck = board.getPiece(move.getEndPosition());
-            if(pieceCheck == null) continue;
-            if(pieceCheck.getTeamColor() == teamColor ) continue;
+            if(pieceCheck == null){ continue; }
+            if(pieceCheck.getTeamColor() == teamColor ){ continue; }
             if(pieceCheck.getPieceType() == ChessPiece.PieceType.ROOK || pieceCheck.getPieceType() == ChessPiece.PieceType.QUEEN){
                 threateningPieces.add(move.getEndPosition());
             }
@@ -80,8 +79,8 @@ public class ThreateningPieceFinder {
         Collection<ChessMove> knightChecks = checkMoves.getMoves(board, piecePosition);
         for(ChessMove move : knightChecks){
             ChessPiece pieceCheck = board.getPiece(move.getEndPosition());
-            if(pieceCheck == null) continue;
-            if(pieceCheck.getTeamColor() == teamColor ) continue;
+            if(pieceCheck == null){ continue; }
+            if(pieceCheck.getTeamColor() == teamColor ){ continue; }
             if(pieceCheck.getPieceType() == ChessPiece.PieceType.KNIGHT){
                 threateningPieces.add(move.getEndPosition());
             }
@@ -91,11 +90,15 @@ public class ThreateningPieceFinder {
         int pawnDir = teamColor == ChessGame.TeamColor.WHITE ? 1 : -1;
         ChessPosition positionCheck = new ChessPosition(piecePosition.getRow() + pawnDir, piecePosition.getColumn() + 1);
         if(!checkMoves.outOfBounds(positionCheck)) {
-            if (pieceEqualPosition(board, positionCheck, teamColor, ChessPiece.PieceType.PAWN)) threateningPieces.add(positionCheck);
+            if (pieceEqualPosition(board, positionCheck, teamColor, ChessPiece.PieceType.PAWN)){
+                threateningPieces.add(positionCheck);
+            }
         }
         positionCheck = new ChessPosition(piecePosition.getRow() + pawnDir, piecePosition.getColumn() - 1);
         if(!checkMoves.outOfBounds(positionCheck)) {
-            if (pieceEqualPosition(board, positionCheck, teamColor, ChessPiece.PieceType.PAWN)) threateningPieces.add(positionCheck);
+            if (pieceEqualPosition(board, positionCheck, teamColor, ChessPiece.PieceType.PAWN)){
+                threateningPieces.add(positionCheck);
+            }
         }
         return threateningPieces;
     }
@@ -110,7 +113,7 @@ public class ThreateningPieceFinder {
      */
     public boolean pieceEqualPosition(ChessBoard board, ChessPosition position, ChessGame.TeamColor teamColor, ChessPiece.PieceType type){
         ChessPiece pieceCheck = board.getPiece(position);
-        if(pieceCheck == null)  return false;
+        if(pieceCheck == null){ return false; }
         return pieceCheck.getTeamColor() != teamColor && pieceCheck.getPieceType() == type;
     }
 

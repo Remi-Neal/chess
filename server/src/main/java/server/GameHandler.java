@@ -12,12 +12,6 @@ import java.util.Map;
 
 public class GameHandler {
     final static GameService GAME_SERVICE = new GameService();
-    //TODO: Add methods to handle major User functions
-    // Methods receive GSON data, unpack it, then format it to call service endpoints
-    // Finally methods will turn returned data back into GSON and send it back to the server
-
-    //TODO: Add error handling to methods to return the proper err messages
-
     public static Object gameList(Request req){
         String authToken = req.headers("authorization");
         List<GameDataType> gameList = GAME_SERVICE.listGames(authToken);
@@ -32,7 +26,7 @@ public class GameHandler {
     }
     public static Object joinGame(Request req) {
         String authToken = req.headers("authorization");
-        if(authToken == null) throw new Unauthorized();
+        if(authToken == null){ throw new Unauthorized(); }
         var joinGameData = new Gson().fromJson(req.body(), GameModel.class);
         GAME_SERVICE.joinGame(authToken, joinGameData.gameID(), joinGameData.playerColor());
         return new Gson().toJson(Map.of());

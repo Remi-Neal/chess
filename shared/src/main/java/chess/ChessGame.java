@@ -25,7 +25,7 @@ public class ChessGame {
         this.teamTurn = TeamColor.WHITE;
         this.gameBoard = new ChessBoard();
         this.gameBoard.resetBoard();
-        this.threatPieceFinder = new ThreateningPieceFinder(this.gameBoard);// TODO: see if this shares a reference to the same board object
+        this.threatPieceFinder = new ThreateningPieceFinder(this.gameBoard);
         this.findPiece = new FindPiecePosition();
     }
 
@@ -158,7 +158,7 @@ public class ChessGame {
                         teamColor,
                         kingPosition,
                         this.gameBoard);
-        if(threateningPieces.isEmpty()) return false; // Not in check
+        if(threateningPieces.isEmpty()){ return false; }// Not in check
 
         //Single threatening piece is threatened
         if(threateningPieces.size() == 1) {
@@ -169,7 +169,9 @@ public class ChessGame {
             // Capture threatening piece
             if(captureOutOfCheck.size() == 1){
                 if(this.gameBoard.getPiece(captureOutOfCheck.getFirst()).getPieceType() == ChessPiece.PieceType.KING){
-                    if(threatPieceFinder.findPieces(teamColor,captureOutOfCheck.getFirst(),this.gameBoard).isEmpty()) return false;
+                    if(threatPieceFinder.findPieces(teamColor,captureOutOfCheck.getFirst(),this.gameBoard).isEmpty()){
+                        return false;
+                    }
                 }
             } else if (captureOutOfCheck.size() > 1) {
                 return false;
@@ -177,7 +179,9 @@ public class ChessGame {
 
             // Block threatening piece
             FindInterceptingMoves calcBlock = new FindInterceptingMoves();
-            List<ChessMove> blockingMoves = calcBlock.findMoves(threateningPieces.getFirst(),kingPosition,this.gameBoard);
+            List<ChessMove> blockingMoves = calcBlock.findMoves(
+                    threateningPieces.getFirst(),
+                    kingPosition,this.gameBoard);
             if(blockingMoves != null) {
                 for(ChessMove move : blockingMoves){
                     ChessBoard newBoard = makeNewBoard(move, this.gameBoard);
@@ -190,13 +194,6 @@ public class ChessGame {
                 }
             }
         }
-
-        // Threatening piece can be blocked
-        /*
-        TODO: add logic to test if threatening piece can be blocked
-        Find current team's piece who's move set overlaps threatening piece's line of sight
-         */
-
 
         // Multiple threatening piece
         // Test if king can move out of check
@@ -211,7 +208,7 @@ public class ChessGame {
             if(threatPieceFinder.findPieces(
                     teamColor,
                     findPiece.findPiece(board,teamColor,
-                            ChessPiece.PieceType.KING),board).isEmpty()) return false;
+                            ChessPiece.PieceType.KING),board).isEmpty()){ return false; }
         }
         return true;
     }
@@ -224,23 +221,25 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        if(isInCheck(teamColor)) return false;
+        if(isInCheck(teamColor)){ return false; }
         for(int i = 1; i <= 8; i++){
             for(int j = 1; j <= 8; j++){
                 ChessPiece piece = gameBoard.getPiece(new ChessPosition(i,j));
-                if(piece == null) continue;
-                if(piece.getTeamColor() != teamColor) continue;
+                if(piece == null){ continue; }
+                if(piece.getTeamColor() != teamColor){ continue; }
 
                 FindInterceptingMoves getCalc = new FindInterceptingMoves();
                 BasicMovesCalc calc = getCalc.getCalc(piece);
                 List<ChessMove> moves = calc.getMoves(this.gameBoard, new ChessPosition(i,j));
-                if(moves.isEmpty()) continue;
+                if(moves.isEmpty()){ continue; }
 
                 // If King is it in check after moving
                 if(piece.getPieceType() == ChessPiece.PieceType.KING){
                     for(ChessMove move : moves){
                         ChessBoard newBoard = makeNewBoard(move, this.gameBoard);
-                        if(threatPieceFinder.findPieces(teamColor,move.getEndPosition(),newBoard).isEmpty()) return false;
+                        if(threatPieceFinder.findPieces(teamColor,move.getEndPosition(),newBoard).isEmpty()){
+                            return false;
+                        }
                     }
                     continue;
                 }
@@ -250,7 +249,9 @@ public class ChessGame {
                     if(!threatPieceFinder.findPieces(
                             teamColor,
                             findPiece.findPiece(newBoard, teamColor, ChessPiece.PieceType.KING),
-                            newBoard).isEmpty()) continue;
+                            newBoard).isEmpty()){
+                        continue;
+                    }
                     return false;
                 }
             }

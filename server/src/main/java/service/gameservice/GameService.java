@@ -20,19 +20,19 @@ public class GameService implements ServiceInterface{
     }
 
     public List<GameDataType> listGames(String authToken){
-        if(!Authenticator.validAuth(authDAO, authToken)) throw new Unauthorized();
+        if(!Authenticator.validAuth(authDAO, authToken)){ throw new Unauthorized(); }
         return ListGamesService.listGames(gameDAO);
     }
     public GameDataType createGame(String authToken, String gameName){
-        if(!Authenticator.validAuth(authDAO, authToken)) throw new Unauthorized();
+        if(!Authenticator.validAuth(authDAO, authToken)){ throw new Unauthorized(); }
         GameDataType newGame = CreateGameService.createGame(gameName);
         CreateGameService.addGame(gameDAO, newGame);
         return newGame;
     }
     public void joinGame(String authToken, int gameId, String color) throws IllegalArgumentException{
         AuthtokenDataType authData = authDAO.getAuth(authToken);
-        if(!Authenticator.validAuth(authDAO, authToken)) throw new Unauthorized();
-        if(color == null) throw new BadRequest();
+        if(!Authenticator.validAuth(authDAO, authToken)){ throw new Unauthorized(); }
+        if(color == null){ throw new BadRequest(); }
         if(color.equalsIgnoreCase("black")){
             JoinGameService.blackJoin(gameDAO, authData.username(), gameId);
         } else if (color.equalsIgnoreCase("white")) {

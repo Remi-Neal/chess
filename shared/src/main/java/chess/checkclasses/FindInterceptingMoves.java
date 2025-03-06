@@ -40,7 +40,7 @@ public class FindInterceptingMoves {
 
     public ChessPosition findIntersection(List<ChessPosition> path, List<ChessPosition> blocking){
         for(ChessPosition position : path){
-            if(blocking.contains(position)) return position;
+            if(blocking.contains(position)){ return position; }
         }
         return null;
     }
@@ -76,20 +76,17 @@ public class FindInterceptingMoves {
             int startCol = Math.min(attPiece.getColumn(), vicPiece.getColumn()) + 1;
             int startRow = Math.min(attPiece.getRow(), vicPiece.getRow()) + 1; // Going from the furthest left to right, bottom to top
             int endCol = Math.max(attPiece.getColumn(), vicPiece.getColumn());
-            int endRow = Math.max(attPiece.getRow(), vicPiece.getRow());
             while(startCol < endCol){ // Arbitrary could be rows too
                 path.add(new ChessPosition(startRow,startCol));
                 startCol++;
                 startRow++;
             }
         }
-        // TODO: Add Back slash diag
         // Back diag (second > switched to <)
         if ((attPiece.getColumn() > vicPiece.getColumn()) == (attPiece.getRow() < vicPiece.getRow())) { //True == True || False == False
             int startCol = Math.min(attPiece.getColumn(), vicPiece.getColumn()) + 1;
             int startRow = Math.max(attPiece.getRow(), vicPiece.getRow()) - 1; // Going from the furthest left to right, top to bottom
             int endCol = Math.max(attPiece.getColumn(), vicPiece.getColumn());
-            int endRow = Math.min(attPiece.getRow(), vicPiece.getRow());
             while(startCol < endCol){ // Arbitrary could be rows too
                 path.add(new ChessPosition(startRow,startCol));
                 startCol++;
@@ -110,7 +107,9 @@ public class FindInterceptingMoves {
         ChessPiece.PieceType attPieceType = gameBoard.getPiece(attPiece).getPieceType();
         if(attPieceType == ChessPiece.PieceType.KING ||
                 attPieceType == ChessPiece.PieceType.KNIGHT ||
-                attPieceType == ChessPiece.PieceType.PAWN) return null; // Pieces cannot be blocked
+                attPieceType == ChessPiece.PieceType.PAWN) {
+            return null; // Pieces cannot be blocked
+        }
         List<ChessPosition> attPath = findPath(attPiece, vicPiece);
 
         List<ChessMove> blockingMoves = new ArrayList<>();
@@ -118,7 +117,7 @@ public class FindInterceptingMoves {
             for(int j = 1; j <= 8; j++){
                 ChessPosition position = new ChessPosition(i,j);
                 ChessPiece piece = gameBoard.getPiece(position);
-                if(piece == null) continue;
+                if(piece == null){ continue; }
                 BasicMovesCalc movesCalc = getCalc(piece);
 
                 List<ChessPosition> endPositions = new ArrayList<>();
@@ -127,7 +126,9 @@ public class FindInterceptingMoves {
                 }
 
                 ChessPosition intersect = findIntersection(attPath, endPositions);
-                if(intersect != null) blockingMoves.add(new ChessMove(position,intersect,null));
+                if(intersect != null){
+                    blockingMoves.add(new ChessMove(position,intersect,null));
+                }
             }
         }
 

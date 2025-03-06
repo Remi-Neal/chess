@@ -6,7 +6,6 @@ import database.datatypes.GameDataType;
 import java.util.List;
 
 public class GameMemoryDAO implements GameDAO {
-    //TODO: write tests for GameMemoryDAO
     private final GameDataBase dataBase;
     public GameMemoryDAO(GameDataBase db){
         dataBase = db;

@@ -4,7 +4,6 @@ import database.DataBase.UserDataBase;
 import database.datatypes.UserDataType;
 
 public final class UserMemoryDAO implements UserDAO {
-    //TODO: write tests for UserMemoryDAO
     private final UserDataBase dataBase;
     public UserMemoryDAO(UserDataBase db){
         dataBase = db;
