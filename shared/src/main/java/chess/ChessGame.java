@@ -213,6 +213,39 @@ public class ChessGame {
         return true;
     }
 
+    private boolean checkSquareForLegalMove(TeamColor teamColor, int i, int j){
+        ChessPiece piece = gameBoard.getPiece(new ChessPosition(i,j));
+        if(piece == null){ return true; }
+        if(piece.getTeamColor() != teamColor){ return true; }
+
+        FindInterceptingMoves getCalc = new FindInterceptingMoves();
+        BasicMovesCalc calc = getCalc.getCalc(piece);
+        List<ChessMove> moves = calc.getMoves(this.gameBoard, new ChessPosition(i,j));
+        if(moves.isEmpty()){ return true; }
+
+        // If King is it in check after moving
+        if(piece.getPieceType() == ChessPiece.PieceType.KING){
+            for(ChessMove move : moves){
+                ChessBoard newBoard = makeNewBoard(move, this.gameBoard);
+                if(threatPieceFinder.findPieces(teamColor,move.getEndPosition(),newBoard).isEmpty()){
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        for(ChessMove move : moves){
+            ChessBoard newBoard = makeNewBoard(move, this.gameBoard);
+            if(!threatPieceFinder.findPieces(
+                    teamColor,
+                    findPiece.findPiece(newBoard, teamColor, ChessPiece.PieceType.KING),
+                    newBoard).isEmpty()){
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
     /**
      * Determines if the given team is in stalemate, which here is defined as having
      * no valid moves
@@ -224,36 +257,8 @@ public class ChessGame {
         if(isInCheck(teamColor)){ return false; }
         for(int i = 1; i <= 8; i++){
             for(int j = 1; j <= 8; j++){
-                ChessPiece piece = gameBoard.getPiece(new ChessPosition(i,j));
-                if(piece == null){ continue; }
-                if(piece.getTeamColor() != teamColor){ continue; }
-
-                FindInterceptingMoves getCalc = new FindInterceptingMoves();
-                BasicMovesCalc calc = getCalc.getCalc(piece);
-                List<ChessMove> moves = calc.getMoves(this.gameBoard, new ChessPosition(i,j));
-                if(moves.isEmpty()){ continue; }
-
-                // If King is it in check after moving
-                if(piece.getPieceType() == ChessPiece.PieceType.KING){
-                    for(ChessMove move : moves){
-                        ChessBoard newBoard = makeNewBoard(move, this.gameBoard);
-                        if(threatPieceFinder.findPieces(teamColor,move.getEndPosition(),newBoard).isEmpty()){
-                            return false;
-                        }
-                    }
-                    continue;
-                }
-
-                for(ChessMove move : moves){
-                    ChessBoard newBoard = makeNewBoard(move, this.gameBoard);
-                    if(!threatPieceFinder.findPieces(
-                            teamColor,
-                            findPiece.findPiece(newBoard, teamColor, ChessPiece.PieceType.KING),
-                            newBoard).isEmpty()){
-                        continue;
-                    }
-                    return false;
-                }
+                if(checkSquareForLegalMove(teamColor, i, j)){ continue; }
+                return false;
             }
         }
         return true;
