@@ -1,4 +1,4 @@
-package dataaccess.authdata;
+package dataaccess.interfaces;
 
 import memorydatabase.datatypes.AuthtokenDataType;
 

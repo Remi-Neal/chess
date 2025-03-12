@@ -1,8 +1,8 @@
 package doatests.auth;
 
-import dataaccess.MemoryDAO;
-import dataaccess.authdata.AuthMemoryDAO;
-import dataaccess.resetdata.ResetDataBase;
+import dataaccess.memory.MemoryDAO;
+import dataaccess.memory.AuthMemoryDAO;
+import dataaccess.memory.ResetDataBase;
 import memorydatabase.datatypes.AuthtokenDataType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

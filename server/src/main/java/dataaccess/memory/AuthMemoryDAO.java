@@ -1,5 +1,6 @@
-package dataaccess.authdata;
+package dataaccess.memory;
 
+import dataaccess.interfaces.AuthDAO;
 import memorydatabase.DataBase.AuthDataBase;
 import memorydatabase.datatypes.AuthtokenDataType;
 

@@ -1,8 +1,8 @@
 package doatests.user;
 
-import dataaccess.MemoryDAO;
-import dataaccess.resetdata.ResetDataBase;
-import dataaccess.userdata.UserMemoryDAO;
+import dataaccess.memory.MemoryDAO;
+import dataaccess.memory.ResetDataBase;
+import dataaccess.memory.UserMemoryDAO;
 import memorydatabase.datatypes.UserDataType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

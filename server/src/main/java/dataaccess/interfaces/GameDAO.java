@@ -1,4 +1,4 @@
-package dataaccess.gamedata;
+package dataaccess.interfaces;
 
 import memorydatabase.datatypes.GameDataType;
 

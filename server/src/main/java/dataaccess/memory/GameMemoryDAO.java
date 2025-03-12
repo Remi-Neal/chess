@@ -1,5 +1,6 @@
-package dataaccess.gamedata;
+package dataaccess.memory;
 
+import dataaccess.interfaces.GameDAO;
 import memorydatabase.DataBase.GameDataBase;
 import memorydatabase.datatypes.GameDataType;
 

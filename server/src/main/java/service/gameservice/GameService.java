@@ -1,7 +1,7 @@
 package service.gameservice;
 
-import dataaccess.authdata.AuthDAO;
-import dataaccess.gamedata.GameDAO;
+import dataaccess.interfaces.AuthDAO;
+import dataaccess.interfaces.GameDAO;
 import memorydatabase.datatypes.AuthtokenDataType;
 import memorydatabase.datatypes.GameDataType;
 import service.exceptions.BadRequest;

@@ -1,6 +1,6 @@
 package service.userservice;
 
-import dataaccess.authdata.AuthDAO;
+import dataaccess.interfaces.AuthDAO;
 import memorydatabase.datatypes.AuthtokenDataType;
 import service.userservice.methods.Authenticator;
 

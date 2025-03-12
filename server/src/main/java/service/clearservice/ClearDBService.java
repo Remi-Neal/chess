@@ -1,6 +1,6 @@
 package service.clearservice;
 
-import dataaccess.resetdata.ResetDataBase;
+import dataaccess.memory.ResetDataBase;
 import service.ServiceInterface;
 
 public class ClearDBService {

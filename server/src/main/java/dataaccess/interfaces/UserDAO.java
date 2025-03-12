@@ -1,4 +1,4 @@
-package dataaccess.userdata;
+package dataaccess.interfaces;
 
 import memorydatabase.datatypes.UserDataType;
 

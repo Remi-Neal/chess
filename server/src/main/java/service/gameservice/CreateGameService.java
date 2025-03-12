@@ -1,7 +1,7 @@
 package service.gameservice;
 
 import chess.ChessGame;
-import dataaccess.gamedata.GameDAO;
+import dataaccess.interfaces.GameDAO;
 import memorydatabase.datatypes.GameDataType;
 
 

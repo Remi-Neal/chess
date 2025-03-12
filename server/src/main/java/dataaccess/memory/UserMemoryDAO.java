@@ -1,5 +1,6 @@
-package dataaccess.userdata;
+package dataaccess.memory;
 
+import dataaccess.interfaces.UserDAO;
 import memorydatabase.DataBase.UserDataBase;
 import memorydatabase.datatypes.UserDataType;
 

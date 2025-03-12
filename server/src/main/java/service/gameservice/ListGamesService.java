@@ -1,6 +1,6 @@
 package service.gameservice;
 
-import dataaccess.gamedata.GameDAO;
+import dataaccess.interfaces.GameDAO;
 import memorydatabase.datatypes.GameDataType;
 
 import java.util.List;

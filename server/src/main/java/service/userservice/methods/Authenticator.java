@@ -1,6 +1,6 @@
 package service.userservice.methods;
 
-import dataaccess.authdata.AuthDAO;
+import dataaccess.interfaces.AuthDAO;
 import memorydatabase.datatypes.AuthtokenDataType;
 
 import java.util.UUID;

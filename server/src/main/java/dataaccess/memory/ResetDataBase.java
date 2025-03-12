@@ -1,4 +1,4 @@
-package dataaccess.resetdata;
+package dataaccess.memory;
 
 import memorydatabase.DataBase.ClearDataBase;
 

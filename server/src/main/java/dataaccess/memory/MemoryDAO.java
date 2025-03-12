@@ -1,15 +1,12 @@
-package dataaccess;
+package dataaccess.memory;
 
-import dataaccess.authdata.AuthDAO;
-import dataaccess.authdata.AuthMemoryDAO;
-import dataaccess.gamedata.GameDAO;
-import dataaccess.gamedata.GameMemoryDAO;
-import dataaccess.resetdata.ResetDataBase;
-import dataaccess.userdata.UserDAO;
-import dataaccess.userdata.UserMemoryDAO;
+import dataaccess.interfaces.UserDAO;
+import dataaccess.interfaces.AuthDAO;
+import dataaccess.interfaces.DAO;
+import dataaccess.interfaces.GameDAO;
 import memorydatabase.DataBase;
 
-public class MemoryDAO implements DAO{
+public class MemoryDAO implements DAO {
     static protected DataBase db;
     public MemoryDAO(){
         db = new DataBase();

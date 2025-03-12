@@ -1,11 +1,11 @@
 package service;
 
-import dataaccess.DAO;
-import dataaccess.MemoryDAO;
-import dataaccess.authdata.AuthDAO;
-import dataaccess.gamedata.GameDAO;
-import dataaccess.resetdata.ResetDataBase;
-import dataaccess.userdata.UserDAO;
+import dataaccess.interfaces.DAO;
+import dataaccess.memory.MemoryDAO;
+import dataaccess.interfaces.AuthDAO;
+import dataaccess.interfaces.GameDAO;
+import dataaccess.memory.ResetDataBase;
+import dataaccess.interfaces.UserDAO;
 
 public record DAORecord() {
     private static DAO dao;
