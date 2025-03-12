@@ -7,7 +7,7 @@ import dataaccess.gamedata.GameMemoryDAO;
 import dataaccess.resetdata.ResetDataBase;
 import dataaccess.userdata.UserDAO;
 import dataaccess.userdata.UserMemoryDAO;
-import database.DataBase;
+import memorydatabase.DataBase;
 
 public class MemoryDAO implements DAO{
     static protected DataBase db;

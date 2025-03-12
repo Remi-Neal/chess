@@ -1,9 +1,7 @@
 package service.gameservice;
 
-import dataaccess.authdata.AuthDAO;
 import dataaccess.gamedata.GameDAO;
-import database.datatypes.AuthtokenDataType;
-import database.datatypes.GameDataType;
+import memorydatabase.datatypes.GameDataType;
 
 import java.util.List;
 

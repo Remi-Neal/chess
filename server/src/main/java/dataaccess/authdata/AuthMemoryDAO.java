@@ -1,7 +1,7 @@
 package dataaccess.authdata;
 
-import database.DataBase.AuthDataBase;
-import database.datatypes.AuthtokenDataType;
+import memorydatabase.DataBase.AuthDataBase;
+import memorydatabase.datatypes.AuthtokenDataType;
 
 public class AuthMemoryDAO implements AuthDAO {
     private final AuthDataBase dataBase;

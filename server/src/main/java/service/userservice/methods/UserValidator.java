@@ -1,7 +1,7 @@
 package service.userservice.methods;
 
 import dataaccess.userdata.UserDAO;
-import database.datatypes.UserDataType;
+import memorydatabase.datatypes.UserDataType;
 
 public class UserValidator {
     public static Boolean validateUserData(UserDAO userDAO, UserDataType userData){

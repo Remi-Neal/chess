@@ -2,8 +2,8 @@ package server;
 
 import com.google.gson.Gson;
 
-import database.datatypes.AuthtokenDataType;
-import database.datatypes.UserDataType;
+import memorydatabase.datatypes.AuthtokenDataType;
+import memorydatabase.datatypes.UserDataType;
 import server.models.UserModel;
 import service.exceptions.Unauthorized;
 import service.exceptions.Forbidden;

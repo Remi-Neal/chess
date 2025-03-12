@@ -1,6 +1,6 @@
 package dataaccess.resetdata;
 
-import database.DataBase.ClearDataBase;
+import memorydatabase.DataBase.ClearDataBase;
 
 public class ResetDataBase {
     final ClearDataBase clearer;

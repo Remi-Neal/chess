@@ -1,4 +1,4 @@
-package database.datatypes;
+package memorydatabase.datatypes;
 
 /**
  * Data class storing Authorization data for Chess GameHandler API

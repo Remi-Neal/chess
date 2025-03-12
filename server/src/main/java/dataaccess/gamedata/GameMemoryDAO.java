@@ -1,7 +1,7 @@
 package dataaccess.gamedata;
 
-import database.DataBase.GameDataBase;
-import database.datatypes.GameDataType;
+import memorydatabase.DataBase.GameDataBase;
+import memorydatabase.datatypes.GameDataType;
 
 import java.util.List;
 

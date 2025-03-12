@@ -1,8 +1,8 @@
 package databasetests;
 
-import database.DataBase;
-import database.datatypes.AuthtokenDataType;
-import database.datatypes.GameDataType;
+import memorydatabase.DataBase;
+import memorydatabase.datatypes.AuthtokenDataType;
+import memorydatabase.datatypes.GameDataType;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

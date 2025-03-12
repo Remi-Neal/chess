@@ -1,6 +1,6 @@
 package dataaccess.authdata;
 
-import database.datatypes.AuthtokenDataType;
+import memorydatabase.datatypes.AuthtokenDataType;
 
 public interface AuthDAO {
     void createAuth(AuthtokenDataType auth);

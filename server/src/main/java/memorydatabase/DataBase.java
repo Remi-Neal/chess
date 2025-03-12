@@ -1,5 +1,5 @@
-package database;
-import database.datatypes.*;
+package memorydatabase;
+import memorydatabase.datatypes.*;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -2,8 +2,8 @@ package service.userservice;
 
 import dataaccess.authdata.AuthDAO;
 import dataaccess.userdata.UserDAO;
-import database.datatypes.AuthtokenDataType;
-import database.datatypes.UserDataType;
+import memorydatabase.datatypes.AuthtokenDataType;
+import memorydatabase.datatypes.UserDataType;
 import service.ServiceInterface;
 
 public class UserService {

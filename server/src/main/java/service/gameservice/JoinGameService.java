@@ -1,7 +1,7 @@
 package service.gameservice;
 
 import dataaccess.gamedata.GameDAO;
-import database.datatypes.GameDataType;
+import memorydatabase.datatypes.GameDataType;
 import service.exceptions.BadRequest;
 import service.exceptions.Forbidden;
 import service.gameservice.methods.GameValidator;
