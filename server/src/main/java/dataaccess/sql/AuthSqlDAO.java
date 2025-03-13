@@ -4,10 +4,7 @@ import dataaccess.interfaces.AuthDAO;
 import datatypes.AuthtokenDataType;
 
 public class AuthSqlDAO implements AuthDAO {
-    private final String TABLE_NAME;
-
     public AuthSqlDAO(String tableName){
-        TABLE_NAME = tableName;
     }
 
     //TODO: implement createAuth in AuthSqlDAO
