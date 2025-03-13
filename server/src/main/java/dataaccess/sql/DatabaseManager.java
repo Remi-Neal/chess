@@ -10,6 +10,9 @@ public class DatabaseManager {
     private static final String USER;
     private static final String PASSWORD;
     private static final String CONNECTION_URL;
+    protected static final String USER_TABLE_NAME = "user";
+    protected static final String GAME_TABLE_NAME = "game";
+    protected static final String AUTH_TABLE_NAME = "auth";
 
     /*
      * Load the database information for the db.properties file.
@@ -38,11 +41,11 @@ public class DatabaseManager {
     static void createTables() throws DataAccessException {
         try {
             var statement = """
-                    CREATE TABLE IF NOT EXISTS user (name VARCHAR(20), password VARCHAR(100), email VARCHAR(20);
-                    CREATE TABLE IF NOT EXISTS auth (name VARCHAR(20), auth VARCHAR(36);
-                    CREATE TABLE IF NOT EXISTS game (gameId int, whiteUserName VARCHAR(20),
+                    CREATE TABLE IF NOT EXISTS %s (name VARCHAR(20), password VARCHAR(100), email VARCHAR(20);
+                    CREATE TABLE IF NOT EXISTS %s (name VARCHAR(20), auth VARCHAR(36);
+                    CREATE TABLE IF NOT EXISTS %s (gameId int, whiteUserName VARCHAR(20),
                         blackUserName VARCHAR(20), gameName VARCHAR(20), game text);
-                    """;
+                    """.formatted(USER_TABLE_NAME,GAME_TABLE_NAME,AUTH_TABLE_NAME);
             var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
             try (var preparedStatement = conn.prepareStatement(statement)){
                 preparedStatement.executeUpdate();

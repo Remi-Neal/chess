@@ -10,16 +10,16 @@ public class SqlDAO implements DAO {
 
     @Override
     public UserDAO makeUserDAO() {
-        return new UserSqlDAO("user"); // Hard coded but could be parameterized
+        return new UserSqlDAO(DatabaseManager.USER_TABLE_NAME); // Hard coded but could be parameterized
     }
 
     @Override
     public GameDAO makeGameDAO() {
-        return new GameSqlDAO("game");
+        return new GameSqlDAO(DatabaseManager.GAME_TABLE_NAME);
     }
 
     @Override
     public AuthDAO makeAuthDAO() {
-        return new AuthSqlDAO("auth");
+        return new AuthSqlDAO(DatabaseManager.AUTH_TABLE_NAME);
     }
 }
