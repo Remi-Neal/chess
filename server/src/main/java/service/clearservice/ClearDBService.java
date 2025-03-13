@@ -1,11 +1,11 @@
 package service.clearservice;
 
 import dataaccess.memory.ResetDataBase;
-import service.ServiceInterface;
+import service.DAORecord;
 
 public class ClearDBService {
-    public void clearDB(){
-        ResetDataBase reset = ServiceInterface.DAO_RECORD.getDatabaseReset();
+    public void clearDB(DAORecord daoRecord){
+        ResetDataBase reset = daoRecord.getDatabaseReset();
         reset.run();
     }
 }

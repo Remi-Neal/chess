@@ -1,13 +1,23 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.interfaces.DAO;
+import service.DAORecord;
 import service.exceptions.ExceptionHandler;
 import spark.*;
 
 import java.util.Map;
 
 public class Server {
-    ClearDatabase reset = new ClearDatabase();
+    private final DAORecord DAO_RECORD;
+    private final ClearDatabase RESET = new ClearDatabase();
+    private final UserHandler USER_HANDLER;
+    private final GameHandler GAME_HANDLER;
+    public Server(DAO dao){
+        DAO_RECORD = new DAORecord(dao);
+        USER_HANDLER = new UserHandler(DAO_RECORD);
+        GAME_HANDLER = new GameHandler(DAO_RECORD);
+    }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -43,7 +53,7 @@ public class Server {
 
     private Object reset(Request req, Response res) {
         try {
-            reset.reset();
+            RESET.reset(DAO_RECORD);
             return new Gson().toJson(Map.of());
         } catch (Exception e) {
             exceptionHandler(e, res);
@@ -53,7 +63,7 @@ public class Server {
 
     private Object register(Request req, Response res) {
         try {
-            return UserHandler.register(req);
+            return USER_HANDLER.register(req);
         } catch (Exception e) {
             exceptionHandler(e, res);
             return res.body();
@@ -62,7 +72,7 @@ public class Server {
 
     private Object login(Request req, Response res) {
         try {
-            return UserHandler.login(req);
+            return USER_HANDLER.login(req);
         } catch (Exception e) {
             exceptionHandler(e, res);
             return res.body();
@@ -71,7 +81,7 @@ public class Server {
 
     private Object logout(Request req, Response res) {
         try {
-            return UserHandler.logout(req);
+            return USER_HANDLER.logout(req);
         } catch (Exception e) {
             exceptionHandler(e, res);
             return res.body();
@@ -80,7 +90,7 @@ public class Server {
 
     private Object gameList(Request req, Response res) {
         try {
-            return GameHandler.gameList(req);
+            return GAME_HANDLER.gameList(req);
         } catch (Exception e) {
             exceptionHandler(e, res);
             return res.body();
@@ -89,7 +99,7 @@ public class Server {
 
     private Object createGame(Request req, Response res) {
         try {
-            return GameHandler.createGame(req);
+            return GAME_HANDLER.createGame(req);
         } catch (Exception e) {
             exceptionHandler(e, res);
             return res.body();
@@ -98,7 +108,7 @@ public class Server {
 
     private Object joinGame(Request req, Response res) {
         try {
-            return GameHandler.joinGame(req);
+            return GAME_HANDLER.joinGame(req);
         } catch (Exception e) {
             exceptionHandler(e, res);
             return res.body();

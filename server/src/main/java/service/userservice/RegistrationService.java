@@ -5,7 +5,6 @@ import dataaccess.interfaces.UserDAO;
 import datatypes.AuthtokenDataType;
 import datatypes.UserDataType;
 import service.exceptions.BadRequest;
-import service.ServiceInterface;
 import service.userservice.methods.Authenticator;
 import service.userservice.methods.UserValidator;
 

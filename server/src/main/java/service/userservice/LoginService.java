@@ -6,7 +6,6 @@ import datatypes.AuthtokenDataType;
 import datatypes.UserDataType;
 import service.exceptions.BadRequest;
 import service.exceptions.Unauthorized;
-import service.ServiceInterface;
 import service.userservice.methods.Authenticator;
 import service.userservice.methods.UserValidator;
 

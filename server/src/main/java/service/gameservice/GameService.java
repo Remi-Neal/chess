@@ -4,19 +4,19 @@ import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.GameDAO;
 import datatypes.AuthtokenDataType;
 import datatypes.GameDataType;
+import service.DAORecord;
 import service.exceptions.BadRequest;
 import service.exceptions.Unauthorized;
-import service.ServiceInterface;
 import service.userservice.methods.Authenticator;
 
 import java.util.List;
 
-public class GameService implements ServiceInterface{
+public class GameService{
     private final GameDAO gameDAO;
     private final AuthDAO authDAO;
-    public GameService(){
-        this.gameDAO = ServiceInterface.DAO_RECORD.getGameDAO();
-        this.authDAO = ServiceInterface.DAO_RECORD.getAuthDAO();
+    public GameService(DAORecord daoRecord){
+        this.gameDAO = daoRecord.getGameDAO();
+        this.authDAO = daoRecord.getAuthDAO();
     }
 
     public List<GameDataType> listGames(String authToken){

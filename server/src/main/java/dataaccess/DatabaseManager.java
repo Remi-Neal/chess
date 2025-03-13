@@ -33,6 +33,23 @@ public class DatabaseManager {
         }
     }
 
+    static void createTables() throws DataAccessException {
+        try {
+            var statement = """
+                    CREATE TABLE IF NOT EXISTS user (name VARCHAR(20), password VARCHAR(100), email VARCHAR(20);
+                    CREATE TABLE IF NOT EXISTS auth (name VARCHAR(20), auth VARCHAR(36);
+                    CREATE TABLE IF NOT EXISTS game (gameId int, whiteUserName VARCHAR(20),
+                        blackUserName VARCHAR(20), gameName VARCHAR(20), game text);
+                    """;
+            var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
+            try (var preparedStatement = conn.prepareStatement(statement)){
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e){
+            throw new DataAccessException(e.getMessage());
+        }
+    }
+
     /**
      * Creates the database if it does not already exist.
      */
@@ -42,6 +59,7 @@ public class DatabaseManager {
             var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
+                createTables();
             }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
@@ -69,6 +87,4 @@ public class DatabaseManager {
             throw new DataAccessException(e.getMessage());
         }
     }
-
-    //TODO:
 }

@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import datatypes.AuthtokenDataType;
 import datatypes.UserDataType;
 import server.models.UserModel;
+import service.DAORecord;
 import service.exceptions.Unauthorized;
 import service.exceptions.Forbidden;
 import service.userservice.UserService;
@@ -13,9 +14,11 @@ import spark.Request;
 import java.util.Map;
 
 public class UserHandler {
-    final static UserService USER_SERVICE = new UserService();
+    private final UserService USER_SERVICE;
+    public UserHandler(DAORecord daoRecord){ USER_SERVICE = new UserService(daoRecord); }
 
-    public static Object register(Request req){
+
+    public Object register(Request req){
         var registration = new Gson().fromJson(req.body(), UserModel.class);
         UserDataType newUser = new UserDataType(
                 registration.username(),
@@ -26,7 +29,7 @@ public class UserHandler {
         return new Gson().toJson(authData);
     }
 
-    public static Object login(Request req){
+    public Object login(Request req){
         var login = new Gson().fromJson(req.body(), UserModel.class);
         UserDataType loginUser = new UserDataType(
                 login.username(),
@@ -37,7 +40,7 @@ public class UserHandler {
         return new Gson().toJson(Map.of("username", authData.username(), "authToken", authData.authToken()));
     }
 
-    public static Object logout(Request req){
+    public Object logout(Request req){
         AuthtokenDataType auth = new AuthtokenDataType(
                 req.headers("authorization"),
                 ""

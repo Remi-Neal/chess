@@ -7,11 +7,7 @@ import dataaccess.interfaces.GameDAO;
 import dataaccess.memory.ResetDataBase;
 import dataaccess.interfaces.UserDAO;
 
-public record DAORecord() {
-    private static DAO dao;
-    public DAORecord(){
-        dao = new MemoryDAO();
-    }
+public record DAORecord(DAO dao) {
     public UserDAO getUserDAO(){
         return dao.makeUserDAO();
     }

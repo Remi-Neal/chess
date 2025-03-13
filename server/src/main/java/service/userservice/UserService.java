@@ -4,14 +4,14 @@ import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.UserDAO;
 import datatypes.AuthtokenDataType;
 import datatypes.UserDataType;
-import service.ServiceInterface;
+import service.DAORecord;
 
 public class UserService {
     private final UserDAO userDAO;
     private final AuthDAO authDAO;
-    public UserService(){
-        this.userDAO = ServiceInterface.DAO_RECORD.getUserDAO();
-        this.authDAO = ServiceInterface.DAO_RECORD.getAuthDAO();
+    public UserService(DAORecord daoRecord){
+        this.userDAO = daoRecord.getUserDAO();
+        this.authDAO = daoRecord.getAuthDAO();
     }
 
 
