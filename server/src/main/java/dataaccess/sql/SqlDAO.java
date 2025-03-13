@@ -1,5 +1,6 @@
 package dataaccess.sql;
 
+import dataaccess.DataAccessException;
 import dataaccess.interfaces.UserDAO;
 import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.DAO;
@@ -7,6 +8,7 @@ import dataaccess.interfaces.GameDAO;
 
 public class SqlDAO implements DAO {
 
+    public SqlDAO() throws DataAccessException { DatabaseManager.createDatabase(); }
 
     @Override
     public UserDAO makeUserDAO() {

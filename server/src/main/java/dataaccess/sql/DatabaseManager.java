@@ -41,10 +41,12 @@ public class DatabaseManager {
     static void createTables() throws DataAccessException {
         try {
             var statement = """
-                    CREATE TABLE IF NOT EXISTS %s (name VARCHAR(20), password VARCHAR(100), email VARCHAR(20);
-                    CREATE TABLE IF NOT EXISTS %s (name VARCHAR(20), auth VARCHAR(36);
-                    CREATE TABLE IF NOT EXISTS %s (gameId int, whiteUserName VARCHAR(20),
-                        blackUserName VARCHAR(20), gameName VARCHAR(20), game text);
+                    CREATE TABLE IF NOT EXISTS %s
+                        (name VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, email VARCHAR(20));
+                    CREATE TABLE IF NOT EXISTS %s
+                        (name VARCHAR(255) NOT NULL, auth VARCHAR(36) NOT NULL);
+                    CREATE TABLE IF NOT EXISTS %s (gameId INT NOT NULL, whiteUserName VARCHAR(255),
+                        blackUserName VARCHAR(225), gameName VARCHAR(225) NOT NULL, game text NOT NULL);
                     """.formatted(USER_TABLE_NAME,GAME_TABLE_NAME,AUTH_TABLE_NAME);
             var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
             try (var preparedStatement = conn.prepareStatement(statement)){
