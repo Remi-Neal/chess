@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 
+import dataaccess.DataAccessException;
 import datatypes.AuthtokenDataType;
 import datatypes.UserDataType;
 import server.models.UserModel;
@@ -18,7 +19,7 @@ public class UserHandler {
     public UserHandler(DAORecord daoRecord){ USER_SERVICE = new UserService(daoRecord); }
 
 
-    public Object register(Request req){
+    public Object register(Request req) throws DataAccessException {
         var registration = new Gson().fromJson(req.body(), UserModel.class);
         UserDataType newUser = new UserDataType(
                 registration.username(),

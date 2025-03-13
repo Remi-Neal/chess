@@ -1,8 +1,9 @@
 package dataaccess.interfaces;
 
+import dataaccess.DataAccessException;
 import datatypes.UserDataType;
 
 public interface UserDAO {
     UserDataType getUser(String name);
-    void createUser(UserDataType userData);
+    void createUser(UserDataType userData) throws DataAccessException;
 }

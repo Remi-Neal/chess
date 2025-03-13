@@ -1,5 +1,6 @@
 package service.userservice;
 
+import dataaccess.DataAccessException;
 import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.UserDAO;
 import datatypes.AuthtokenDataType;
@@ -15,7 +16,7 @@ public class UserService {
     }
 
 
-    public AuthtokenDataType register(UserDataType registrationRequest){
+    public AuthtokenDataType register(UserDataType registrationRequest) throws DataAccessException {
         RegistrationService registration = new RegistrationService();
         return registration.register(userDAO, authDAO, registrationRequest);
     }
