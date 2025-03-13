@@ -2,8 +2,6 @@ import chess.*;
 import dataaccess.DataAccessException;
 import dataaccess.sql.SqlDAO;
 import server.Server;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 public class Main {
     public static void main(String[] args) throws DataAccessException {
