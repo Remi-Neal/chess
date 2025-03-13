@@ -9,7 +9,7 @@ import service.exceptions.Unauthorized;
 import service.userservice.methods.Authenticator;
 import service.userservice.methods.UserValidator;
 
-public class LoginService implements ServiceInterface {
+public class LoginService {
     public static AuthtokenDataType login(UserDAO userDAO, AuthDAO authDAO, UserDataType userData){
         if(userData.password() == null | userData.userName() == null){ throw new BadRequest(); }
         if(!UserValidator.validateUserData(userDAO, userData)){ throw new Unauthorized(); }

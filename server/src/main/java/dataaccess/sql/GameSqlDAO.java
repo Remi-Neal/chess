@@ -6,6 +6,9 @@ import datatypes.GameDataType;
 import java.util.List;
 
 public class GameSqlDAO implements GameDAO {
+    public GameSqlDAO(String tableName){
+    }
+
     //TODO: implement gameList in GameSqlDAO
     @Override
     public List<GameDataType> gameList() {

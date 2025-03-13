@@ -8,7 +8,7 @@ import service.exceptions.BadRequest;
 import service.userservice.methods.Authenticator;
 import service.userservice.methods.UserValidator;
 
-public class RegistrationService implements ServiceInterface {
+public class RegistrationService {
     public AuthtokenDataType register(UserDAO userDAO, AuthDAO authDAO, UserDataType registerRequest){
         if(registerRequest.userName() == null | registerRequest.password() == null){ throw new BadRequest(); }
         String userName = registerRequest.getUserName();
