@@ -1,5 +1,6 @@
 package service.gameservice;
 
+import dataaccess.DataAccessException;
 import dataaccess.interfaces.GameDAO;
 import datatypes.GameDataType;
 import service.exceptions.BadRequest;
@@ -7,7 +8,7 @@ import service.exceptions.Forbidden;
 import service.gameservice.methods.GameValidator;
 
 public class JoinGameService {
-    public static void blackJoin(GameDAO gameDAO, String userName, int gameId){
+    public static void blackJoin(GameDAO gameDAO, String userName, int gameId) throws DataAccessException {
         if(!GameValidator.validateGame(gameDAO, gameId)){ throw new BadRequest(); }
         GameDataType game = gameDAO.findGame(gameId);
         if(game.blackUsername() != null){ throw new Forbidden(); }
@@ -15,7 +16,7 @@ public class JoinGameService {
         blackGame.setGameBoard(game.getChessGame());
         gameDAO.updateGameData(game, blackGame);
     }
-    public static void whiteJoin(GameDAO gameDAO, String userName, int gameId){
+    public static void whiteJoin(GameDAO gameDAO, String userName, int gameId) throws DataAccessException {
         if(!GameValidator.validateGame(gameDAO, gameId)){ throw new BadRequest(); }
         GameDataType game = gameDAO.findGame(gameId);
         if(game.whiteUsername() != null){ throw new Forbidden(); }

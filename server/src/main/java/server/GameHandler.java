@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
 import datatypes.GameDataType;
 import server.models.GameModel;
 import service.DAORecord;
@@ -14,19 +15,19 @@ import java.util.Map;
 public class GameHandler {
     private final GameService GAME_SERVICE;
     public GameHandler(DAORecord daoRecord){ GAME_SERVICE = new GameService(daoRecord); }
-    public Object gameList(Request req){
+    public Object gameList(Request req) throws DataAccessException {
         String authToken = req.headers("authorization");
         List<GameDataType> gameList = GAME_SERVICE.listGames(authToken);
         return new Gson().toJson(Map.of("games", gameList));
     }
-    public Object createGame(Request req){
+    public Object createGame(Request req) throws DataAccessException {
         String authToken = req.headers("authorization");
         var reqBody = new Gson().fromJson(req.body(), GameModel.class);
         String gameName = reqBody.gameName();
         GameDataType newGame = GAME_SERVICE.createGame(authToken, gameName);
         return new Gson().toJson(Map.of("gameID",newGame.gameID()));
     }
-    public Object joinGame(Request req) {
+    public Object joinGame(Request req) throws DataAccessException {
         String authToken = req.headers("authorization");
         if(authToken == null){ throw new Unauthorized(); }
         var joinGameData = new Gson().fromJson(req.body(), GameModel.class);

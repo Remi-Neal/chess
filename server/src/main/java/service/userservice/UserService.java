@@ -21,11 +21,11 @@ public class UserService {
         return registration.register(userDAO, authDAO, registrationRequest);
     }
 
-    public AuthtokenDataType login(UserDataType loginRequest){
+    public AuthtokenDataType login(UserDataType loginRequest) throws DataAccessException {
         return LoginService.login(userDAO, authDAO, loginRequest);
     }
 
-    public boolean logout(AuthtokenDataType authtoken){
+    public boolean logout(AuthtokenDataType authtoken) throws DataAccessException {
         return LogoutService.logout(authDAO, authtoken);
     }
 }

@@ -1,5 +1,6 @@
 package service.gameservice;
 
+import dataaccess.DataAccessException;
 import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.GameDAO;
 import datatypes.AuthtokenDataType;
@@ -19,17 +20,18 @@ public class GameService{
         this.authDAO = daoRecord.getAuthDAO();
     }
 
-    public List<GameDataType> listGames(String authToken){
+    public List<GameDataType> listGames(String authToken) throws DataAccessException {
         if(!Authenticator.validAuth(authDAO, authToken)){ throw new Unauthorized(); }
         return ListGamesService.listGames(gameDAO);
     }
-    public GameDataType createGame(String authToken, String gameName){
+    public GameDataType createGame(String authToken, String gameName) throws DataAccessException {
         if(!Authenticator.validAuth(authDAO, authToken)){ throw new Unauthorized(); }
         GameDataType newGame = CreateGameService.createGame(gameName);
         CreateGameService.addGame(gameDAO, newGame);
         return newGame;
     }
-    public void joinGame(String authToken, int gameId, String color) throws IllegalArgumentException{
+    public void joinGame(
+            String authToken, int gameId, String color) throws IllegalArgumentException, DataAccessException {
         AuthtokenDataType authData = authDAO.getAuth(authToken);
         if(!Authenticator.validAuth(authDAO, authToken)){ throw new Unauthorized(); }
         if(color == null){ throw new BadRequest(); }

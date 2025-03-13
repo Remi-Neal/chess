@@ -30,7 +30,7 @@ public class UserHandler {
         return new Gson().toJson(authData);
     }
 
-    public Object login(Request req){
+    public Object login(Request req) throws DataAccessException {
         var login = new Gson().fromJson(req.body(), UserModel.class);
         UserDataType loginUser = new UserDataType(
                 login.username(),
@@ -41,7 +41,7 @@ public class UserHandler {
         return new Gson().toJson(Map.of("username", authData.username(), "authToken", authData.authToken()));
     }
 
-    public Object logout(Request req){
+    public Object logout(Request req) throws DataAccessException {
         AuthtokenDataType auth = new AuthtokenDataType(
                 req.headers("authorization"),
                 ""

@@ -1,6 +1,7 @@
 package service.gameservice;
 
 import chess.ChessGame;
+import dataaccess.DataAccessException;
 import dataaccess.interfaces.GameDAO;
 import datatypes.GameDataType;
 
@@ -13,7 +14,7 @@ public class CreateGameService {
         addNewBoard(newGame);
         return newGame;
     }
-    public static void addGame(GameDAO gameDAO, GameDataType game){
+    public static void addGame(GameDAO gameDAO, GameDataType game) throws DataAccessException {
         gameDAO.newGame(game);
     }
     private static void addNewBoard(GameDataType game){
