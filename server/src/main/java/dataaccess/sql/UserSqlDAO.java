@@ -11,21 +11,21 @@ public class UserSqlDAO implements UserDAO {
     private String TABLE_NAME;
     public UserSqlDAO(String tableName){ TABLE_NAME = tableName; }
 
-    //TODO: implement getUser in UserSqlDAO
     @Override
     public UserDataType getUser(String name) throws DataAccessException {
-        UserDataType user;
+        UserDataType user = null;
         try{
             var conn = DatabaseManager.getConnection();
             try(var statement = conn.prepareStatement(
                     "SELECT * FROM " + TABLE_NAME + "WHERE name == ?")){
                 statement.setString(1, name);
                 try(var resultSet = statement.executeQuery()){
-                    resultSet.next();
-                    user = new UserDataType(
-                            resultSet.getString("name"),
-                            resultSet.getString("password"),
-                            resultSet.getString("email"));
+                    if(resultSet.next()) {
+                        user = new UserDataType(
+                                resultSet.getString("name"),
+                                resultSet.getString("password"),
+                                resultSet.getString("email"));
+                    }
                 }
             }
         } catch(SQLException e){
@@ -39,7 +39,7 @@ public class UserSqlDAO implements UserDAO {
         try{
             var conn = DatabaseManager.getConnection();
             try(var statement = conn.prepareStatement(
-                    "INSERT INTO" + TABLE_NAME + "(name, password, email) values (?,?,?)");) {
+                    "INSERT INTO %s (name, password, email) values (?,?,?)".formatted(TABLE_NAME))) {
                 statement.setString(1, userData.getUserName());
                 statement.setString(2, userData.getPassword());
                 statement.setString(3, userData.getEmail());
