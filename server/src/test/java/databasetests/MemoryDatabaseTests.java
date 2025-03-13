@@ -1,14 +1,14 @@
 package databasetests;
 
 import memorydatabase.DataBase;
-import memorydatabase.datatypes.AuthtokenDataType;
-import memorydatabase.datatypes.GameDataType;
+import datatypes.AuthtokenDataType;
+import datatypes.GameDataType;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatabaseTests {
+public class MemoryDatabaseTests {
     DataBase db = new DataBase();
 
     @Test

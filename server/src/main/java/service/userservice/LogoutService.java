@@ -1,7 +1,7 @@
 package service.userservice;
 
 import dataaccess.interfaces.AuthDAO;
-import memorydatabase.datatypes.AuthtokenDataType;
+import datatypes.AuthtokenDataType;
 import service.userservice.methods.Authenticator;
 
 public class LogoutService {

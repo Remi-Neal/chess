@@ -1,6 +1,6 @@
 package dataaccess.interfaces;
 
-import memorydatabase.datatypes.UserDataType;
+import datatypes.UserDataType;
 
 public interface UserDAO {
     UserDataType getUser(String name);

@@ -1,9 +1,14 @@
 package dataaccess.sql;
 
 import dataaccess.interfaces.AuthDAO;
-import memorydatabase.datatypes.AuthtokenDataType;
+import datatypes.AuthtokenDataType;
 
 public class AuthSqlDAO implements AuthDAO {
+    private final String TABLE_NAME;
+
+    public AuthSqlDAO(String tableName){
+        TABLE_NAME = tableName;
+    }
 
     //TODO: implement createAuth in AuthSqlDAO
     @Override

@@ -1,6 +1,6 @@
 package dataaccess.interfaces;
 
-import memorydatabase.datatypes.GameDataType;
+import datatypes.GameDataType;
 
 import java.util.List;
 

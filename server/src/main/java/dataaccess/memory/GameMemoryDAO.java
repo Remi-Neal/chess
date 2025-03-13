@@ -2,7 +2,7 @@ package dataaccess.memory;
 
 import dataaccess.interfaces.GameDAO;
 import memorydatabase.DataBase.GameDataBase;
-import memorydatabase.datatypes.GameDataType;
+import datatypes.GameDataType;
 
 import java.util.List;
 

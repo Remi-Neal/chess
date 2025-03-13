@@ -1,7 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
-import memorydatabase.datatypes.GameDataType;
+import datatypes.GameDataType;
 import server.models.GameModel;
 import service.exceptions.Unauthorized;
 import service.gameservice.GameService;

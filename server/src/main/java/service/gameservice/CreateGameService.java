@@ -2,7 +2,7 @@ package service.gameservice;
 
 import chess.ChessGame;
 import dataaccess.interfaces.GameDAO;
-import memorydatabase.datatypes.GameDataType;
+import datatypes.GameDataType;
 
 
 public class CreateGameService {

@@ -1,7 +1,7 @@
 package dataaccess.sql;
 
 import dataaccess.interfaces.UserDAO;
-import memorydatabase.datatypes.UserDataType;
+import datatypes.UserDataType;
 
 public class UserSqlDAO implements UserDAO {
     //TODO: implement getUser in UserSqlDAO

@@ -1,4 +1,4 @@
-package memorydatabase.datatypes;
+package datatypes;
 
 import chess.ChessGame;
 

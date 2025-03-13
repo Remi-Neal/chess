@@ -2,7 +2,7 @@ package dataaccess.memory;
 
 import dataaccess.interfaces.UserDAO;
 import memorydatabase.DataBase.UserDataBase;
-import memorydatabase.datatypes.UserDataType;
+import datatypes.UserDataType;
 
 public final class UserMemoryDAO implements UserDAO {
     private final UserDataBase dataBase;

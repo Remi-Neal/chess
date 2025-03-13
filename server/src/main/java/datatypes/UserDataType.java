@@ -1,4 +1,4 @@
-package memorydatabase.datatypes;
+package datatypes;
 
 public record UserDataType(String userName, String password, String email) {
     @Override

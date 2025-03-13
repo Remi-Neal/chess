@@ -1,5 +1,7 @@
 package memorydatabase;
-import memorydatabase.datatypes.*;
+import datatypes.AuthtokenDataType;
+import datatypes.GameDataType;
+import datatypes.UserDataType;
 
 import java.util.ArrayList;
 import java.util.List;
