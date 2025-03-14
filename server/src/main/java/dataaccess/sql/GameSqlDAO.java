@@ -77,7 +77,7 @@ public class GameSqlDAO implements GameDAO {
     //TODO: implement findGame in GameSqlDAO
     @Override
     public GameDataType findGame(int gameId) throws DataAccessException {
-        GameDataType gameData;
+        GameDataType gameData = null;
         try{
             var conn = SqlDAO.getConnection();
             try(var statement = conn.prepareStatement(
@@ -85,7 +85,9 @@ public class GameSqlDAO implements GameDAO {
             )){
                 statement.setInt(1, gameId);
                 try(var resultSet = statement.executeQuery()){
-                    gameData = createGameFromResultSet(resultSet);
+                    if(resultSet.next()) {
+                        gameData = createGameFromResultSet(resultSet);
+                    }
                 }
             }
         } catch(SQLException e){
@@ -97,11 +99,10 @@ public class GameSqlDAO implements GameDAO {
     //TODO: implement updateGameData in GameSqlDAO
     private void createUpdateWithConn(Connection conn, String column, String updatedData, int id) throws DataAccessException {
         try(var statement = conn.prepareStatement(
-                "UPDATE %s SET ?=? WHERE id=?".formatted(TABLE_NAME)
+                "UPDATE %s SET %s=? WHERE gameId=?".formatted(TABLE_NAME, column)
         )){
-            statement.setString(1,column);
-            statement.setString(2,updatedData);
-            statement.setInt(3,id);
+            statement.setString(1,updatedData);
+            statement.setInt(2,id);
             statement.executeUpdate();
         } catch(SQLException e){
             throw new DataAccessException(e.getMessage());
@@ -136,7 +137,11 @@ public class GameSqlDAO implements GameDAO {
                         newData.gameID()
                 );
             }
-            if(!oldData.getChessGame().equals(newData.getChessGame())){
+            if(oldData.getChessGame() == null) {
+                if (newData.getChessGame() == null) {
+                    return;
+                }
+                if (oldData.getChessGame().equals(newData.getChessGame())) { return; }
                 createUpdateWithConn(
                         conn,
                         "chessGame",

@@ -1,12 +1,9 @@
 package dataaccess;
 
-import dataaccess.interfaces.UserDAO;
-import dataaccess.interfaces.AuthDAO;
-import dataaccess.interfaces.DAO;
-import dataaccess.interfaces.GameDAO;
+import dataaccess.interfaces.*;
 import dataaccess.memory.AuthMemoryDAO;
 import dataaccess.memory.GameMemoryDAO;
-import dataaccess.memory.ResetDataBase;
+import dataaccess.memory.ResetMemoryDAO;
 import dataaccess.memory.UserMemoryDAO;
 import memorydatabase.DataBase;
 
@@ -29,8 +26,8 @@ public class MemoryDAO implements DAO {
         return new AuthMemoryDAO(authDB);
     }
 
-    public ResetDataBase makeClearer(){
-        DataBase.ClearDataBase clearer = db.new ClearDataBase();
-        return new ResetDataBase(clearer);
+    @Override
+    public ResetDAO makeResetDAO() {
+       return new ResetMemoryDAO(db);
     }
 }

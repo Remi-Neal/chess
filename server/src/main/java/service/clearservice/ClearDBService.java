@@ -1,11 +1,12 @@
 package service.clearservice;
 
-import dataaccess.memory.ResetDataBase;
+import dataaccess.DataAccessException;
+import dataaccess.interfaces.ResetDAO;
 import service.DAORecord;
 
 public class ClearDBService {
-    public void clearDB(DAORecord daoRecord){
-        ResetDataBase reset = daoRecord.getDatabaseReset();
+    public void clearDB(DAORecord daoRecord) throws DataAccessException {
+        ResetDAO reset = daoRecord.getDatabaseReset();
         reset.run();
     }
 }

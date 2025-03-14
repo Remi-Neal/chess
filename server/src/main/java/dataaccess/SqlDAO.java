@@ -1,12 +1,11 @@
 package dataaccess;
 
-import dataaccess.interfaces.UserDAO;
-import dataaccess.interfaces.AuthDAO;
-import dataaccess.interfaces.DAO;
-import dataaccess.interfaces.GameDAO;
+import dataaccess.interfaces.*;
 import dataaccess.sql.AuthSqlDAO;
 import dataaccess.sql.GameSqlDAO;
+import dataaccess.sql.ResetSQLDatabase;
 import dataaccess.sql.UserSqlDAO;
+import datatypes.GameDataType;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -64,4 +63,7 @@ public class SqlDAO implements DAO {
 
     @Override
     public AuthDAO makeAuthDAO() { return new AuthSqlDAO(AUTH_TABLE_NAME); }
+
+    @Override
+    public ResetDAO makeResetDAO() { return new ResetSQLDatabase(USER_TABLE_NAME, GAME_TABLE_NAME, AUTH_TABLE_NAME); }
 }

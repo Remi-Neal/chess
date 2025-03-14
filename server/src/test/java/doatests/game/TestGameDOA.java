@@ -2,7 +2,7 @@ package doatests.game;
 
 import dataaccess.MemoryDAO;
 import dataaccess.memory.GameMemoryDAO;
-import dataaccess.memory.ResetDataBase;
+import dataaccess.memory.ResetMemoryDAO;
 import datatypes.GameDataType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,11 +13,11 @@ import java.util.List;
 
 public class TestGameDOA {
     GameMemoryDAO gameDOA;
-    ResetDataBase reset;
+    ResetMemoryDAO reset;
     public TestGameDOA(){
         MemoryDAO doa = new MemoryDAO();
         gameDOA = (GameMemoryDAO) doa.makeGameDAO();
-        reset = doa.makeClearer();
+        reset = (ResetMemoryDAO) doa.makeResetDAO();
     }
 
     @BeforeEach

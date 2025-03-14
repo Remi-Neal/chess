@@ -1,19 +1,21 @@
 package dataaccess.memory;
 
+import dataaccess.interfaces.ResetDAO;
+import memorydatabase.DataBase;
 import memorydatabase.DataBase.ClearDataBase;
 
-public class ResetDataBase {
+public class ResetMemoryDAO implements ResetDAO {
     final ClearDataBase clearer;
-    public ResetDataBase(ClearDataBase clearer){
-        this.clearer = clearer;
+    public ResetMemoryDAO(DataBase db){
+        clearer = db.new ClearDataBase();
     }
-    private void deleteUsers(){
+    public void deleteUsers(){
         clearer.clearUserData();
     }
-    private void deleteAuth(){
+    public void deleteAuth(){
         clearer.clearAuthData();
     }
-    private void deleteGames(){
+    public void deleteGames(){
         clearer.clearGameData();
     }
     public void run(){

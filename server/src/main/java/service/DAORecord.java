@@ -1,11 +1,6 @@
 package service;
 
-import dataaccess.interfaces.DAO;
-import dataaccess.MemoryDAO;
-import dataaccess.interfaces.AuthDAO;
-import dataaccess.interfaces.GameDAO;
-import dataaccess.memory.ResetDataBase;
-import dataaccess.interfaces.UserDAO;
+import dataaccess.interfaces.*;
 
 public record DAORecord(DAO dao) {
     public UserDAO getUserDAO(){
@@ -17,8 +12,5 @@ public record DAORecord(DAO dao) {
     public AuthDAO getAuthDAO(){
         return dao.makeAuthDAO();
     }
-    public ResetDataBase getDatabaseReset(){
-        MemoryDAO memDAO = (MemoryDAO) dao;
-        return memDAO.makeClearer();
-    }
+    public ResetDAO getDatabaseReset(){ return dao.makeResetDAO(); }
 }
