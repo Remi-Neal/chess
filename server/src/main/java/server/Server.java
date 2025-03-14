@@ -1,6 +1,8 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
+import dataaccess.SqlDAO;
 import dataaccess.interfaces.DAO;
 import service.DAORecord;
 import service.exceptions.ExceptionHandler;
@@ -13,8 +15,8 @@ public class Server {
     private final ClearDatabase RESET = new ClearDatabase();
     private final UserHandler USER_HANDLER;
     private final GameHandler GAME_HANDLER;
-    public Server(DAO dao){
-        DAO_RECORD = new DAORecord(dao);
+    public Server(){
+        DAO_RECORD = new DAORecord(new SqlDAO());
         USER_HANDLER = new UserHandler(DAO_RECORD);
         GAME_HANDLER = new GameHandler(DAO_RECORD);
     }

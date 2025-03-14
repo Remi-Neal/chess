@@ -15,9 +15,13 @@ public class SqlDAO implements DAO {
     public static final String GAME_TABLE_NAME = "game";
     public static final String AUTH_TABLE_NAME = "auth";
 
-    public SqlDAO() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        createTables();
+    public SqlDAO() {
+        try {
+            DatabaseManager.createDatabase();
+            createTables();
+        } catch(DataAccessException e){
+           throw new RuntimeException(e.getMessage());
+        }
     }
 
     public static Connection getConnection() throws DataAccessException {
