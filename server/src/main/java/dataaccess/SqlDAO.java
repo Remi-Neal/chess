@@ -9,7 +9,6 @@ import dataaccess.sql.GameSqlDAO;
 import dataaccess.sql.UserSqlDAO;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class SqlDAO implements DAO {
@@ -22,13 +21,13 @@ public class SqlDAO implements DAO {
         createTables();
     }
 
-    public static Connection createConnection() throws DataAccessException {
+    public static Connection getConnection() throws DataAccessException {
         return DatabaseManager.getConnection();
     }
 
     static void createTables() throws DataAccessException {
         try {
-            var conn = createConnection();
+            var conn = getConnection();
             try(var statement = conn.prepareStatement((
                     "CREATE TABLE IF NOT EXISTS %s ".formatted(USER_TABLE_NAME) +
                             "(name VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, email VARCHAR(20));"

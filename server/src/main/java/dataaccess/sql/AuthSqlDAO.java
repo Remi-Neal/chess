@@ -2,6 +2,7 @@ package dataaccess.sql;
 
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
+import dataaccess.SqlDAO;
 import dataaccess.interfaces.AuthDAO;
 import datatypes.AuthtokenDataType;
 
@@ -14,7 +15,7 @@ public class AuthSqlDAO implements AuthDAO {
     @Override
     public void createAuth(AuthtokenDataType auth) throws DataAccessException {
         try{
-            var conn = DatabaseManager.getConnection();
+            var conn = SqlDAO.getConnection();
             try( var statement = conn.prepareStatement(
                     "INSERT INTO %s (name, auth) VALUES (?,?)".formatted(TABLE_NAME)
             )){
@@ -30,7 +31,7 @@ public class AuthSqlDAO implements AuthDAO {
     @Override
     public void removeAuth(String token) throws DataAccessException {
         try{
-            var conn = DatabaseManager.getConnection();
+            var conn = SqlDAO.getConnection();
             try(var statement = conn.prepareStatement(
                     "DELETE FROM %s WHERE auth = ?".formatted(TABLE_NAME)
             )){
@@ -46,7 +47,7 @@ public class AuthSqlDAO implements AuthDAO {
     public AuthtokenDataType getAuth(String token) throws DataAccessException {
         AuthtokenDataType authData = null;
         try{
-            var conn = DatabaseManager.getConnection();
+            var conn = SqlDAO.getConnection();
             try(var statement = conn.prepareStatement(
                     "SELECT * FROM %s WHERE auth = ?".formatted(TABLE_NAME)
             )){

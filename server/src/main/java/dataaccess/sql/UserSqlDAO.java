@@ -2,6 +2,7 @@ package dataaccess.sql;
 
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
+import dataaccess.SqlDAO;
 import dataaccess.interfaces.UserDAO;
 import datatypes.UserDataType;
 import java.sql.SQLException;
@@ -13,9 +14,9 @@ public class UserSqlDAO implements UserDAO {
     @Override
     public UserDataType getUser(String name) throws DataAccessException {
         UserDataType user = null; try{
-            var conn = DatabaseManager.getConnection();
+            var conn = SqlDAO.getConnection();
             try(var statement = conn.prepareStatement(
-                    "SELECT * FROM " + TABLE_NAME + "WHERE name == ?")){
+                    "SELECT * FROM %s WHERE name = ?".formatted(TABLE_NAME))){
                 statement.setString(1, name);
                 try(var resultSet = statement.executeQuery()){
                     if(resultSet.next()) {
@@ -35,7 +36,7 @@ public class UserSqlDAO implements UserDAO {
     @Override
     public void createUser(UserDataType userData) throws DataAccessException {
         try{
-            var conn = DatabaseManager.getConnection();
+            var conn = SqlDAO.getConnection();
             try(var statement = conn.prepareStatement(
                     "INSERT INTO %s (name, password, email) values (?,?,?)".formatted(TABLE_NAME))) {
                 statement.setString(1, userData.getUserName());

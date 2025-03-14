@@ -3,6 +3,7 @@ package dataaccess.sql;
 import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
+import dataaccess.SqlDAO;
 import dataaccess.interfaces.GameDAO;
 import datatypes.GameDataType;
 import com.google.gson.Gson;
@@ -20,17 +21,12 @@ public class GameSqlDAO implements GameDAO {
     private GameDataType createGameFromResultSet(ResultSet resultSet) throws DataAccessException {
         GameDataType gameData = null;
         try {
-            if (resultSet.next()) {
-                gameData = new GameDataType(
-                        resultSet.getInt("gameId"),
-                        resultSet.getString("whiteUserName"),
-                        resultSet.getString("blackUserName"),
-                        resultSet.getString("gameName")
-                );
-                gameData.setGameBoard(new Gson().fromJson(
-                        resultSet.getString("chessGame"),
-                        ChessGame.class));
-            }
+            gameData = new GameDataType(
+                    resultSet.getInt("gameId"),
+                    resultSet.getString("whiteUserName"),
+                    resultSet.getString("blackUserName"),
+                    resultSet.getString("gameName")
+            );
         } catch(SQLException e){
             throw new DataAccessException(e.getMessage());
         }
@@ -41,9 +37,9 @@ public class GameSqlDAO implements GameDAO {
     public List<GameDataType> gameList() throws DataAccessException {
         List<GameDataType> listOfGames = new ArrayList<>();
         try{
-            var conn = DatabaseManager.getConnection();
+            var conn = SqlDAO.getConnection();
             try(var statement = conn.prepareStatement(
-                    "SELECT * FROM game"
+                    "SELECT gameName, gameId, whiteUserName, blackUserName FROM game"
             )){
                 try(var resultSet = statement.executeQuery()){
                     while(resultSet.next()){
@@ -60,12 +56,10 @@ public class GameSqlDAO implements GameDAO {
     @Override
     public void newGame(GameDataType gameData) throws DataAccessException {
         try{
-            var conn = DatabaseManager.getConnection();
+            var conn = SqlDAO.getConnection();
             try(var statement = conn.prepareStatement(
-                    """
-                        INSERT INTO %s (gameId, whiteUserName, blackUserName, gameName, chessGame)
-                        VALUES (?,?,?,?,?)
-                        """.formatted(TABLE_NAME)
+                    "INSERT INTO %s ".formatted(TABLE_NAME) +
+                            "(gameId, whiteUserName, blackUserName, gameName, chessGame) VALUES (?,?,?,?,?)"
             )){
                 statement.setInt(1,gameData.gameID());
                 statement.setString(2, gameData.whiteUsername());
@@ -85,7 +79,7 @@ public class GameSqlDAO implements GameDAO {
     public GameDataType findGame(int gameId) throws DataAccessException {
         GameDataType gameData;
         try{
-            var conn = DatabaseManager.getConnection();
+            var conn = SqlDAO.getConnection();
             try(var statement = conn.prepareStatement(
                     "SELECT * FROM %s WHERE gameId = ?".formatted(TABLE_NAME)
             )){
@@ -117,8 +111,8 @@ public class GameSqlDAO implements GameDAO {
     @Override
     public void updateGameData(GameDataType oldData, GameDataType newData) throws DataAccessException {
         try{
-            var conn = DatabaseManager.getConnection();
-            if(!oldData.whiteUsername().equals(newData.whiteUsername())) {
+            var conn = SqlDAO.getConnection();
+            if(oldData.whiteUsername() == null && newData.whiteUsername() != null) {
                 createUpdateWithConn(
                         conn,
                         "whiteUserName",
@@ -126,7 +120,7 @@ public class GameSqlDAO implements GameDAO {
                         newData.gameID()
                 );
             }
-            if(!oldData.blackUsername().equals(newData.blackUsername())){
+            if(oldData.blackUsername() == null && newData.blackUsername() != null){
                 createUpdateWithConn(
                         conn,
                         "blackUserName",
@@ -134,7 +128,7 @@ public class GameSqlDAO implements GameDAO {
                         newData.gameID()
                 );
             }
-            if(!oldData.gameName().equals(newData.gameName())){
+            if(oldData.gameName() == null && newData.gameName() != null){
                 createUpdateWithConn(
                         conn,
                         "gameName",
