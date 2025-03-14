@@ -1,11 +1,8 @@
-package doatests;
+package dataaccess.sql;
 
 import dataaccess.DataAccessException;
 import dataaccess.SqlDAO;
 import dataaccess.interfaces.ResetDAO;
-import dataaccess.sql.UserSqlDAO;
-import org.eclipse.jetty.io.Connection;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -71,13 +68,61 @@ class SqlDAOTest {
 
     @Test
     void makeAuthDAO() {
-        UserSqlDAO userSqlDAO = new UserSqlDAO("user");
-        assert userSqlDAO != null;
+        AuthSqlDAO authSqlDAO = new AuthSqlDAO("auth");
+        assert authSqlDAO != null;
     }
 
     @Test
     void makeResetDAO() {
-        UserSqlDAO userSqlDAO = new UserSqlDAO("user");
-        assert userSqlDAO != null;
+        GameSqlDAO gameSqlDAO = new GameSqlDAO("game");
+        assert gameSqlDAO != null;
+    }
+
+    /*
+        AuthSqlDAO tests
+     */
+
+    @Test
+    void createAuth() {
+    }
+
+    @Test
+    void removeAuth() {
+    }
+
+    @Test
+    void getAuth() {
+    }
+
+    /*
+        UserSqlDAO tests
+     */
+
+    @Test
+    void getUser() {
+    }
+
+    @Test
+    void createUser() {
+    }
+
+    /*
+        GameSql tests
+     */
+
+    @Test
+    void gameList() {
+    }
+
+    @Test
+    void newGame() {
+    }
+
+    @Test
+    void findGame() {
+    }
+
+    @Test
+    void updateGameData() {
     }
 }
