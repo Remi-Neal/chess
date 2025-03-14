@@ -7,14 +7,14 @@ import dataaccess.interfaces.ResetDAO;
 import java.sql.SQLException;
 
 public class ResetSQLDatabase implements ResetDAO {
-    final String USER_TABLE_NAME;
-    final String GAME_TABLE_NAME;
-    final String AUTH_TABLE_NAME;
+    final String userTableName;
+    final String gameTableName;
+    final String authTableName;
 
     public ResetSQLDatabase(String userTable, String gameTable, String authTable){
-        USER_TABLE_NAME = userTable;
-        GAME_TABLE_NAME = gameTable;
-        AUTH_TABLE_NAME = authTable;
+        userTableName = userTable;
+        gameTableName = gameTable;
+        authTableName = authTable;
     }
 
     @Override
@@ -22,7 +22,7 @@ public class ResetSQLDatabase implements ResetDAO {
         try{
             var conn = SqlDAO.getConnection();
             try(var statement = conn.prepareStatement(
-                    "TRUNCATE %s".formatted(USER_TABLE_NAME)
+                    "TRUNCATE %s".formatted(userTableName)
             )){
                 statement.executeUpdate();
             }
@@ -36,7 +36,7 @@ public class ResetSQLDatabase implements ResetDAO {
         try{
             var conn = SqlDAO.getConnection();
             try(var statement = conn.prepareStatement(
-                    "TRUNCATE %s".formatted(AUTH_TABLE_NAME)
+                    "TRUNCATE %s".formatted(authTableName)
             )){
                 statement.executeUpdate();
             }
@@ -50,7 +50,7 @@ public class ResetSQLDatabase implements ResetDAO {
         try{
             var conn = SqlDAO.getConnection();
             try(var statement = conn.prepareStatement(
-                    "TRUNCATE %s".formatted(GAME_TABLE_NAME)
+                    "TRUNCATE %s".formatted(gameTableName)
             )){
                 statement.executeUpdate();
             }
@@ -65,6 +65,4 @@ public class ResetSQLDatabase implements ResetDAO {
         deleteGames();
         deleteAuth();
     }
-    //TODO: add reset to SQL database
-
 }

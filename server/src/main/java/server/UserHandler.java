@@ -15,8 +15,8 @@ import spark.Request;
 import java.util.Map;
 
 public class UserHandler {
-    private final UserService USER_SERVICE;
-    public UserHandler(DAORecord daoRecord){ USER_SERVICE = new UserService(daoRecord); }
+    private final UserService userService;
+    public UserHandler(DAORecord daoRecord){ this.userService = new UserService(daoRecord); }
 
 
     public Object register(Request req) throws DataAccessException {
@@ -25,7 +25,7 @@ public class UserHandler {
                 registration.username(),
                 registration.password(),
                 registration.email());
-        AuthtokenDataType authData = USER_SERVICE.register(newUser);
+        AuthtokenDataType authData = userService.register(newUser);
         if(authData == null){ throw new Forbidden(); }
         return new Gson().toJson(authData);
     }
@@ -36,7 +36,7 @@ public class UserHandler {
                 login.username(),
                 login.password(),
                 "");
-        AuthtokenDataType authData = USER_SERVICE.login(loginUser);
+        AuthtokenDataType authData = userService.login(loginUser);
         if(authData == null){ throw new Unauthorized(); }
         return new Gson().toJson(Map.of("username", authData.username(), "authToken", authData.authToken()));
     }
@@ -46,7 +46,7 @@ public class UserHandler {
                 req.headers("authorization"),
                 ""
                 );
-        if(!USER_SERVICE.logout(auth)){ throw new Unauthorized(); }
+        if(!userService.logout(auth)){ throw new Unauthorized(); }
         return new Gson().toJson(Map.of());
     }
 }

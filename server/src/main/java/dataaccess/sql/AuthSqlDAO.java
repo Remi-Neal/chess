@@ -1,7 +1,6 @@
 package dataaccess.sql;
 
 import dataaccess.DataAccessException;
-import dataaccess.DatabaseManager;
 import dataaccess.SqlDAO;
 import dataaccess.interfaces.AuthDAO;
 import datatypes.AuthtokenDataType;
@@ -9,15 +8,17 @@ import datatypes.AuthtokenDataType;
 import java.sql.SQLException;
 
 public class AuthSqlDAO implements AuthDAO {
-    private final String TABLE_NAME;
-    public AuthSqlDAO(String tableName){ TABLE_NAME = tableName; }
+    private final String tableName;
+    public AuthSqlDAO(String tableName){
+        this.tableName = tableName;
+    }
 
     @Override
     public void createAuth(AuthtokenDataType auth) throws DataAccessException {
         try{
             var conn = SqlDAO.getConnection();
             try( var statement = conn.prepareStatement(
-                    "INSERT INTO %s (name, auth) VALUES (?,?)".formatted(TABLE_NAME)
+                    "INSERT INTO %s (name, auth) VALUES (?,?)".formatted(tableName)
             )){
                 statement.setString(1, auth.username());
                 statement.setString(2, auth.authToken());
@@ -33,7 +34,7 @@ public class AuthSqlDAO implements AuthDAO {
         try{
             var conn = SqlDAO.getConnection();
             try(var statement = conn.prepareStatement(
-                    "DELETE FROM %s WHERE auth = ?".formatted(TABLE_NAME)
+                    "DELETE FROM %s WHERE auth = ?".formatted(tableName)
             )){
                 statement.setString(1, token);
                 statement.executeUpdate();
@@ -49,7 +50,7 @@ public class AuthSqlDAO implements AuthDAO {
         try{
             var conn = SqlDAO.getConnection();
             try(var statement = conn.prepareStatement(
-                    "SELECT * FROM %s WHERE auth = ?".formatted(TABLE_NAME)
+                    "SELECT * FROM %s WHERE auth = ?".formatted(tableName)
             )){
                 statement.setString(1, token);
                 try(var resultSet = statement.executeQuery()){

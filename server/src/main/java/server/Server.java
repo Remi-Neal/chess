@@ -1,9 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
-import dataaccess.DataAccessException;
 import dataaccess.SqlDAO;
-import dataaccess.interfaces.DAO;
 import service.DAORecord;
 import service.exceptions.ExceptionHandler;
 import spark.*;
@@ -11,14 +9,14 @@ import spark.*;
 import java.util.Map;
 
 public class Server {
-    private final DAORecord DAO_RECORD;
-    private final ClearDatabase RESET = new ClearDatabase();
-    private final UserHandler USER_HANDLER;
-    private final GameHandler GAME_HANDLER;
+    private final DAORecord daoRecord;
+    private final ClearDatabase reset = new ClearDatabase();
+    private final UserHandler userHandler;
+    private final GameHandler gameHandler;
     public Server(){
-        DAO_RECORD = new DAORecord(new SqlDAO());
-        USER_HANDLER = new UserHandler(DAO_RECORD);
-        GAME_HANDLER = new GameHandler(DAO_RECORD);
+        this.daoRecord = new DAORecord(new SqlDAO());
+        this.userHandler = new UserHandler(this.daoRecord);
+        this.gameHandler = new GameHandler(this.daoRecord);
     }
 
     public int run(int desiredPort) {
@@ -55,7 +53,7 @@ public class Server {
 
     private Object reset(Request req, Response res) {
         try {
-            RESET.reset(DAO_RECORD);
+            reset.reset(this.daoRecord);
             return new Gson().toJson(Map.of());
         } catch (Exception e) {
             exceptionHandler(e, res);
@@ -65,7 +63,7 @@ public class Server {
 
     private Object register(Request req, Response res) {
         try {
-            return USER_HANDLER.register(req);
+            return userHandler.register(req);
         } catch (Exception e) {
             exceptionHandler(e, res);
             return res.body();
@@ -74,7 +72,7 @@ public class Server {
 
     private Object login(Request req, Response res) {
         try {
-            return USER_HANDLER.login(req);
+            return userHandler.login(req);
         } catch (Exception e) {
             exceptionHandler(e, res);
             return res.body();
@@ -83,7 +81,7 @@ public class Server {
 
     private Object logout(Request req, Response res) {
         try {
-            return USER_HANDLER.logout(req);
+            return userHandler.logout(req);
         } catch (Exception e) {
             exceptionHandler(e, res);
             return res.body();
@@ -92,7 +90,7 @@ public class Server {
 
     private Object gameList(Request req, Response res) {
         try {
-            return GAME_HANDLER.gameList(req);
+            return gameHandler.gameList(req);
         } catch (Exception e) {
             exceptionHandler(e, res);
             return res.body();
@@ -101,7 +99,7 @@ public class Server {
 
     private Object createGame(Request req, Response res) {
         try {
-            return GAME_HANDLER.createGame(req);
+            return gameHandler.createGame(req);
         } catch (Exception e) {
             exceptionHandler(e, res);
             return res.body();
@@ -110,7 +108,7 @@ public class Server {
 
     private Object joinGame(Request req, Response res) {
         try {
-            return GAME_HANDLER.joinGame(req);
+            return gameHandler.joinGame(req);
         } catch (Exception e) {
             exceptionHandler(e, res);
             return res.body();

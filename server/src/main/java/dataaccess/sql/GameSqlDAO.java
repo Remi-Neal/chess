@@ -1,8 +1,6 @@
 package dataaccess.sql;
 
-import chess.ChessGame;
 import dataaccess.DataAccessException;
-import dataaccess.DatabaseManager;
 import dataaccess.SqlDAO;
 import dataaccess.interfaces.GameDAO;
 import datatypes.GameDataType;
@@ -15,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameSqlDAO implements GameDAO {
-    private final String TABLE_NAME;
-    public GameSqlDAO(String tableName){ TABLE_NAME = tableName; }
+    private final String tableName;
+    public GameSqlDAO(String tableName){ this.tableName = tableName; }
 
     private GameDataType createGameFromResultSet(ResultSet resultSet) throws DataAccessException {
-        GameDataType gameData = null;
+        GameDataType gameData;
         try {
             gameData = new GameDataType(
                     resultSet.getInt("gameId"),
@@ -32,7 +30,7 @@ public class GameSqlDAO implements GameDAO {
         }
         return gameData;
     }
-    //TODO: implement gameList in GameSqlDAO
+
     @Override
     public List<GameDataType> gameList() throws DataAccessException {
         List<GameDataType> listOfGames = new ArrayList<>();
@@ -58,7 +56,7 @@ public class GameSqlDAO implements GameDAO {
         try{
             var conn = SqlDAO.getConnection();
             try(var statement = conn.prepareStatement(
-                    "INSERT INTO %s ".formatted(TABLE_NAME) +
+                    "INSERT INTO %s ".formatted(tableName) +
                             "(gameId, whiteUserName, blackUserName, gameName, chessGame) VALUES (?,?,?,?,?)"
             )){
                 statement.setInt(1,gameData.gameID());
@@ -74,14 +72,13 @@ public class GameSqlDAO implements GameDAO {
         }
     }
 
-    //TODO: implement findGame in GameSqlDAO
     @Override
     public GameDataType findGame(int gameId) throws DataAccessException {
         GameDataType gameData = null;
         try{
             var conn = SqlDAO.getConnection();
             try(var statement = conn.prepareStatement(
-                    "SELECT * FROM %s WHERE gameId = ?".formatted(TABLE_NAME)
+                    "SELECT * FROM %s WHERE gameId = ?".formatted(tableName)
             )){
                 statement.setInt(1, gameId);
                 try(var resultSet = statement.executeQuery()){
@@ -96,10 +93,9 @@ public class GameSqlDAO implements GameDAO {
         return gameData;
     }
 
-    //TODO: implement updateGameData in GameSqlDAO
     private void createUpdateWithConn(Connection conn, String column, String updatedData, int id) throws DataAccessException {
         try(var statement = conn.prepareStatement(
-                "UPDATE %s SET %s=? WHERE gameId=?".formatted(TABLE_NAME, column)
+                "UPDATE %s SET %s=? WHERE gameId=?".formatted(tableName, column)
         )){
             statement.setString(1,updatedData);
             statement.setInt(2,id);
