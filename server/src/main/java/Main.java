@@ -1,6 +1,6 @@
 import chess.*;
 import dataaccess.DataAccessException;
-import dataaccess.sql.SqlDAO;
+import dataaccess.SqlDAO;
 import server.Server;
 
 public class Main {

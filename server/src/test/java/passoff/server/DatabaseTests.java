@@ -1,7 +1,7 @@
 package passoff.server;
 
 import chess.ChessGame;
-import dataaccess.memory.MemoryDAO;
+import dataaccess.MemoryDAO;
 import org.junit.jupiter.api.*;
 import passoff.model.*;
 import server.Server;

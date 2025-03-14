@@ -1,7 +1,7 @@
 package service;
 
 import dataaccess.interfaces.DAO;
-import dataaccess.memory.MemoryDAO;
+import dataaccess.MemoryDAO;
 import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.GameDAO;
 import dataaccess.memory.ResetDataBase;

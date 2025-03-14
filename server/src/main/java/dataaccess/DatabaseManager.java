@@ -1,6 +1,4 @@
-package dataaccess.sql;
-
-import dataaccess.DataAccessException;
+package dataaccess;
 
 import java.sql.*;
 import java.util.Properties;
@@ -10,9 +8,7 @@ public class DatabaseManager {
     private static final String USER;
     private static final String PASSWORD;
     private static final String CONNECTION_URL;
-    protected static final String USER_TABLE_NAME = "user";
-    protected static final String GAME_TABLE_NAME = "game";
-    protected static final String AUTH_TABLE_NAME = "auth";
+
 
     /*
      * Load the database information for the db.properties file.
@@ -38,35 +34,17 @@ public class DatabaseManager {
         }
     }
 
-    static void createTables() throws DataAccessException {
-        try {
-            var statement = """
-                    CREATE TABLE IF NOT EXISTS %s
-                        (name VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, email VARCHAR(20));
-                    CREATE TABLE IF NOT EXISTS %s
-                        (name VARCHAR(255) NOT NULL, auth VARCHAR(36) NOT NULL);
-                    CREATE TABLE IF NOT EXISTS %s (gameId INT NOT NULL, whiteUserName VARCHAR(255),
-                        blackUserName VARCHAR(225), gameName VARCHAR(225) NOT NULL, game text NOT NULL);
-                    """.formatted(USER_TABLE_NAME,GAME_TABLE_NAME,AUTH_TABLE_NAME);
-            var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
-            try (var preparedStatement = conn.prepareStatement(statement)){
-                preparedStatement.executeUpdate();
-            }
-        } catch (SQLException e){
-            throw new DataAccessException(e.getMessage());
-        }
-    }
+
 
     /**
      * Creates the database if it does not already exist.
      */
-    static void createDatabase() throws DataAccessException {
+     static void createDatabase() throws DataAccessException {
         try {
             var statement = "CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME;
             var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
-                createTables();
             }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());

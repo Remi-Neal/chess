@@ -2,6 +2,7 @@ package dataaccess.sql;
 
 import chess.ChessGame;
 import dataaccess.DataAccessException;
+import dataaccess.DatabaseManager;
 import dataaccess.interfaces.GameDAO;
 import datatypes.GameDataType;
 import com.google.gson.Gson;

@@ -1,6 +1,7 @@
 package dataaccess.sql;
 
 import dataaccess.DataAccessException;
+import dataaccess.DatabaseManager;
 import dataaccess.interfaces.UserDAO;
 import datatypes.UserDataType;
 import java.sql.SQLException;
@@ -11,8 +12,7 @@ public class UserSqlDAO implements UserDAO {
 
     @Override
     public UserDataType getUser(String name) throws DataAccessException {
-        UserDataType user = null;
-        try{
+        UserDataType user = null; try{
             var conn = DatabaseManager.getConnection();
             try(var statement = conn.prepareStatement(
                     "SELECT * FROM " + TABLE_NAME + "WHERE name == ?")){
@@ -28,7 +28,7 @@ public class UserSqlDAO implements UserDAO {
             }
         } catch(SQLException e){
             throw new DataAccessException(e.getMessage());
-        }
+       }
         return user;
     }
 

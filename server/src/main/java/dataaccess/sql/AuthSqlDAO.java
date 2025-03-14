@@ -1,6 +1,7 @@
 package dataaccess.sql;
 
 import dataaccess.DataAccessException;
+import dataaccess.DatabaseManager;
 import dataaccess.interfaces.AuthDAO;
 import datatypes.AuthtokenDataType;
 

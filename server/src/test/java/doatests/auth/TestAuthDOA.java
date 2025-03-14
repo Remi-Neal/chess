@@ -1,6 +1,6 @@
 package doatests.auth;
 
-import dataaccess.memory.MemoryDAO;
+import dataaccess.MemoryDAO;
 import dataaccess.memory.AuthMemoryDAO;
 import dataaccess.memory.ResetDataBase;
 import datatypes.AuthtokenDataType;

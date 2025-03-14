@@ -1,6 +1,6 @@
 package doatests.game;
 
-import dataaccess.memory.MemoryDAO;
+import dataaccess.MemoryDAO;
 import dataaccess.memory.GameMemoryDAO;
 import dataaccess.memory.ResetDataBase;
 import datatypes.GameDataType;

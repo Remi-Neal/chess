@@ -1,6 +1,6 @@
 package doatests.user;
 
-import dataaccess.memory.MemoryDAO;
+import dataaccess.MemoryDAO;
 import dataaccess.memory.ResetDataBase;
 import dataaccess.memory.UserMemoryDAO;
 import datatypes.UserDataType;
