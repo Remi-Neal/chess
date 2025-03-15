@@ -194,16 +194,12 @@ class SqlDAOTest {
            userSqlDAO.createUser(userDataType);
            assert userSqlDAO.getUser(name).equals(userDataType);
        });
-       assertDoesNotThrow(()->{
-           userSqlDAO.createUser(new UserDataType(name, password, null));
-       });
+       assertDoesNotThrow(()-> userSqlDAO.createUser(new UserDataType(name, password, null)));
        // Negative
-       assertThrows(DataAccessException.class,()->{
-           userSqlDAO.createUser(new UserDataType(null,null,email));
-       });
-       assertThrows(DataAccessException.class, ()->{
-           userSqlDAO.createUser(new UserDataType(null, password, email));
-       });
+       assertThrows(DataAccessException.class,()-> userSqlDAO.createUser(new UserDataType(
+               null,null,email)));
+       assertThrows(DataAccessException.class, ()-> userSqlDAO.createUser(new UserDataType(
+               null, password, email)));
 
     }
 
@@ -246,9 +242,8 @@ class SqlDAOTest {
            assert gameSqlDAO.findGame(id).equals(gameData);
         });
         // Negative
-        assertThrows(DataAccessException.class, ()->{
-            gameSqlDAO.newGame(new GameDataType(id, null, null, null));
-        });
+        assertThrows(DataAccessException.class, ()-> gameSqlDAO.newGame(new GameDataType(
+                id, null, null, null)));
     }
 
     @Test

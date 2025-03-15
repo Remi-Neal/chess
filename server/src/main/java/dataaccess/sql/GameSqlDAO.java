@@ -67,9 +67,7 @@ public class GameSqlDAO implements GameDAO {
                 statement.setString(5, chessGameJSON);
                 statement.executeUpdate();
             }
-        } catch(SQLException e){
-            throw new DataAccessException(e.getMessage());
-        } catch(Exception e){
+        } catch(SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
     }
