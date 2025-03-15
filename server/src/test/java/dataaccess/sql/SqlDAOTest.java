@@ -4,6 +4,7 @@ import dataaccess.DataAccessException;
 import dataaccess.SqlDAO;
 import dataaccess.interfaces.ResetDAO;
 import datatypes.AuthtokenDataType;
+import datatypes.GameDataType;
 import datatypes.UserDataType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,15 +15,14 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SqlDAOTest {
-
-    private static SqlDAO sqlDAO = new SqlDAO();
-    private static String authTable = "auth";
-    private static String userTable = "user";
-    private static String gameTable = "game";
+    private static final SqlDAO SQL_DAO = new SqlDAO();
+    private static final String AUTH_TABLE = "auth";
+    private static final String USER_TABLE = "user";
+    private static final String GAME_TABLE = "game";
 
     @BeforeEach
     void setUp() {
-        ResetDAO resetDAO = sqlDAO.makeResetDAO();
+        ResetDAO resetDAO = SQL_DAO.makeResetDAO();
         try {
             resetDAO.run();
         } catch (DataAccessException e) {
@@ -122,7 +122,7 @@ class SqlDAOTest {
         String authToken = "1";
         String name = "name";
         AuthtokenDataType authData = new AuthtokenDataType(authToken,name);
-        AuthSqlDAO authSqlDAO = new AuthSqlDAO(authTable);
+        AuthSqlDAO authSqlDAO = new AuthSqlDAO(AUTH_TABLE);
         // Positive
         assertDoesNotThrow(()->{
             authSqlDAO.createAuth(authData);
@@ -145,7 +145,7 @@ class SqlDAOTest {
         String authToken = "1";
         String name = "name";
         AuthtokenDataType authData = new AuthtokenDataType(authToken, name);
-        AuthSqlDAO authSqlDAO = new AuthSqlDAO(authTable);
+        AuthSqlDAO authSqlDAO = new AuthSqlDAO(AUTH_TABLE);
         // Positive
         assertDoesNotThrow(()->{
             authSqlDAO.createAuth(authData);
@@ -167,7 +167,7 @@ class SqlDAOTest {
         String password = "password";
         String email = "email";
         UserDataType userDataType = new UserDataType(name,password,email);
-        UserSqlDAO userSqlDAO = new UserSqlDAO(userTable);
+        UserSqlDAO userSqlDAO = new UserSqlDAO(USER_TABLE);
         // Positive
         assertDoesNotThrow(()->{
             userSqlDAO.createUser(userDataType);
@@ -188,7 +188,7 @@ class SqlDAOTest {
        String password = "password";
        String email = "email";
        UserDataType userDataType = new UserDataType(name, password, email);
-       UserSqlDAO userSqlDAO = new UserSqlDAO(userTable);
+       UserSqlDAO userSqlDAO = new UserSqlDAO(USER_TABLE);
        // Positive
        assertDoesNotThrow(()->{
            userSqlDAO.createUser(userDataType);
@@ -213,17 +213,90 @@ class SqlDAOTest {
 
     @Test
     void gameList() {
+        String gameName = "game";
+        int id = 1;
+        GameDataType gameData = new GameDataType(id, null, null, gameName);
+        GameSqlDAO gameSqlDAO = new GameSqlDAO(GAME_TABLE);
+        // Negative
+        assertDoesNotThrow(()->{
+            assert gameSqlDAO.gameList().isEmpty();
+        });
+        // Positive
+        assertDoesNotThrow(()->{
+            gameSqlDAO.newGame(gameData);
+            assert gameSqlDAO.gameList().size() == 1;
+        });
+        // Negative
+        assertDoesNotThrow(()->{
+            ResetDAO resetDAO = new ResetSQLDatabase(USER_TABLE, GAME_TABLE, AUTH_TABLE);
+            resetDAO.deleteGames();
+            assert gameSqlDAO.gameList().isEmpty();
+        });
     }
 
     @Test
     void newGame() {
+        String gameName = "game";
+        int id = 1;
+        GameDataType gameData = new GameDataType(id, null, null, gameName);
+        GameSqlDAO gameSqlDAO = new GameSqlDAO(GAME_TABLE);
+        // Positive
+        assertDoesNotThrow(()->{
+           gameSqlDAO.newGame(gameData);
+           assert gameSqlDAO.findGame(id).equals(gameData);
+        });
+        // Negative
+        assertThrows(DataAccessException.class, ()->{
+            gameSqlDAO.newGame(new GameDataType(id, null, null, null));
+        });
     }
 
     @Test
     void findGame() {
+        String gameName = "game";
+        int id = 1;
+        GameDataType gameData = new GameDataType(id, null, null, gameName);
+        GameSqlDAO gameSqlDAO = new GameSqlDAO(GAME_TABLE);
+        // Positive
+        assertDoesNotThrow(()->{
+            gameSqlDAO.newGame(gameData);
+            assert gameSqlDAO.findGame(id).equals(gameData);
+        });
+        // Negative
+        assertDoesNotThrow(()->{
+           assert gameSqlDAO.findGame(2) != gameData;
+        });
     }
 
     @Test
     void updateGameData() {
+        String gameName = "game";
+        int id = 1;
+        GameDataType gameData = new GameDataType(id, null, null, gameName);
+        GameSqlDAO gameSqlDAO = new GameSqlDAO(GAME_TABLE);
+        // Positive
+        assertDoesNotThrow(()->{
+           gameSqlDAO.newGame(gameData);
+           GameDataType newData = new GameDataType(id, "name", null, gameName);
+           gameSqlDAO.updateGameData(gameData,newData);
+           assert gameSqlDAO.findGame(id).equals(newData);
+        });
+        assertDoesNotThrow(()->{
+            GameDataType newData = new GameDataType(id, "name", "other name", gameName);
+            gameSqlDAO.updateGameData(gameData,newData);
+            assert gameSqlDAO.findGame(id).equals(newData);
+        });
+       // Negative
+       GameDataType currData = new GameDataType(id,"name","other name", gameName);
+       assertDoesNotThrow(()->{
+          GameDataType newData = new GameDataType(id, "new name", "other name", gameName);
+          gameSqlDAO.updateGameData(currData, newData);
+          assert  gameSqlDAO.findGame(id).equals(currData);
+       });
+        assertDoesNotThrow(()->{
+            GameDataType newData = new GameDataType(id, "name", "new name", gameName);
+            gameSqlDAO.updateGameData(currData, newData);
+            assert  gameSqlDAO.findGame(id).equals(currData);
+        });
     }
 }

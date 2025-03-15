@@ -69,6 +69,8 @@ public class GameSqlDAO implements GameDAO {
             }
         } catch(SQLException e){
             throw new DataAccessException(e.getMessage());
+        } catch(Exception e){
+            throw new DataAccessException(e.getMessage());
         }
     }
 
