@@ -125,13 +125,15 @@ public class GameSqlDAO implements GameDAO {
                         newData.gameID()
                 );
             }
-            if(oldData.gameName() == null && newData.gameName() != null){
-                createUpdateWithConn(
-                        conn,
-                        "gameName",
-                        newData.gameName(),
-                        newData.gameID()
-                );
+            if(oldData.gameName() != null && newData.gameName() != null) {
+                if(!oldData.gameName().equals(newData.gameName())) {
+                    createUpdateWithConn(
+                            conn,
+                            "gameName",
+                            newData.gameName(),
+                            newData.gameID()
+                    );
+                }
             }
             if(oldData.getChessGame() == null) {
                 if (newData.getChessGame() == null) {

@@ -1,5 +1,6 @@
 package dataaccess.sql;
 
+import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.SqlDAO;
 import dataaccess.interfaces.ResetDAO;
@@ -269,7 +270,7 @@ class SqlDAOTest {
         int id = 1;
         GameDataType gameData = new GameDataType(id, null, null, gameName);
         GameSqlDAO gameSqlDAO = new GameSqlDAO(GAME_TABLE);
-        // Positive
+        // Positive Update Players
         assertDoesNotThrow(()->{
            gameSqlDAO.newGame(gameData);
            GameDataType newData = new GameDataType(id, "name", null, gameName);
@@ -281,17 +282,51 @@ class SqlDAOTest {
             gameSqlDAO.updateGameData(gameData,newData);
             assert gameSqlDAO.findGame(id).equals(newData);
         });
-       // Negative
-       GameDataType currData = new GameDataType(id,"name","other name", gameName);
-       assertDoesNotThrow(()->{
-          GameDataType newData = new GameDataType(id, "new name", "other name", gameName);
-          gameSqlDAO.updateGameData(currData, newData);
-          assert  gameSqlDAO.findGame(id).equals(currData);
-       });
+       // Negative Update Players
+        String whiteName = "name";
+        String blackName = "other name";
+        GameDataType currData = new GameDataType(id,whiteName,blackName,gameName);
+
+        GameDataType finalCurrData1 = currData;
         assertDoesNotThrow(()->{
-            GameDataType newData = new GameDataType(id, "name", "new name", gameName);
-            gameSqlDAO.updateGameData(currData, newData);
-            assert  gameSqlDAO.findGame(id).equals(currData);
+          GameDataType newData = new GameDataType(id, "new name", blackName, gameName);
+          gameSqlDAO.updateGameData(finalCurrData1, newData);
+          assert  gameSqlDAO.findGame(id).equals(finalCurrData1);
+       });
+
+        GameDataType finalCurrData = currData;
+        assertDoesNotThrow(()->{
+            GameDataType newData = new GameDataType(id, whiteName, "new name", gameName);
+            gameSqlDAO.updateGameData(finalCurrData, newData);
+            assert  gameSqlDAO.findGame(id).equals(finalCurrData);
+        });
+        // Positive Update Game and Game Name
+        String newGameName = "new name";
+        GameDataType finalCurrData2 = currData;
+        assertDoesNotThrow(()->{
+            GameDataType newData = new GameDataType(id, whiteName, blackName, newGameName);
+            gameSqlDAO.updateGameData(finalCurrData2, newData);
+            assert  gameSqlDAO.findGame(id).equals(newData);
+        });
+        currData = new GameDataType(id, whiteName,blackName,newGameName);
+        GameDataType finalCurrData3 = currData;
+        assertDoesNotThrow(()->{
+            GameDataType newData = new GameDataType(id, whiteName,blackName,newGameName);
+            newData.setGameBoard(new ChessGame());
+            gameSqlDAO.updateGameData(finalCurrData3, newData);
+        });
+        // Negative Update Game and Game Name
+        currData.setGameBoard(new ChessGame());
+        GameDataType finalCurrData4 = currData;
+        assertDoesNotThrow(()->{
+            GameDataType newGame = new GameDataType(id,whiteName,blackName,newGameName);
+            gameSqlDAO.updateGameData(finalCurrData4, newGame);
+            assert gameSqlDAO.findGame(id).equals(finalCurrData4);
+        });
+        assertDoesNotThrow(()->{
+            GameDataType newGame = new GameDataType(id,whiteName,blackName,null);
+            gameSqlDAO.updateGameData(finalCurrData4,newGame);
+            assert gameSqlDAO.findGame(id).equals(finalCurrData4);
         });
     }
 }
