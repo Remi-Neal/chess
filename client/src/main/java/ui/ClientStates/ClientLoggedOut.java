@@ -14,29 +14,71 @@ public class ClientLoggedOut {
         selectedQuit = false;
         System.out.print(SET_TEXT_COLOR_RED + "[LOGGED_OUT] >>> " + RESET_TEXT_COLOR);
         Scanner scanner = new Scanner(System.in);
-        if(scanner.hasNext()) {
-            String command = scanner.next();
-            switch(command.toLowerCase()) {
-                case "help":
-                case "h":
-                    System.out.println(LOGGEDOUT_HELP_STRING);
-                    break;
-                case "quit":
-                case "q":
-                    selectedQuit = true;
-                    break;
-                case "login":
-                    break;
-                default:
-                    System.out.println(SET_TEXT_COLOR_RED + "Unknown " + RESET_TEXT_COLOR + command);
-                    System.out.println("Please use one of the following options...");
-                    System.out.println(LOGGEDOUT_HELP_STRING);
-            }
+        String command = scanner.next();
+        switch(command.toLowerCase()) {
+            case "help":
+            case "h":
+                System.out.println(LOGGEDOUT_HELP_STRING);
+                break;
+            case "quit":
+            case "q":
+                selectedQuit = true;
+                scanner.close();
+                break;
+            case "login":
+                isLoggedIn = tryLoggingIn(scanner);
+                if(isLoggedIn) {
+                    scanner.close();
+                }
+                break;
+            case "register":
+                isLoggedIn = tryRegisterng(scanner);
+            default:
+                System.out.println(SET_TEXT_COLOR_RED + "Unknown " + RESET_TEXT_COLOR + command);
+                System.out.println("Please use one of the following options...");
+                System.out.println(LOGGEDOUT_HELP_STRING);
         }
-        scanner.close();
     }
 
-    private boolean tryLoggingIn(String userName, String password, String email){
+    private static boolean tryLoggingIn(Scanner scanner){
+        System.out.println("Trying to Login");
+        String[] logInData = scanner.nextLine().split(" ");
+        switch(logInData.length){
+            case 2:
+                break;
+            case 1:
+                System.out.println("Missing <PASSWORD>");
+                return false;
+            default:
+                System.out.println("Missing <USERNAME> <PASSWORD>");
+                return false;
+        }
+        if(!scanner.hasNext()){
+
+        }
+        System.out.println("Username = " + logInData[0]);
+        System.out.println("Password = " + logInData[1]);
+        // TODO: add api call to login
+        System.out.println("Login functionality is not implemented");
+        return false;
+    }
+
+    private static boolean tryRegisterng(Scanner scanner){
+        if(!scanner.hasNext()){
+            System.out.println("Missing <USERNAME> <PASSWORD> <EMAIL>");
+        }
+        String userName = scanner.next();
+        if(!scanner.hasNext()){
+            System.out.println("Missing <PASSWORD> <EMAIL>");
+        }
+        String password = scanner.next();
+        if(!scanner.hasNext()){
+            System.out.println("Missing <EMAIL>");
+        }
+        String email = scanner.next();
+        // TODO: add api call to register
+        System.out.println("Username: " + userName + " Password: " + password + " Email: " + email);
+        System.out.println("Registration functionality is not implemented");
         return false;
     }
 
