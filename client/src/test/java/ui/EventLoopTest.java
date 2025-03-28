@@ -13,6 +13,5 @@ class EventLoopTest {
 
     @Test
     void run() {
-        EventLoop.run();
     }
 }

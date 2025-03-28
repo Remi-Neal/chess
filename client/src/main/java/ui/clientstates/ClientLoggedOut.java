@@ -1,19 +1,24 @@
-package ui.ClientStates;
-import java.util.Locale;
+package ui.clientstates;
+import ui.ClientMain;
+import ui.EventLoop;
+import ui.ServerFacade;
+import ui.server_request_records.LoginRequest;
+import static ui.EventLoop.scanner;
+import static ui.EventLoop.eventState;
+import ui.EventLoop.EventState;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
-import static java.awt.SystemColor.text;
 import static ui.EscapeSequences.*;
 
 public class ClientLoggedOut {
     public static boolean isLoggedIn;
-    public static boolean selectedQuit;
 
     public static void loggedOutUI(){
         isLoggedIn = false;
-        selectedQuit = false;
         System.out.print(SET_TEXT_COLOR_RED + "[LOGGED_OUT] >>> " + RESET_TEXT_COLOR);
-        Scanner scanner = new Scanner(System.in);
         String command = scanner.next();
         switch(command.toLowerCase()) {
             case "help":
@@ -22,13 +27,14 @@ public class ClientLoggedOut {
                 break;
             case "quit":
             case "q":
-                selectedQuit = true;
-                scanner.close();
+                eventState = EventState.QUIT;
                 break;
             case "login":
-                isLoggedIn = tryLoggingIn(scanner);
-                if(isLoggedIn) {
-                    scanner.close();
+                if(tryLoggingIn(scanner)) {
+                    eventState  = EventState.LOGGEDIN;
+                    System.out.println("Logging in!");
+                } else {
+                    System.out.println("Unable to log in...");
                 }
                 break;
             case "register":
@@ -42,25 +48,35 @@ public class ClientLoggedOut {
 
     private static boolean tryLoggingIn(Scanner scanner){
         System.out.println("Trying to Login");
-        String[] logInData = scanner.nextLine().split(" ");
-        switch(logInData.length){
-            case 2:
-                break;
-            case 1:
-                System.out.println("Missing <PASSWORD>");
-                return false;
-            default:
-                System.out.println("Missing <USERNAME> <PASSWORD>");
-                return false;
-        }
-        if(!scanner.hasNext()){
+        String username = "";
+        String password = "";
+        String[] line = scanner.nextLine().split(" ");
 
+        System.out.println("Text read:" + Arrays.toString(line) + " length: " + line.length);
+        if(line.length == 3){
+            username = line[1];
+            password = line[2];
+        } else if(line.length == 2){
+            username = line[1];
+            System.out.print(SET_TEXT_COLOR_BLUE + "Password: " + RESET_TEXT_COLOR);
+            password = scanner.next();
+        } else {
+            System.out.print(SET_TEXT_COLOR_BLUE + "Username: " + RESET_TEXT_COLOR);
+            username = scanner.next();
+            System.out.print(SET_TEXT_COLOR_BLUE + "Password: " + RESET_TEXT_COLOR);
+            password = scanner.next();
         }
-        System.out.println("Username = " + logInData[0]);
-        System.out.println("Password = " + logInData[1]);
-        // TODO: add api call to login
-        System.out.println("Login functionality is not implemented");
-        return false;
+        System.out.println("Username = " + username);
+        System.out.println("Password = " + password);
+        // This stuff is bad plz fix quick
+        try{
+            var reponse = ClientMain.serverFacade.callLogin(new LoginRequest(username, password));
+            System.out.println(reponse.toString());
+            return true; // TODO: idk what to do with this response
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+            return false;
+        }
     }
 
     private static boolean tryRegisterng(Scanner scanner){

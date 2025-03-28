@@ -1,40 +1,38 @@
 package ui;
 
-import ui.ClientStates.ClientLoggedOut;
+import ui.clientstates.ClientLoggedOut;
+
+import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
 public class EventLoop {
+    public static Scanner scanner;
+    public static EventState eventState;
     public EventLoop(){
-
+        scanner = new Scanner(System.in);
+        eventState = EventState.LOGGEDOUT;
     }
-    public static void run(){
-        EventState state = EventState.LOGGEDOUT;
+    public  void run(){
         System.out.print("👸 WELCOME to Chess a la BYU CS 240. ");
         System.out.print("Type ");
         System.out.print(SET_TEXT_BLINKING + "HELP" + RESET_TEXT_BLINKING);
         System.out.print(" to begin! 🤴\n");
         boolean run_loop = true;
         while(run_loop){
-            switch(state){
+            switch(eventState){
                 case LOGGEDOUT -> {
                     ClientLoggedOut.loggedOutUI();
-                    if(ClientLoggedOut.isLoggedIn){
-                        state = EventState.LOGGEDIN;
-                    }
-                    if(ClientLoggedOut.selectedQuit){
-                        state = EventState.QUIT;
-                    }
                     break;
                 }
                 case LOGGEDIN -> {
                     System.out.print(SET_BG_COLOR_RED + "Logged In state not implemented");
-                    state = EventState.LOGGEDOUT;
+                    eventState = EventState.LOGGEDOUT;
                     break;
                 }
                 case GAMEPLAY -> {
                     System.out.print(SET_BG_COLOR_RED + "Gameplay state not implemented");
-                    state = EventState.LOGGEDOUT;
+                    eventState = EventState.LOGGEDOUT;
                     break;
                 }
                 case QUIT -> {
@@ -45,7 +43,7 @@ public class EventLoop {
         }
     }
 
-    private enum EventState{
+    public enum EventState{
         LOGGEDOUT, LOGGEDIN, GAMEPLAY, QUIT
     }
 }
