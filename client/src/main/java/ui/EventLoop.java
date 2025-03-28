@@ -1,5 +1,6 @@
 package ui;
 
+import ui.clientstates.ClientLoggedIn;
 import ui.clientstates.ClientLoggedOut;
 
 import java.util.Scanner;
@@ -25,11 +26,10 @@ public class EventLoop {
                     ClientLoggedOut.loggedOutUI();
                 }
                 case LOGGEDIN -> {
-                    System.out.println(SET_BG_COLOR_RED + "Logged In state not implemented");
-                    eventState = EventState.QUIT;
+                    ClientLoggedIn.loggedinUI();
                 }
                 case GAMEPLAY -> {
-                    System.out.println(SET_BG_COLOR_RED + "Gameplay state not implemented");
+                    System.out.println(SET_BG_COLOR_RED + "Gameplay state not implemented" + RESET_BG_COLOR);
                     eventState = EventState.LOGGEDOUT;
                 }
                 case QUIT -> {

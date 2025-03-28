@@ -1,7 +1,5 @@
 package ui.clientstates;
 import ui.ClientMain;
-import ui.EventLoop;
-import ui.ServerFacade;
 import ui.exceptions.ResponseException;
 import ui.server_request_records.LoginRequest;
 import static ui.EventLoop.scanner;
@@ -16,10 +14,8 @@ import java.util.Scanner;
 import static ui.EscapeSequences.*;
 
 public class ClientLoggedOut {
-    public static boolean isLoggedIn;
 
     public static void loggedOutUI(){
-        isLoggedIn = false;
         System.out.print(SET_TEXT_COLOR_RED + "[LOGGED_OUT] >>> " + RESET_TEXT_COLOR);
         String command = scanner.next();
         switch(command.toLowerCase()) {
@@ -80,6 +76,7 @@ public class ClientLoggedOut {
         try{
             var reponse = ClientMain.serverFacade.callLogin(new LoginRequest(username, password));
             System.out.println(reponse.toString());
+            ClientMain.authToken = reponse.authToken();
             return true; // TODO: idk what to do with this response
         } catch (ResponseException e) {
             System.out.println(exceptionHandler(e));

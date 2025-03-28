@@ -3,6 +3,7 @@ package ui;
 public class ClientMain {
     public static Integer port;
     public static ServerFacade serverFacade;
+    public static String authToken;
     public ClientMain(int portNum){
         port = portNum;
     }

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.reflect.GenericArrayType;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -24,22 +25,28 @@ public class ServerFacade {
 
     public LoginResponse callLogin(LoginRequest request) throws ResponseException {
         String path = "/session";
-        return makeRequest("POST", path, request, LoginResponse.class);// TODO: Create response record to pass to makeRequest()
+        return makeRequest("POST", path, null, request, LoginResponse.class);// TODO: Create response record to pass to makeRequest()
     }
 
     public LoginResponse callRegistration(RegistrationRequest request) throws ResponseException {
         String path = "/user";
-        return makeRequest("POST", path, request, LoginResponse.class);
+        return makeRequest("POST", path, null, request, LoginResponse.class);
+    }
+
+    public void callLogout(String authToken) throws ResponseException {
+        String path = "/session";
+        makeRequest("DELETE", path, authToken, null, null);
     }
 
     // TODO: handle calling and error processing to api
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+    private <T> T makeRequest(String method, String path, String authToken, Object request, Class<T> responseClass) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
+            writeHead(authToken, http);
             writeBody(request, http);
             http.connect();
             throwIfNotSuccessful(http);
@@ -51,6 +58,15 @@ public class ServerFacade {
         }
     }
 
+    private static void writeHead(String authToken, HttpURLConnection http) throws IOException {
+        if (authToken != null){
+            http.addRequestProperty("Authorization", authToken);
+            String reqData = new Gson().toJson(authToken);
+            try (OutputStream request = http.getOutputStream()){
+                request.write(reqData.getBytes());
+            }
+        }
+    }
 
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {
         if (request != null) {
