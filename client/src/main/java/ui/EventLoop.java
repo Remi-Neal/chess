@@ -23,17 +23,14 @@ public class EventLoop {
             switch(eventState){
                 case LOGGEDOUT -> {
                     ClientLoggedOut.loggedOutUI();
-                    break;
                 }
                 case LOGGEDIN -> {
-                    System.out.print(SET_BG_COLOR_RED + "Logged In state not implemented");
-                    eventState = EventState.LOGGEDOUT;
-                    break;
+                    System.out.println(SET_BG_COLOR_RED + "Logged In state not implemented");
+                    eventState = EventState.QUIT;
                 }
                 case GAMEPLAY -> {
-                    System.out.print(SET_BG_COLOR_RED + "Gameplay state not implemented");
+                    System.out.println(SET_BG_COLOR_RED + "Gameplay state not implemented");
                     eventState = EventState.LOGGEDOUT;
-                    break;
                 }
                 case QUIT -> {
                     System.out.println("GOODBY! 👋");

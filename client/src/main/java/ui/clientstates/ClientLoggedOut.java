@@ -2,10 +2,12 @@ package ui.clientstates;
 import ui.ClientMain;
 import ui.EventLoop;
 import ui.ServerFacade;
+import ui.exceptions.ResponseException;
 import ui.server_request_records.LoginRequest;
 import static ui.EventLoop.scanner;
 import static ui.EventLoop.eventState;
 import ui.EventLoop.EventState;
+import ui.server_request_records.RegistrationRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +40,13 @@ public class ClientLoggedOut {
                 }
                 break;
             case "register":
-                isLoggedIn = tryRegisterng(scanner);
+                if(tryRegisterng(scanner)){
+                    eventState = EventState.LOGGEDIN;
+                    System.out.println("Registered!");
+                } else {
+                    System.out.println("Unable to register");
+                }
+                break;
             default:
                 System.out.println(SET_TEXT_COLOR_RED + "Unknown " + RESET_TEXT_COLOR + command);
                 System.out.println("Please use one of the following options...");
@@ -73,29 +81,57 @@ public class ClientLoggedOut {
             var reponse = ClientMain.serverFacade.callLogin(new LoginRequest(username, password));
             System.out.println(reponse.toString());
             return true; // TODO: idk what to do with this response
-        } catch (Exception e) {
-            System.out.println("Error: " + e);
-            return false;
+        } catch (ResponseException e) {
+            System.out.println(exceptionHandler(e));
         }
+        return false;
     }
 
     private static boolean tryRegisterng(Scanner scanner){
-        if(!scanner.hasNext()){
-            System.out.println("Missing <USERNAME> <PASSWORD> <EMAIL>");
+        System.out.println("Registering user");
+        String username = "";
+        String password = "";
+        String email = "";
+        String[] line = scanner.nextLine().split(" ");
+        int numItems = line.length - 1;
+        if(numItems == 3){
+            username = line[1];
+            password = line[2];
+            email = line[3];
+        } else if(numItems == 2 ) {
+            System.out.print(SET_TEXT_COLOR_BLUE + "Email: " + RESET_TEXT_COLOR);
+            email = scanner.next();
+        } else if(numItems == 1){
+            System.out.print(SET_TEXT_COLOR_BLUE + "Password: " + RESET_TEXT_COLOR);
+            password = scanner.next();
+            System.out.print(SET_TEXT_COLOR_BLUE + "Email: " + RESET_TEXT_COLOR);
+            email = scanner.next();
+        } else {
+            System.out.print(SET_TEXT_COLOR_BLUE + "Username: " + RESET_TEXT_COLOR);
+            username = scanner.next();
+            System.out.print(SET_TEXT_COLOR_BLUE + "Password: " + RESET_TEXT_COLOR);
+            password = scanner.next();
+            System.out.print(SET_TEXT_COLOR_BLUE + "Email: " + RESET_TEXT_COLOR);
+            email = scanner.next();
         }
-        String userName = scanner.next();
-        if(!scanner.hasNext()){
-            System.out.println("Missing <PASSWORD> <EMAIL>");
+        System.out.println("Username: " + username + " Password: " + password + " Email: " + email);
+        try{
+            var response = ClientMain.serverFacade.callRegistration(new RegistrationRequest(username,password,email));
+            System.out.println(response.toString());
+            return true;
+        } catch (ResponseException e) {
+            System.out.println(exceptionHandler(e));
         }
-        String password = scanner.next();
-        if(!scanner.hasNext()){
-            System.out.println("Missing <EMAIL>");
-        }
-        String email = scanner.next();
-        // TODO: add api call to register
-        System.out.println("Username: " + userName + " Password: " + password + " Email: " + email);
-        System.out.println("Registration functionality is not implemented");
         return false;
+    }
+
+    private static String exceptionHandler(ResponseException e){
+        int status = e.StatusCode();
+        if(e.StatusCode() == 401){
+            return "Username already take";
+        }
+        System.out.println(e.StatusCode() + " " + e);
+        return "Unable to process request. Please try again later.";
     }
 
     static final String LOGGEDOUT_HELP_STRING =
