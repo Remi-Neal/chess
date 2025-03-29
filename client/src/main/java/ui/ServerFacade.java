@@ -2,15 +2,16 @@ package ui;
 
 import com.google.gson.Gson;
 import ui.exceptions.ResponseException;
+import ui.server_request_records.CreateGameRequest;
 import ui.server_request_records.LoginRequest;
 import ui.server_request_records.RegistrationRequest;
+import ui.server_responce_record.CreateGameResponse;
 import ui.server_responce_record.LoginResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.lang.reflect.GenericArrayType;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -23,6 +24,7 @@ public class ServerFacade {
         serverUrl = url;
     }
 
+    // User calls
     public LoginResponse callLogin(LoginRequest request) throws ResponseException {
         String path = "/session";
         return makeRequest("POST", path, null, request, LoginResponse.class);// TODO: Create response record to pass to makeRequest()
@@ -38,6 +40,12 @@ public class ServerFacade {
         makeRequest("DELETE", path, authToken, null, null);
     }
 
+    //Game Calls
+    public CreateGameResponse callCreateGame(String authToken, CreateGameRequest request) throws ResponseException {
+        String path = "/game";
+        return makeRequest("POST", path, authToken, request, CreateGameResponse.class);
+    }
+
     // TODO: handle calling and error processing to api
     private <T> T makeRequest(String method, String path, String authToken, Object request, Class<T> responseClass) throws ResponseException {
         try {
@@ -46,8 +54,7 @@ public class ServerFacade {
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
-            writeHead(authToken, http);
-            writeBody(request, http);
+            writeRequest(authToken, request, http);
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
@@ -60,21 +67,22 @@ public class ServerFacade {
 
     private static void writeHead(String authToken, HttpURLConnection http) throws IOException {
         if (authToken != null){
-            http.addRequestProperty("Authorization", authToken);
+
             String reqData = new Gson().toJson(authToken);
-            try (OutputStream request = http.getOutputStream()){
-                request.write(reqData.getBytes());
-            }
+
         }
     }
 
-    private static void writeBody(Object request, HttpURLConnection http) throws IOException {
+    private static void writeRequest(String authToken, Object request, HttpURLConnection http) throws IOException {
+        if (authToken != null){
+            http.addRequestProperty("Authorization", authToken);
+        }
         if (request != null) {
             http.addRequestProperty("Content-Type", "application/json");
-            String reqData = new Gson().toJson(request);
-            try (OutputStream reqBody = http.getOutputStream()) {
-                reqBody.write(reqData.getBytes());
-            }
+        }
+        String reqData = new Gson().toJson(request);
+        try (OutputStream reqBody = http.getOutputStream()) {
+            reqBody.write(reqData.getBytes());
         }
     }
 

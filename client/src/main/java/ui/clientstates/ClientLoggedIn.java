@@ -1,6 +1,10 @@
 package ui.clientstates;
 import ui.ClientMain;
 import ui.EventLoop;
+import ui.exceptions.ResponseException;
+import ui.server_request_records.CreateGameRequest;
+
+import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
@@ -13,18 +17,14 @@ public class ClientLoggedIn {
         String command = scanner.next();
         switch(command.toLowerCase()){
             case "create":
+                tryCreatingGame();
+                break;
             case "list":
             case "join":
             case "observe":
                 break;
             case "logout":
-                //TODO: create api call to logout from the server
-                if(tryLoggingOut()) {
-                    eventState  = EventLoop.EventState.LOGGEDOUT;
-                    System.out.println("Logging out!");
-                } else {
-                    System.out.println("Unable to log out...");
-                }
+                tryLoggingOut();
                 break;
             case "quit":
             case "q":
@@ -41,16 +41,36 @@ public class ClientLoggedIn {
         }
     }
 
-    private static boolean tryLoggingOut(){
+    private static void tryLoggingOut(){
         if(ClientMain.authToken != null) {
             try {
                 ClientMain.serverFacade.callLogout(ClientMain.authToken);
                 System.out.println("Loggin out...");
                 ClientMain.authToken = null;
-                return true;
+                eventState = EventLoop.EventState.LOGGEDOUT;
             } catch (Exception e) {
                 System.out.println("An error occurred, please try again");
-                return false;
+            }
+        }
+    }
+
+    private static boolean tryCreatingGame(){
+        String[] line = scanner.nextLine().split(" ");
+        String gameName;
+        if(line.length == 1){
+            System.out.print(SET_TEXT_COLOR_BLUE + "Game Name: " + RESET_TEXT_COLOR);
+            gameName = scanner.next();
+        } else {
+            gameName = line[1];
+        }
+        if(ClientMain.authToken != null){
+            try{
+                var response =  ClientMain.serverFacade.callCreateGame(ClientMain.authToken, new CreateGameRequest(gameName));
+                System.out.println("Game Created!");
+                System.out.println("GameID: " + response.gameID());
+            } catch (ResponseException e) {
+                System.out.println("Error num: " + e.StatusCode() + " Message: " + e);
+                System.out.println("An error occurred, please try again");
             }
         }
         return false;

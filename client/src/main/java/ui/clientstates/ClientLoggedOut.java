@@ -6,10 +6,7 @@ import static ui.EventLoop.scanner;
 import static ui.EventLoop.eventState;
 import ui.EventLoop.EventState;
 import ui.server_request_records.RegistrationRequest;
-
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
@@ -28,7 +25,7 @@ public class ClientLoggedOut {
                 eventState = EventState.QUIT;
                 break;
             case "login":
-                if(tryLoggingIn(scanner)) {
+                if(tryLoggingIn()) {
                     eventState  = EventState.LOGGEDIN;
                     System.out.println("Logging in!");
                 } else {
@@ -36,7 +33,7 @@ public class ClientLoggedOut {
                 }
                 break;
             case "register":
-                if(tryRegisterng(scanner)){
+                if(tryRegistering()){
                     eventState = EventState.LOGGEDIN;
                     System.out.println("Registered!");
                 } else {
@@ -50,7 +47,7 @@ public class ClientLoggedOut {
         }
     }
 
-    private static boolean tryLoggingIn(Scanner scanner){
+    private static boolean tryLoggingIn(){
         System.out.println("Trying to Login");
         String username = "";
         String password = "";
@@ -84,7 +81,7 @@ public class ClientLoggedOut {
         return false;
     }
 
-    private static boolean tryRegisterng(Scanner scanner){
+    private static boolean tryRegistering(){
         System.out.println("Registering user");
         String username = "";
         String password = "";
