@@ -1,9 +1,15 @@
 package ui;
 
+import ui.server_responce_record.GameDataResponse;
+
+import java.util.ArrayList;
+
 public class ClientMain {
     public static Integer port;
     public static ServerFacade serverFacade;
     public static String authToken;
+    public static int activeGame;
+    public static ArrayList<GameDataResponse> currGameList;
     public ClientMain(int portNum){
         port = portNum;
     }

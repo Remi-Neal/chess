@@ -3,6 +3,7 @@ package ui;
 import com.google.gson.Gson;
 import ui.exceptions.ResponseException;
 import ui.server_request_records.CreateGameRequest;
+import ui.server_request_records.JoinRequest;
 import ui.server_request_records.LoginRequest;
 import ui.server_request_records.RegistrationRequest;
 import ui.server_responce_record.CreateGameResponse;
@@ -58,6 +59,11 @@ public class ServerFacade {
         return makeRequest("GET", path, authToken, null, GameListResponse.class);
     }
 
+    public void callJoinGame(String authToken, JoinRequest request) throws ResponseException {
+        String path = "/game";
+        makeRequest("PUT", path, authToken, request, null);
+    }
+
     // TODO: handle calling and error processing to api
     private <T> T makeRequest(String method, String path, String authToken, Object request, Class<T> responseClass) throws ResponseException {
         try {
@@ -83,10 +89,10 @@ public class ServerFacade {
         }
         if (request != null) {
             http.addRequestProperty("Content-Type", "application/json");
-        }
-        String reqData = new Gson().toJson(request);
-        try (OutputStream reqBody = http.getOutputStream()) {
-            reqBody.write(reqData.getBytes());
+            String reqData = new Gson().toJson(request);
+            try (OutputStream reqBody = http.getOutputStream()) {
+                reqBody.write(reqData.getBytes());
+            }
         }
     }
 

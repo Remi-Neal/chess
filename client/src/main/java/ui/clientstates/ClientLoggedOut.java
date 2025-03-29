@@ -74,7 +74,7 @@ public class ClientLoggedOut {
             var reponse = ClientMain.serverFacade.callLogin(new LoginRequest(username, password));
             System.out.println(reponse.toString());
             ClientMain.authToken = reponse.authToken();
-            return true; // TODO: idk what to do with this response
+            return true;
         } catch (ResponseException e) {
             System.out.println(exceptionHandler(e));
         }
@@ -112,6 +112,7 @@ public class ClientLoggedOut {
         try{
             var response = ClientMain.serverFacade.callRegistration(new RegistrationRequest(username,password,email));
             System.out.println(response.toString());
+            ClientMain.authToken = response.authToken();
             return true;
         } catch (ResponseException e) {
             System.out.println(exceptionHandler(e));
