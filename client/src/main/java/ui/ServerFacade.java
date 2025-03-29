@@ -6,6 +6,7 @@ import ui.server_request_records.CreateGameRequest;
 import ui.server_request_records.LoginRequest;
 import ui.server_request_records.RegistrationRequest;
 import ui.server_responce_record.CreateGameResponse;
+import ui.server_responce_record.GameListResponse;
 import ui.server_responce_record.LoginResponse;
 
 import java.io.IOException;
@@ -22,6 +23,12 @@ public class ServerFacade {
 
     public ServerFacade(String url) {
         serverUrl = url;
+    }
+
+    // Delete database
+    public void callClearDatabase() throws ResponseException{
+        String path = "/db";
+        makeRequest("DELETE", path, null, null, null);
     }
 
     // User calls
@@ -46,6 +53,11 @@ public class ServerFacade {
         return makeRequest("POST", path, authToken, request, CreateGameResponse.class);
     }
 
+    public GameListResponse callListGames(String authToken) throws ResponseException{
+        String path = "/game";
+        return makeRequest("GET", path, authToken, null, GameListResponse.class);
+    }
+
     // TODO: handle calling and error processing to api
     private <T> T makeRequest(String method, String path, String authToken, Object request, Class<T> responseClass) throws ResponseException {
         try {
@@ -62,14 +74,6 @@ public class ServerFacade {
             throw ex;
         } catch (Exception ex) {
             throw new ResponseException(500, ex.getMessage());
-        }
-    }
-
-    private static void writeHead(String authToken, HttpURLConnection http) throws IOException {
-        if (authToken != null){
-
-            String reqData = new Gson().toJson(authToken);
-
         }
     }
 

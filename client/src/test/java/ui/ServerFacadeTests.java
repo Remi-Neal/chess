@@ -1,6 +1,7 @@
 package ui;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.engine.discovery.predicates.IsNestedTestClass;
 import ui.exceptions.ResponseException;
@@ -17,6 +18,15 @@ class ServerFacadeTests {
     @BeforeAll
     public static void init(){
         serverFacade = new ServerFacade("http://localhost:8080");
+    }
+
+    @BeforeEach
+    public  void resetDB(){
+        try {
+            serverFacade.callClearDatabase();
+        } catch (ResponseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private String createAuth(){
@@ -67,6 +77,17 @@ class ServerFacadeTests {
         String authToken = createAuth();
         try{
             var response = serverFacade.callCreateGame(authToken, new CreateGameRequest("game"));
+            System.out.println(response);
+        } catch (ResponseException e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void test_listGames(){
+        String authToken = createAuth();
+        try{
+            var response = serverFacade.callListGames(authToken);
             System.out.println(response);
         } catch (ResponseException e){
             throw new RuntimeException(e);

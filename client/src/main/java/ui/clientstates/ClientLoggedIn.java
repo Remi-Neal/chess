@@ -20,6 +20,8 @@ public class ClientLoggedIn {
                 tryCreatingGame();
                 break;
             case "list":
+                tryListGames();
+                break;
             case "join":
             case "observe":
                 break;
@@ -42,6 +44,7 @@ public class ClientLoggedIn {
     }
 
     private static void tryLoggingOut(){
+        System.out.println("AuthToken: " + ClientMain.authToken);
         if(ClientMain.authToken != null) {
             try {
                 ClientMain.serverFacade.callLogout(ClientMain.authToken);
@@ -65,7 +68,7 @@ public class ClientLoggedIn {
         }
         if(ClientMain.authToken != null){
             try{
-                var response =  ClientMain.serverFacade.callCreateGame(ClientMain.authToken, new CreateGameRequest(gameName));
+                var response = ClientMain.serverFacade.callCreateGame(ClientMain.authToken, new CreateGameRequest(gameName));
                 System.out.println("Game Created!");
                 System.out.println("GameID: " + response.gameID());
             } catch (ResponseException e) {
@@ -74,6 +77,19 @@ public class ClientLoggedIn {
             }
         }
         return false;
+    }
+
+    private static void tryListGames(){
+        System.out.println("AuthToken: " + ClientMain.authToken);
+        if(ClientMain.authToken != null){
+            try{
+                var response = ClientMain.serverFacade.callListGames(ClientMain.authToken);
+                System.out.println(response);
+            } catch (ResponseException e){
+                System.out.println("Error num: " + e.StatusCode() + " Message: " + e);
+                System.out.println("An error occurred, please try again");
+            }
+        }
     }
 
    static final String LOGGEDIN_HELP_STRING =
