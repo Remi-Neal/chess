@@ -122,10 +122,10 @@ public class ClientLoggedOut {
     }
 
     private static String exceptionHandler(ResponseException e){
-        if(e.StatusCode() == 401){
+        if(e.statusCode() == 401){
             return "Username already take";
         }
-        System.out.println(e.StatusCode() + " " + e);
+        System.out.println(e.statusCode() + " " + e);
         return "Unable to process request. Please try again later.";
     }
 

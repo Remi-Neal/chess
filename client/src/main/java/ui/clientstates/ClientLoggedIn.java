@@ -84,7 +84,7 @@ public class ClientLoggedIn {
                 System.out.println("Game Created!");
                 System.out.println("GameID: " + response.gameID());
             } catch (ResponseException e) {
-                System.out.println("Error num: " + e.StatusCode() + " Message: " + e);
+                System.out.println("Error num: " + e.statusCode() + " Message: " + e);
                 System.out.println("An error occurred, please try again");
             }
         }
@@ -96,7 +96,7 @@ public class ClientLoggedIn {
                 var response = ClientMain.serverFacade.callListGames(ClientMain.authToken);
                 ClientMain.currGameList = new ArrayList<>(List.of(response.games()));
             } catch (ResponseException e){
-                System.out.println("Error num: " + e.StatusCode() + " Message: " + e);
+                System.out.println("Error num: " + e.statusCode() + " Message: " + e);
                 System.out.println("An error occurred, please try again");
             }
         }

@@ -12,8 +12,8 @@ class ServerFacadeTests {
     // TODO: Create positive and negative tests for all sever facade classes
     static ServerFacade serverFacade;
 
-    final String USER_NAME = "name";
-    final String PASSWORD = "name";
+    final static String USER_NAME = "name";
+    final static String PASSWORD = "name";
     @BeforeAll
     public static void init(){
         serverFacade = new ServerFacade("http://localhost:8080");
