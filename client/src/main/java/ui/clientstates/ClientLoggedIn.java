@@ -6,11 +6,8 @@ import ui.server_request_records.CreateGameRequest;
 import ui.server_request_records.JoinRequest;
 import ui.server_responce_record.GameDataResponse;
 
-import javax.rmi.ssl.SslRMIClientSocketFactory;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
@@ -53,7 +50,7 @@ public class ClientLoggedIn {
             default:
                 System.out.println(SET_TEXT_COLOR_RED + "Unknown " + RESET_TEXT_COLOR + command);
                 System.out.println("Please use one of the following options...");
-                System.out.println(LOGGEDIN_HELP_STRING);;
+                System.out.println(LOGGEDIN_HELP_STRING);
         }
     }
 
@@ -71,7 +68,7 @@ public class ClientLoggedIn {
         }
     }
 
-    private static boolean tryCreatingGame(){
+    private static void tryCreatingGame(){
         String[] line = scanner.nextLine().split(" ");
         String gameName;
         if(line.length == 1){
@@ -90,21 +87,24 @@ public class ClientLoggedIn {
                 System.out.println("An error occurred, please try again");
             }
         }
-        return false;
     }
 
-    private static void tryListGames(){
-        System.out.println("AuthToken: " + ClientMain.authToken);
+    private static void getGameList(){
         if(ClientMain.authToken != null){
             try{
                 var response = ClientMain.serverFacade.callListGames(ClientMain.authToken);
                 ClientMain.currGameList = new ArrayList<>(List.of(response.games()));
-                outputGameList();
             } catch (ResponseException e){
                 System.out.println("Error num: " + e.StatusCode() + " Message: " + e);
                 System.out.println("An error occurred, please try again");
             }
         }
+    }
+
+    private static void tryListGames(){
+        System.out.println("AuthToken: " + ClientMain.authToken);
+        getGameList();
+        outputGameList();
     }
 
     private static void tryJoiningGame(){
@@ -125,7 +125,25 @@ public class ClientLoggedIn {
             gameID = Integer.parseInt(line[1]);
             color = line[2];
         }
+        if(findGame(gameID) == null){
+            System.out.println("Unknown game ID");
+            return;
+        }
         if(ClientMain.authToken != null){
+           if(findGame(gameID).whiteUsername() != null){
+               if(findGame(gameID).whiteUsername().equals(ClientMain.userName)){
+                   eventState = EventLoop.EventState.GAMEPLAY;
+                   ClientMain.activeGame = gameID;
+                   return;
+               }
+           }
+           if(findGame(gameID).blackUsername() != null){
+               if(findGame(gameID).blackUsername().equals(ClientMain.userName)){
+                   eventState = EventLoop.EventState.GAMEPLAY;
+                   ClientMain.activeGame = gameID;
+                   return;
+               }
+           }
             try {
                 ClientMain.serverFacade.callJoinGame(ClientMain.authToken, new JoinRequest(color, gameID));
                 ClientMain.activeGame = gameID;
@@ -134,6 +152,18 @@ public class ClientLoggedIn {
                 System.out.println("Unable to join game. Please try again");
             }
         }
+    }
+
+    private static GameDataResponse findGame(int gameID){
+        if(ClientMain.currGameList == null){
+            getGameList();
+        }
+        for(GameDataResponse game : ClientMain.currGameList){
+            if(game.gameID() == gameID){
+                return game;
+            }
+        }
+        return null;
     }
 
     private static void tryObserveGame(){

@@ -49,8 +49,8 @@ public class ClientLoggedOut {
 
     private static boolean tryLoggingIn(){
         System.out.println("Trying to Login");
-        String username = "";
-        String password = "";
+        String username;
+        String password;
         String[] line = scanner.nextLine().split(" ");
 
         System.out.println("Text read:" + Arrays.toString(line) + " length: " + line.length);
@@ -69,10 +69,10 @@ public class ClientLoggedOut {
         }
         System.out.println("Username = " + username);
         System.out.println("Password = " + password);
-        // This stuff is bad plz fix quick
         try{
             var reponse = ClientMain.serverFacade.callLogin(new LoginRequest(username, password));
             System.out.println(reponse.toString());
+            ClientMain.userName = reponse.username();
             ClientMain.authToken = reponse.authToken();
             return true;
         } catch (ResponseException e) {
@@ -85,7 +85,7 @@ public class ClientLoggedOut {
         System.out.println("Registering user");
         String username = "";
         String password = "";
-        String email = "";
+        String email;
         String[] line = scanner.nextLine().split(" ");
         int numItems = line.length - 1;
         if(numItems == 3){
@@ -112,6 +112,7 @@ public class ClientLoggedOut {
         try{
             var response = ClientMain.serverFacade.callRegistration(new RegistrationRequest(username,password,email));
             System.out.println(response.toString());
+            ClientMain.userName = response.username();
             ClientMain.authToken = response.authToken();
             return true;
         } catch (ResponseException e) {
@@ -121,7 +122,6 @@ public class ClientLoggedOut {
     }
 
     private static String exceptionHandler(ResponseException e){
-        int status = e.StatusCode();
         if(e.StatusCode() == 401){
             return "Username already take";
         }

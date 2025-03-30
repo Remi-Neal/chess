@@ -1,5 +1,6 @@
 package ui;
 
+import ui.clientstates.ClientGamePlay;
 import ui.clientstates.ClientLoggedIn;
 import ui.clientstates.ClientLoggedOut;
 
@@ -22,16 +23,9 @@ public class EventLoop {
         boolean run_loop = true;
         while(run_loop){
             switch(eventState){
-                case LOGGEDOUT -> {
-                    ClientLoggedOut.loggedOutUI();
-                }
-                case LOGGEDIN -> {
-                    ClientLoggedIn.loggedinUI();
-                }
-                case GAMEPLAY -> {
-                    System.out.println(SET_BG_COLOR_RED + "Gameplay state not implemented" + RESET_BG_COLOR);
-                    eventState = EventState.LOGGEDOUT;
-                }
+                case LOGGEDOUT -> ClientLoggedOut.loggedOutUI();
+                case LOGGEDIN -> ClientLoggedIn.loggedinUI();
+                case GAMEPLAY -> ClientGamePlay.gameUI();
                 case QUIT -> {
                     System.out.println("GOODBY! 👋");
                     run_loop = false;

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 public class ClientMain {
     public static Integer port;
     public static ServerFacade serverFacade;
+    public static String userName;
     public static String authToken;
     public static int activeGame;
     public static ArrayList<GameDataResponse> currGameList;
