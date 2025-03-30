@@ -1,4 +1,4 @@
-package ui.server_request_records;
+package ui.requestrecords;
 
 public record CreateGameRequest(String gameName) {
 }

@@ -1,4 +1,4 @@
-package ui.server_responce_record;
+package ui.responcerecord;
 
 public record LoginResponse(String username, String authToken) {
 }

@@ -1,13 +1,14 @@
 package ui.clientstates;
 import ui.ClientMain;
 import ui.EventLoop;
-import ui.server_responce_record.GameDataResponse;
+import ui.responcerecord.GameDataResponse;
 import static ui.EventLoop.scanner;
 import static ui.EventLoop.eventState;
 
 import static ui.EscapeSequences.*;
 
 public class ClientGamePlay {
+    // TODO: take out any excessive System.out calls
     private enum Orientation{
         BLACK_VIEW, WHITE_VIEW
     }

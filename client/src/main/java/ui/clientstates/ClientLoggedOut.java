@@ -1,17 +1,17 @@
 package ui.clientstates;
 import ui.ClientMain;
 import ui.exceptions.ResponseException;
-import ui.server_request_records.LoginRequest;
+import ui.requestrecords.LoginRequest;
 import static ui.EventLoop.scanner;
 import static ui.EventLoop.eventState;
 import ui.EventLoop.EventState;
-import ui.server_request_records.RegistrationRequest;
+import ui.requestrecords.RegistrationRequest;
 import java.util.Arrays;
 
 import static ui.EscapeSequences.*;
 
 public class ClientLoggedOut {
-
+// TODO: take out any excessive System.out calls
     public static void loggedOutUI(){
         System.out.print(SET_TEXT_COLOR_RED + "[LOGGED_OUT] >>> " + RESET_TEXT_COLOR);
         String command = scanner.next();

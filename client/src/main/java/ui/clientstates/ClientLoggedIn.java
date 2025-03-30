@@ -2,9 +2,9 @@ package ui.clientstates;
 import ui.ClientMain;
 import ui.EventLoop;
 import ui.exceptions.ResponseException;
-import ui.server_request_records.CreateGameRequest;
-import ui.server_request_records.JoinRequest;
-import ui.server_responce_record.GameDataResponse;
+import ui.requestrecords.CreateGameRequest;
+import ui.requestrecords.JoinRequest;
+import ui.responcerecord.GameDataResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +15,7 @@ import static ui.EventLoop.scanner;
 import static ui.EventLoop.eventState;
 
 public class ClientLoggedIn {
+    // TODO: take out any excessive System.out calls
     public static void loggedinUI() {
         System.out.print(SET_TEXT_COLOR_RED +"[LOGGED_IN] >>> "+RESET_TEXT_COLOR);
         String command = scanner.next();

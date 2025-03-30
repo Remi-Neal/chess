@@ -2,13 +2,13 @@ package ui;
 
 import com.google.gson.Gson;
 import ui.exceptions.ResponseException;
-import ui.server_request_records.CreateGameRequest;
-import ui.server_request_records.JoinRequest;
-import ui.server_request_records.LoginRequest;
-import ui.server_request_records.RegistrationRequest;
-import ui.server_responce_record.CreateGameResponse;
-import ui.server_responce_record.GameListResponse;
-import ui.server_responce_record.LoginResponse;
+import ui.requestrecords.CreateGameRequest;
+import ui.requestrecords.JoinRequest;
+import ui.requestrecords.LoginRequest;
+import ui.requestrecords.RegistrationRequest;
+import ui.responcerecord.CreateGameResponse;
+import ui.responcerecord.GameListResponse;
+import ui.responcerecord.LoginResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,7 +35,7 @@ public class ServerFacade {
     // User calls
     public LoginResponse callLogin(LoginRequest request) throws ResponseException {
         String path = "/session";
-        return makeRequest("POST", path, null, request, LoginResponse.class);// TODO: Create response record to pass to makeRequest()
+        return makeRequest("POST", path, null, request, LoginResponse.class);
     }
 
     public LoginResponse callRegistration(RegistrationRequest request) throws ResponseException {

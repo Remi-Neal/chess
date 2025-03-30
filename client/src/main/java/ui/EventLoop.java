@@ -20,15 +20,15 @@ public class EventLoop {
         System.out.print("Type ");
         System.out.print(SET_TEXT_BLINKING + "HELP" + RESET_TEXT_BLINKING);
         System.out.print(" to begin! 🤴\n");
-        boolean run_loop = true;
-        while(run_loop){
+        boolean runLoop = true;
+        while(runLoop){
             switch(eventState){
                 case LOGGEDOUT -> ClientLoggedOut.loggedOutUI();
                 case LOGGEDIN -> ClientLoggedIn.loggedinUI();
                 case GAMEPLAY -> ClientGamePlay.gameUI();
                 case QUIT -> {
                     System.out.println("GOODBY! 👋");
-                    run_loop = false;
+                    runLoop = false;
                 }
             }
         }

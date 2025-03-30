@@ -1,6 +1,6 @@
 package ui;
 
-import ui.server_responce_record.GameDataResponse;
+import ui.responcerecord.GameDataResponse;
 
 import java.util.ArrayList;
 
