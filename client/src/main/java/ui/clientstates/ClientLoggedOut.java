@@ -25,20 +25,10 @@ public class ClientLoggedOut {
                 eventState = EventState.QUIT;
                 break;
             case "login":
-                if(tryLoggingIn()) {
-                    eventState  = EventState.LOGGEDIN;
-                    System.out.println("Logging in!");
-                } else {
-                    System.out.println("Unable to log in...");
-                }
+                tryLoggingIn();
                 break;
             case "register":
-                if(tryRegistering()){
-                    eventState = EventState.LOGGEDIN;
-                    System.out.println("Registered!");
-                } else {
-                    System.out.println("Unable to register");
-                }
+                tryRegistering();
                 break;
             default:
                 System.out.println(SET_TEXT_COLOR_RED + "Unknown " + RESET_TEXT_COLOR + command);
@@ -47,13 +37,10 @@ public class ClientLoggedOut {
         }
     }
 
-    private static boolean tryLoggingIn(){
-        System.out.println("Trying to Login");
+    private static void tryLoggingIn(){
         String username;
         String password;
         String[] line = scanner.nextLine().split(" ");
-
-        System.out.println("Text read:" + Arrays.toString(line) + " length: " + line.length);
         if(line.length == 3){
             username = line[1];
             password = line[2];
@@ -67,22 +54,18 @@ public class ClientLoggedOut {
             System.out.print(SET_TEXT_COLOR_BLUE + "Password: " + RESET_TEXT_COLOR);
             password = scanner.next();
         }
-        System.out.println("Username = " + username);
-        System.out.println("Password = " + password);
         try{
+            System.out.println("Logging in...");
             var reponse = ClientMain.serverFacade.callLogin(new LoginRequest(username, password));
-            System.out.println(reponse.toString());
             ClientMain.userName = reponse.username();
             ClientMain.authToken = reponse.authToken();
-            return true;
+            eventState = EventState.LOGGEDIN;
         } catch (ResponseException e) {
             System.out.println(exceptionHandler(e));
         }
-        return false;
     }
 
-    private static boolean tryRegistering(){
-        System.out.println("Registering user");
+    private static void tryRegistering(){
         String username = "";
         String password = "";
         String email;
@@ -108,24 +91,22 @@ public class ClientLoggedOut {
             System.out.print(SET_TEXT_COLOR_BLUE + "Email: " + RESET_TEXT_COLOR);
             email = scanner.next();
         }
-        System.out.println("Username: " + username + " Password: " + password + " Email: " + email);
         try{
+            System.out.println("Registering...");
             var response = ClientMain.serverFacade.callRegistration(new RegistrationRequest(username,password,email));
-            System.out.println(response.toString());
             ClientMain.userName = response.username();
             ClientMain.authToken = response.authToken();
-            return true;
+            System.out.println("Success!");
+            eventState = EventState.LOGGEDIN;
         } catch (ResponseException e) {
             System.out.println(exceptionHandler(e));
         }
-        return false;
     }
 
     private static String exceptionHandler(ResponseException e){
         if(e.statusCode() == 401){
             return "Username already take";
         }
-        System.out.println(e.statusCode() + " " + e);
         return "Unable to process request. Please try again later.";
     }
 

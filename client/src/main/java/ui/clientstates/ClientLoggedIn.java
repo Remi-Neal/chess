@@ -21,23 +21,18 @@ public class ClientLoggedIn {
         String command = scanner.next();
         switch(command.toLowerCase()){
             case "create":
-                System.out.println("Called Created");
                 tryCreatingGame();
                 break;
             case "list":
-                System.out.println("Called list");
                 tryListGames();
                 break;
             case "join":
-                System.out.println("Called join");
                 tryJoiningGame();
                 break;
             case "observe":
-                System.out.println("Called observe");
                 tryObserveGame();
                 break;
             case "logout":
-                System.out.println("Called logout");
                 tryLoggingOut();
                 break;
             case "quit":
@@ -56,11 +51,10 @@ public class ClientLoggedIn {
     }
 
     private static void tryLoggingOut(){
-        System.out.println("AuthToken: " + ClientMain.authToken);
         if(ClientMain.authToken != null) {
             try {
                 ClientMain.serverFacade.callLogout(ClientMain.authToken);
-                System.out.println("Loggin out...");
+                System.out.println("Logging out...");
                 ClientMain.authToken = null;
                 eventState = EventLoop.EventState.LOGGEDOUT;
             } catch (Exception e) {
@@ -84,7 +78,6 @@ public class ClientLoggedIn {
                 System.out.println("Game Created!");
                 System.out.println("GameID: " + response.gameID());
             } catch (ResponseException e) {
-                System.out.println("Error num: " + e.statusCode() + " Message: " + e);
                 System.out.println("An error occurred, please try again");
             }
         }
@@ -96,20 +89,17 @@ public class ClientLoggedIn {
                 var response = ClientMain.serverFacade.callListGames(ClientMain.authToken);
                 ClientMain.currGameList = new ArrayList<>(List.of(response.games()));
             } catch (ResponseException e){
-                System.out.println("Error num: " + e.statusCode() + " Message: " + e);
                 System.out.println("An error occurred, please try again");
             }
         }
     }
 
     private static void tryListGames(){
-        System.out.println("AuthToken: " + ClientMain.authToken);
         getGameList();
         outputGameList();
     }
 
     private static void tryJoiningGame(){
-        System.out.println("AuthToken: " + ClientMain.authToken);
         String[] line = scanner.nextLine().split(" ");
         String color;
         int gameID;
@@ -118,7 +108,7 @@ public class ClientLoggedIn {
             color = scanner.next();
             gameID = Integer.parseInt(line[1]);
         } else if(line.length == 1){
-            System.out.print(SET_TEXT_COLOR_BLUE + "Color: " + RESET_TEXT_COLOR);
+            System.out.print(SET_TEXT_COLOR_BLUE + "Game ID: " + RESET_TEXT_COLOR);
             gameID = Integer.parseInt(scanner.next());
             System.out.print(SET_TEXT_COLOR_BLUE + "Color: " + RESET_TEXT_COLOR);
             color = scanner.next();
@@ -148,6 +138,7 @@ public class ClientLoggedIn {
             try {
                 ClientMain.serverFacade.callJoinGame(ClientMain.authToken, new JoinRequest(color, gameID));
                 ClientMain.activeGame = gameID;
+                getGameList();
                 eventState = EventLoop.EventState.GAMEPLAY;
             } catch (ResponseException e) {
                 System.out.println("Unable to join game. Please try again");
