@@ -14,33 +14,41 @@ public class ClientGamePlay {
     }
 
     public static void gameUI(){
-        System.out.println(renderGame(pickOrientation()));
+        System.out.println(renderGame(pickOrientation())); // FIXME: may need to changes when the board is rendered to accommodate move highlighting
         System.out.print(SET_TEXT_COLOR_RED + "[Gameplay] >>> " + RESET_TEXT_COLOR);
         String command = scanner.next();
         switch(command.toLowerCase()){
-            case "back":
+            case "highlight":
+                // TODO: Call API to get valid moves and highlight spaces accordingly
+                System.out.println("Hightlighting moves---DELETE ME");
+                break;
+            case "make":
+                // TODO: Call API to make move or not if invalid
+                System.out.println("Making move---DELETE ME");
+                break;
+            case "redraw":
+                break; // UI redraws board after every command so breaking works the same way as redrawing
+            case "leave":
+                // TODO: remove payer name from the game
                 eventState = EventLoop.EventState.LOGGEDIN;
                 break;
-            case "logout":
-                eventState = EventLoop.EventState.LOGGEDOUT;
-                ClientMain.authToken = null;
-                break;
-            case "quit":
-            case "q":
-                eventState = EventLoop.EventState.QUIT;
+            case "resign":
+                // TODO: remove player from the game and finalize the game
+                eventState = EventLoop.EventState.LOGGEDIN;
                 break;
             case "help":
             case "h":
+                System.out.println(GAMEPLAY_HELP_STRING);
+                break;
             default:
                 System.out.println("Work in progress. Please type back, logout, or quit");
                 System.out.println(SET_TEXT_COLOR_RED + "Type anything to continue >>>" + RESET_TEXT_COLOR);
                 scanner.next();
-                break;
         }
 
     }
 
-    private static String renderGame(Orientation orient){
+    private static String renderGame(Orientation orient){ // FIXME: Checkered pattern doesn't render properly on Black side
         StringBuilder strBuild = new StringBuilder();
         final int startIndex = orient == Orientation.WHITE_VIEW ? 0 : 7;
         final int increment = orient == Orientation.WHITE_VIEW ? 1 : -1;
@@ -107,4 +115,19 @@ public class ClientGamePlay {
 
     private static final String[] TOP_BOTTOM_BAR = {" a ", " b ", " c ", " d ", " e ", " f ", " g ", " h "};
     private static final String[] LEFT_RIGHT_BAR = { " 8 ", " 7 ", " 6 ", " 5 ", " 4 ", " 3 ", " 2 ", " 1 "};
+
+    static final String GAMEPLAY_HELP_STRING =
+            SET_TEXT_COLOR_GREEN +
+                    "redraw chess board" + RESET_TEXT_COLOR +  " - to redraw current chess board\n" +
+                    SET_TEXT_COLOR_GREEN +
+                    "make move <START> <END>" + RESET_TEXT_COLOR + " - to make a move\n" +
+                    SET_TEXT_COLOR_GREEN +
+                    "highlight legal moves <PIECE>" + RESET_TEXT_COLOR +
+                        " - to highlight valid move for a given piece\n" +
+                    SET_TEXT_COLOR_GREEN +
+                    "resign" + RESET_TEXT_COLOR +  " - resign (forfeit) from the game\n" +
+                    SET_TEXT_COLOR_GREEN +
+                    "leave" + RESET_TEXT_COLOR +  " - leave the game (someone can take your place)\n" +
+                    SET_TEXT_COLOR_GREEN +
+                    "help | h" + RESET_TEXT_COLOR + " - list possible commands";
 }

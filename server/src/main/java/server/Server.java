@@ -13,10 +13,12 @@ public class Server {
     private final ClearDatabase reset = new ClearDatabase();
     private final UserHandler userHandler;
     private final GameHandler gameHandler;
+    private final WSHandler wsHandler;
     public Server(){
         this.daoRecord = new DAORecord(new SqlDAO());
         this.userHandler = new UserHandler(this.daoRecord);
         this.gameHandler = new GameHandler(this.daoRecord);
+        this.wsHandler = new WSHandler();
     }
 
     public int run(int desiredPort) {
@@ -25,6 +27,7 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
+        Spark.webSocket("/ws", wsHandler); // Websocket needs to be declared prior to other endpoints
 
         Spark.delete("/db", this::reset);
 
@@ -34,6 +37,8 @@ public class Server {
         Spark.post("/game", this::createGame);
         Spark.get("/game", this::gameList);
         Spark.put("/game", this::joinGame);
+
+
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
