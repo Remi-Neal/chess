@@ -2,6 +2,9 @@ package ui.clientstates;
 import ui.ClientMain;
 import ui.EventLoop;
 import ui.responcerecord.GameDataResponse;
+
+import java.util.Scanner;
+
 import static ui.EventLoop.scanner;
 import static ui.EventLoop.eventState;
 
@@ -19,7 +22,7 @@ public class ClientGamePlay {
         String command = scanner.next();
         switch(command.toLowerCase()){
             case "highlight":
-                // TODO: Call API to get valid moves and highlight spaces accordingly
+                // TODO: Call shared valid moves method and render
                 System.out.println("Hightlighting moves---DELETE ME");
                 break;
             case "make":
@@ -41,10 +44,15 @@ public class ClientGamePlay {
                 System.out.println(GAMEPLAY_HELP_STRING);
                 break;
             default:
-                System.out.println("Work in progress. Please type back, logout, or quit");
-                System.out.println(SET_TEXT_COLOR_RED + "Type anything to continue >>>" + RESET_TEXT_COLOR);
-                scanner.next();
+                System.out.println("Unknown command: " + command);
+                System.out.println("Please use one of the following commands...");
+                System.out.println(GAMEPLAY_HELP_STRING);
+                break;
         }
+
+    }
+
+    private static void makeMove(Scanner scanner){
 
     }
 

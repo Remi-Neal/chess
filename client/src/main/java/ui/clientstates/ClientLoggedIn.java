@@ -5,6 +5,7 @@ import ui.exceptions.ResponseException;
 import ui.requestrecords.CreateGameRequest;
 import ui.requestrecords.JoinRequest;
 import ui.responcerecord.GameDataResponse;
+import websocket.commands.commandenums.PlayerTypes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -137,11 +138,13 @@ public class ClientLoggedIn {
            }
             try {
                 ClientMain.serverFacade.callJoinGame(ClientMain.authToken, new JoinRequest(color, gameID));
+            } catch (ResponseException e) {
+                System.out.println("Unable to join game. Please try again");
+            }
+            if(connectToWebsocket()) {
                 ClientMain.activeGame = gameID;
                 getGameList();
                 eventState = EventLoop.EventState.GAMEPLAY;
-            } catch (ResponseException e) {
-                System.out.println("Unable to join game. Please try again");
             }
         }
     }
@@ -159,6 +162,7 @@ public class ClientLoggedIn {
     }
 
     private static void tryObserveGame(){
+        // TODO: Add creating
         String[] line = scanner.nextLine().split(" ");
         int gameID;
         if(line.length == 1){
@@ -167,8 +171,14 @@ public class ClientLoggedIn {
         } else {
             gameID = Integer.parseInt(line[1]);
         }
-        ClientMain.activeGame = gameID;
-        eventState = EventLoop.EventState.GAMEPLAY;
+        if(connectToWebsocket(gameID, PlayerTypes.OBSERVER)) { // This function outputs text to console
+            ClientMain.activeGame = gameID;
+            eventState = EventLoop.EventState.GAMEPLAY;
+        }
+    }
+
+    private static boolean connectToWebsocket(Integer gameID, PlayerTypes playerTypes){
+        return ClientMain.websocketFacade.connectToServer(ClientMain.authToken, gameID, playerTypes);
     }
 
     private static void outputGameList(){

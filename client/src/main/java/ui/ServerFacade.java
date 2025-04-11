@@ -21,8 +21,10 @@ import java.net.URL;
 public class ServerFacade {
 
     private final String serverUrl;
+    private final String httpUrl;
 
     public ServerFacade(String url) {
+        httpUrl = "http://" + url;
         serverUrl = url;
     }
 
@@ -67,7 +69,7 @@ public class ServerFacade {
     // TODO: handle calling and error processing to api
     private <T> T makeRequest(String method, String path, String authToken, Object request, Class<T> responseClass) throws ResponseException {
         try {
-            URL url = (new URI(serverUrl + path)).toURL();
+            URL url = (new URI(httpUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);

@@ -18,7 +18,7 @@ public class Server {
         this.daoRecord = new DAORecord(new SqlDAO());
         this.userHandler = new UserHandler(this.daoRecord);
         this.gameHandler = new GameHandler(this.daoRecord);
-        this.wsHandler = new WSHandler();
+        this.wsHandler = new WSHandler(this.daoRecord);
     }
 
     public int run(int desiredPort) {

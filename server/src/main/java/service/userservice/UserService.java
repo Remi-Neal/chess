@@ -28,4 +28,13 @@ public class UserService {
     public boolean logout(AuthtokenDataType authtoken) throws DataAccessException {
         return LogoutService.logout(authDAO, authtoken);
     }
+
+    public String getUserName(String authToken) throws DataAccessException {
+        AuthtokenDataType authData = authDAO.getAuth(authToken);
+        if(authData != null) {
+            return authData.username();
+        } else {
+            return null;
+        }
+    }
 }
