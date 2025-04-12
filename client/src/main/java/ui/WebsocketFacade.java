@@ -1,6 +1,7 @@
 package ui;
 
 import chess.ChessMove;
+import com.google.gson.Gson;
 import websocket.commands.ConnectCommand;
 import websocket.commands.UserGameCommand;
 import websocket.commands.UserMoveCommand;
@@ -21,33 +22,31 @@ public class WebsocketFacade extends Endpoint {
     }
 
     public boolean connectToServer(String authToken, Integer gameID, PlayerTypes playerTypes){
-        URI uri = null;
+        URI uri;
         try {
             uri = new URI(wsUrl + "/ws");
         } catch (URISyntaxException e) {
             System.out.println("Unable to connect to server. Please try again.");
             return false;
         }
-        if(uri != null) {
-            WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            try {
-                session = container.connectToServer(this, uri);
-                writeCommand(
-                        UserGameCommand.CommandType.CONNECT,
-                        authToken,
-                        gameID,
-                        playerTypes,
-                        null
-                );
-                session.addMessageHandler(new MessageHandler.Whole<String>() {
-                    public void onMessage(String message) {
-                        System.out.println(message);
-                    }
-                });
-            }catch (Exception e){
-                System.out.println("Unable to connect to server. Please try again.");
-                return false;
-            }
+        WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+        try {
+            session = container.connectToServer(this, uri);
+            writeCommand(
+                    UserGameCommand.CommandType.CONNECT,
+                    authToken,
+                    gameID,
+                    playerTypes,
+                    null
+            );
+            session.addMessageHandler(new MessageHandler.Whole<String>() {
+                public void onMessage(String message) {
+                    System.out.println(message);
+                }
+            });
+        }catch (Exception e){
+            System.out.println("Unable to connect to server. Please try again.");
+        return false;
         }
         return true;
     }
@@ -59,12 +58,13 @@ public class WebsocketFacade extends Endpoint {
         if(playerType != null){
             // Create Connect command
             try {
-                session.getBasicRemote().sendObject(new ConnectCommand(
+                ConnectCommand command = new ConnectCommand( // FIXME: This bit throws an error "Expected BEGIN_OBJECT but was STRING at line 1 column 1 path"
                         commandType,
                         authToken,
                         gameID,
                         playerType
-                ));
+                );
+                session.getBasicRemote().sendText(new Gson().toJson(command));
             } catch (Exception e) {
                 handleErrors(e);
             }

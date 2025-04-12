@@ -78,6 +78,7 @@ public class ClientLoggedIn {
                 var response = ClientMain.serverFacade.callCreateGame(ClientMain.authToken, new CreateGameRequest(gameName));
                 System.out.println("Game Created!");
                 System.out.println("GameID: " + response.gameID());
+                getGameList();
             } catch (ResponseException e) {
                 System.out.println("An error occurred, please try again");
             }
@@ -122,26 +123,13 @@ public class ClientLoggedIn {
             return;
         }
         if(ClientMain.authToken != null){
-           if(findGame(gameID).whiteUsername() != null){
-               if(findGame(gameID).whiteUsername().equals(ClientMain.userName)){
-                   eventState = EventLoop.EventState.GAMEPLAY;
-                   ClientMain.activeGame = gameID;
-                   return;
-               }
-           }
-           if(findGame(gameID).blackUsername() != null){
-               if(findGame(gameID).blackUsername().equals(ClientMain.userName)){
-                   eventState = EventLoop.EventState.GAMEPLAY;
-                   ClientMain.activeGame = gameID;
-                   return;
-               }
-           }
             try {
                 ClientMain.serverFacade.callJoinGame(ClientMain.authToken, new JoinRequest(color, gameID));
             } catch (ResponseException e) {
                 System.out.println("Unable to join game. Please try again");
             }
-            if(connectToWebsocket()) {
+            PlayerTypes playerType = color.equalsIgnoreCase("white") ? PlayerTypes.WHITE : PlayerTypes.BLACK;
+            if(connectToWebsocket(gameID, playerType)) {
                 ClientMain.activeGame = gameID;
                 getGameList();
                 eventState = EventLoop.EventState.GAMEPLAY;

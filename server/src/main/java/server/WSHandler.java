@@ -29,6 +29,8 @@ public class WSHandler {
     public WSHandler(DAORecord daoRecord){
         this.userService = new UserService(daoRecord);
         this.gameService = new GameService(daoRecord);
+        this.wsGameMap = new HashMap<>();
+        this.wsGameMap.put(-1, new ArrayList<>());
     }
 
     @OnWebSocketMessage
@@ -84,6 +86,7 @@ public class WSHandler {
                 newUsersName,
                 connectCommand.getPlayerType(),
                 session));
+        session.getRemote().sendString("TEST RESPONSE: joined game: " + connectCommand.getGameID());
 
     }
 
