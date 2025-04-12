@@ -57,6 +57,17 @@ public class WebsocketFacade extends Endpoint {
         return true;
     }
 
+    public void leaveGame(String authToken, Integer gameID) throws IOException {
+        writeCommand(
+                UserGameCommand.CommandType.LEAVE,
+                authToken,
+                gameID,
+                null,
+                null
+        );
+        session.close();
+    }
+
     private static void readMessage(String message){
         ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
         ServerMessage.ServerMessageType type = serverMessage.getServerMessageType();
@@ -78,7 +89,7 @@ public class WebsocketFacade extends Endpoint {
     }
     private static void handleLoadGame(LoadGameMessage message){
         System.out.println("Load game called in wsFacade");
-        ClientMain.renderer.loadBoard(message.getBoard());
+        ClientMain.renderer.loadBoard(message.getBoard(), ClientMain.playerType);
     }
     private static void handleError(ErrorMessage message){
         System.out.println(message.getErrorMessage());
@@ -102,23 +113,25 @@ public class WebsocketFacade extends Endpoint {
         } else if(move != null){
             // Create move command
             try {
-                session.getBasicRemote().sendObject(new UserMoveCommand(
+                UserMoveCommand command = new UserMoveCommand(
                         commandType,
                         authToken,
                         gameID,
                         move
-                ));
+                );
+                session.getBasicRemote().sendObject( new Gson().toJson(command));
             } catch (Exception e) {
                 handleErrors(e);
             }
         } else {
             // Create User Game command
             try {
-                session.getBasicRemote().sendObject(new UserGameCommand(
+                UserGameCommand command = new UserGameCommand(
                         commandType,
                         authToken,
                         gameID
-                ));
+                );
+                session.getBasicRemote().sendText( new Gson().toJson(command) );
             } catch (Exception e) {
                 handleErrors(e);
             }

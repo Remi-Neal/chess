@@ -1,10 +1,12 @@
 package ui.clientstates;
 import ui.ClientMain;
 import ui.EventLoop;
+import ui.WebsocketFacade;
 import ui.clientstates.chessboard.RenderBoard;
 import ui.responcerecord.GameDataResponse;
 import websocket.commands.commandenums.PlayerTypes;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import static ui.EventLoop.scanner;
@@ -20,7 +22,6 @@ public class ClientGamePlay {
     }
 
     public static void gameUI(){
-        System.out.println(renderer.renderBoard(PlayerTypes.WHITE)); // FIXME: This line here should not render the board. It should render when the server sends the board and everytime the server calls to render it
         System.out.print(SET_TEXT_COLOR_RED + "[Gameplay] >>> " + RESET_TEXT_COLOR);
         String command = scanner.next();
         switch(command.toLowerCase()){
@@ -36,7 +37,7 @@ public class ClientGamePlay {
                 break; // UI redraws board after every command so breaking works the same way as redrawing
             case "leave":
                 // TODO: remove payer name from the game
-                eventState = EventLoop.EventState.LOGGEDIN;
+                leaveGame();
                 break;
             case "resign":
                 // TODO: remove player from the game and finalize the game
@@ -53,6 +54,19 @@ public class ClientGamePlay {
                 break;
         }
 
+    }
+
+    private static void resign(){
+
+    }
+
+    private static void leaveGame(){
+        try {
+            ClientMain.websocketFacade.leaveGame(ClientMain.authToken, ClientMain.activeGame);
+            eventState = EventLoop.EventState.LOGGEDIN;
+        } catch (IOException e) {
+            System.out.println("Error leaving game.");
+        }
     }
 
     private static void makeMove(Scanner scanner){

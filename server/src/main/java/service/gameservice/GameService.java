@@ -49,4 +49,24 @@ public class GameService{
         GameDataType gameData = gameDAO.findGame(gameID);
         return gameData.chessGame().getBoard();
     }
+    public void removePlayer(int gameID, String userName) throws DataAccessException {
+        GameDataType gameData = gameDAO.findGame(gameID);
+        if(gameData.blackUsername().equals(userName)){
+            gameDAO.updateGameData(gameData, new GameDataType(
+                    gameData.gameID(),
+                    gameData.whiteUsername(),
+                    null,
+                    gameData.gameName(),
+                    gameData.chessGame()
+            ));
+        } else if(gameData.whiteUsername().equals(userName)){
+            gameDAO.updateGameData(gameData, new GameDataType(
+                    gameData.gameID(),
+                    null,
+                    gameData.blackUsername(),
+                    gameData.gameName(),
+                    gameData.chessGame()
+            ));
+        }
+    }
 }

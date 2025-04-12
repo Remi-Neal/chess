@@ -5,18 +5,20 @@ import websocket.commands.commandenums.PlayerTypes;
 
 public class RenderBoard {
     private ChessBoard activeBoard;
-    public void loadBoard(ChessBoard board){
+    public void loadBoard(ChessBoard board, PlayerTypes playerType){
+        System.out.println("RenderBoard: board loaded");
         this.activeBoard = board;
-    }
-    public String renderBoard(PlayerTypes playerType){
         // TODO: Render Board
         if(activeBoard == null){
             System.out.println("No active board");
+        } else {
+            if (playerType == PlayerTypes.BLACK) {
+                // Render reversed board
+            }
+            System.out.println(activeBoard);
         }
-        StringBuilder renderedBoard = new StringBuilder(activeBoard.toString());
-        if(playerType == PlayerTypes.BLACK){
-            // Render reversed board
-        }
-        return renderedBoard.toString();
+    }
+    public String render(PlayerTypes playerTypes){
+        return "";
     }
 }

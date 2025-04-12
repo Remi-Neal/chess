@@ -131,6 +131,7 @@ public class ClientLoggedIn {
             PlayerTypes playerType = color.equalsIgnoreCase("white") ? PlayerTypes.WHITE : PlayerTypes.BLACK;
             if(connectToWebsocket(gameID, playerType)) {
                 ClientMain.activeGame = gameID;
+                ClientMain.playerType = playerType;
                 getGameList();
                 eventState = EventLoop.EventState.GAMEPLAY;
             }
@@ -161,6 +162,7 @@ public class ClientLoggedIn {
         }
         if(connectToWebsocket(gameID, PlayerTypes.OBSERVER)) { // This function outputs text to console
             ClientMain.activeGame = gameID;
+            ClientMain.playerType = PlayerTypes.OBSERVER;
             eventState = EventLoop.EventState.GAMEPLAY;
         }
     }

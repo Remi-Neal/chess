@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class GameSqlDAO implements GameDAO {
     private final String tableName;
@@ -111,7 +112,7 @@ public class GameSqlDAO implements GameDAO {
     public void updateGameData(GameDataType oldData, GameDataType newData) throws DataAccessException {
         try{
             var conn = SqlDAO.getConnection();
-            if(oldData.whiteUsername() == null && newData.whiteUsername() != null) {
+            if(!Objects.equals(oldData.whiteUsername(), newData.whiteUsername())) {
                 createUpdateWithConn(
                         conn,
                         "whiteUserName",
@@ -119,7 +120,7 @@ public class GameSqlDAO implements GameDAO {
                         newData.gameID()
                 );
             }
-            if(oldData.blackUsername() == null && newData.blackUsername() != null){
+            if(!Objects.equals(oldData.blackUsername(), newData.blackUsername())){
                 createUpdateWithConn(
                         conn,
                         "blackUserName",

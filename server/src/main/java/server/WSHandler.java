@@ -19,9 +19,7 @@ import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @WebSocket
 public class WSHandler {
@@ -73,7 +71,6 @@ public class WSHandler {
     }
 
     private void makeConnection(Session session, ConnectCommand connectCommand) throws DataAccessException, IOException {
-        System.out.println("NOTICE: makeConnection not implemented");
         String newUsersName = userService.getUserName(connectCommand.getAuthToken());
         if(newUsersName == null){
             session.getRemote().sendString("Unable to join game");
@@ -84,29 +81,43 @@ public class WSHandler {
         NotificationMessage notification = new NotificationMessage(
                 ServerMessage.ServerMessageType.NOTIFICATION,
                 "'" + newUsersName + "' has joined the game as: " + connectCommand.getPlayerType());
+        List<String> disconnected = new ArrayList<>();
         for(PlayerInfo player: wsGameMap.get(connectCommand.getGameID())){
+            if(!player.session.isOpen()){
+                disconnected.add(player.authToken);
+                continue;
+            }
             player.session.getRemote().sendString(new Gson().toJson(notification));
         }
+        removeSessions(connectCommand.getGameID(), disconnected);
         wsGameMap.get(connectCommand.getGameID()).add(new PlayerInfo(
                 connectCommand.getAuthToken(),
                 newUsersName,
                 connectCommand.getPlayerType(),
                 session));
-        notification = new NotificationMessage(
-                ServerMessage.ServerMessageType.NOTIFICATION,
-                "TEST RESPONSE: joined game"
-        );
         LoadGameMessage loadGame = new LoadGameMessage(
                 ServerMessage.ServerMessageType.LOAD_GAME,
                 gameService.getBoard(connectCommand.getGameID())
         );
         session.getRemote().sendString(new Gson().toJson(loadGame));
+        notification = new NotificationMessage(
+                ServerMessage.ServerMessageType.NOTIFICATION,
+                "TEST RESPONSE: joined game"
+        );
         session.getRemote().sendString(new Gson().toJson(notification));
-
     }
 
-    private void leaveGame(Session session, UserGameCommand userCommand){
-        System.out.println("NOTICE: leaveGame not implemented");
+    private void leaveGame(Session session, UserGameCommand userCommand) throws IOException, DataAccessException {
+        String userName = userService.getUserName(userCommand.getAuthToken());
+        String message = "'" + userName + "' left the game. GOODBYE!";
+        NotificationMessage notification = new NotificationMessage(
+                ServerMessage.ServerMessageType.NOTIFICATION,
+                message);
+        for(PlayerInfo player: wsGameMap.get(userCommand.getGameID())){
+            player.session.getRemote().sendString(new Gson().toJson(notification));
+        }
+        removeSessions(userCommand.getGameID(), Collections.singletonList(userCommand.getAuthToken()));
+        gameService.removePlayer(userCommand.getGameID(),userName);
     }
 
     private void resignFromGame(Session session, UserGameCommand userCommand){
@@ -115,5 +126,17 @@ public class WSHandler {
 
     private void addNewGame(Integer gameID){
         wsGameMap.put(gameID, new ArrayList<PlayerInfo>());
+    }
+
+    private void removeSessions(Integer gameID, List<String> authTokens) throws IOException {
+        List<PlayerInfo> updatedList = new ArrayList<>();
+        for(PlayerInfo playerInfo : wsGameMap.get(gameID)){
+            if(authTokens.contains(playerInfo.authToken)){
+                playerInfo.session.disconnect();
+                continue;
+            }
+            updatedList.add(playerInfo);
+        }
+        wsGameMap.put(gameID, updatedList);
     }
 }
