@@ -2,10 +2,16 @@ package ui;
 
 import chess.ChessMove;
 import com.google.gson.Gson;
+import ui.clientstates.chessboard.RenderBoard;
 import websocket.commands.ConnectCommand;
 import websocket.commands.UserGameCommand;
 import websocket.commands.UserMoveCommand;
 import websocket.commands.commandenums.PlayerTypes;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
+import websocket.messages.ServerMessage;
+import websocket.messages.ServerMessage.*;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -41,7 +47,7 @@ public class WebsocketFacade extends Endpoint {
             );
             session.addMessageHandler(new MessageHandler.Whole<String>() {
                 public void onMessage(String message) {
-                    System.out.println(message);
+                    readMessage(message);
                 }
             });
         }catch (Exception e){
@@ -51,7 +57,32 @@ public class WebsocketFacade extends Endpoint {
         return true;
     }
 
+    private static void readMessage(String message){
+        ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
+        ServerMessage.ServerMessageType type = serverMessage.getServerMessageType();
+        switch(type){
+            case ServerMessageType.NOTIFICATION ->{
+                handleNotification( new Gson().fromJson(message, NotificationMessage.class));
+            }
+            case ServerMessageType.LOAD_GAME -> {
+                handleLoadGame(new Gson().fromJson(message, LoadGameMessage.class));
+            }
+            case ServerMessageType.ERROR -> {
+                handleError(new Gson().fromJson(message, ErrorMessage.class));
+            }
+        }
+    }
 
+    private static void handleNotification(NotificationMessage message){
+        System.out.println(message.getNotification());
+    }
+    private static void handleLoadGame(LoadGameMessage message){
+        System.out.println("Load game called in wsFacade");
+        ClientMain.renderer.loadBoard(message.getBoard());
+    }
+    private static void handleError(ErrorMessage message){
+        System.out.println(message.getErrorMessage());
+    }
 
     private static void writeCommand(UserGameCommand.CommandType commandType, String authToken, Integer gameID,
                                      PlayerTypes playerType, ChessMove move){

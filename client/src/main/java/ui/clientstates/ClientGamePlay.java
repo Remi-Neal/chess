@@ -1,7 +1,9 @@
 package ui.clientstates;
 import ui.ClientMain;
 import ui.EventLoop;
+import ui.clientstates.chessboard.RenderBoard;
 import ui.responcerecord.GameDataResponse;
+import websocket.commands.commandenums.PlayerTypes;
 
 import java.util.Scanner;
 
@@ -11,13 +13,14 @@ import static ui.EventLoop.eventState;
 import static ui.EscapeSequences.*;
 
 public class ClientGamePlay {
+    private static RenderBoard renderer = new RenderBoard();
     // TODO: take out any excessive System.out calls
     private enum Orientation{
         BLACK_VIEW, WHITE_VIEW
     }
 
     public static void gameUI(){
-        System.out.println(renderGame(pickOrientation())); // FIXME: may need to changes when the board is rendered to accommodate move highlighting
+        System.out.println(renderer.renderBoard(PlayerTypes.WHITE)); // FIXME: This line here should not render the board. It should render when the server sends the board and everytime the server calls to render it
         System.out.print(SET_TEXT_COLOR_RED + "[Gameplay] >>> " + RESET_TEXT_COLOR);
         String command = scanner.next();
         switch(command.toLowerCase()){

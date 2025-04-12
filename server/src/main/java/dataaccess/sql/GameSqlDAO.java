@@ -1,5 +1,6 @@
 package dataaccess.sql;
 
+import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.SqlDAO;
 import dataaccess.interfaces.GameDAO;
@@ -23,7 +24,8 @@ public class GameSqlDAO implements GameDAO {
                     resultSet.getInt("gameId"),
                     resultSet.getString("whiteUserName"),
                     resultSet.getString("blackUserName"),
-                    resultSet.getString("gameName")
+                    resultSet.getString("gameName"),
+                    new ChessGame()
             );
         } catch(SQLException e){
             throw new DataAccessException(e.getMessage());
@@ -63,7 +65,7 @@ public class GameSqlDAO implements GameDAO {
                 statement.setString(2, gameData.whiteUsername());
                 statement.setString(3, gameData.blackUsername());
                 statement.setString(4, gameData.gameName());
-                String chessGameJSON = new Gson().toJson(gameData.getChessGame());
+                String chessGameJSON = new Gson().toJson(gameData.chessGame());
                 statement.setString(5, chessGameJSON);
                 statement.executeUpdate();
             }
@@ -135,15 +137,15 @@ public class GameSqlDAO implements GameDAO {
                     );
                 }
             }
-            if(oldData.getChessGame() == null) {
-                if (newData.getChessGame() == null) {
+            if(oldData.chessGame() == null) {
+                if (newData.chessGame() == null) {
                     return;
                 }
-                if (oldData.getChessGame().equals(newData.getChessGame())) { return; }
+                if (oldData.chessGame().equals(newData.chessGame())) { return; }
                 createUpdateWithConn(
                         conn,
                         "chessGame",
-                        new Gson().toJson(newData.getChessGame()),
+                        new Gson().toJson(newData.chessGame()),
                         newData.gameID()
                 );
             }

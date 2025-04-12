@@ -1,5 +1,6 @@
 package ui;
 
+import ui.clientstates.chessboard.RenderBoard;
 import ui.responcerecord.GameDataResponse;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ public class ClientMain {
     public static String userName;
     public static String authToken;
     public static int activeGame;
+    public static RenderBoard renderer;
     public static ArrayList<GameDataResponse> currGameList;
 
     public ClientMain(int portNum){

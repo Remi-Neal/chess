@@ -1,5 +1,6 @@
 package service.gameservice;
 
+import chess.ChessBoard;
 import dataaccess.DataAccessException;
 import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.GameDAO;
@@ -43,5 +44,9 @@ public class GameService{
             throw new BadRequest();
         }
 
+    }
+    public ChessBoard getBoard(int gameID) throws DataAccessException {
+        GameDataType gameData = gameDAO.findGame(gameID);
+        return gameData.chessGame().getBoard();
     }
 }

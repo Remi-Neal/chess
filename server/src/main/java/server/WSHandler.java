@@ -1,5 +1,6 @@
 package server;
 
+import chess.ChessBoard;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import datatypes.GameDataType;
@@ -13,6 +14,9 @@ import websocket.commands.UserMoveCommand;
 import service.gameservice.GameService;
 import service.userservice.UserService;
 import websocket.commands.commandenums.PlayerTypes;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
+import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -77,16 +81,27 @@ public class WSHandler {
         if(!wsGameMap.containsKey(connectCommand.getGameID())){
             addNewGame(connectCommand.getGameID());
         }
+        NotificationMessage notification = new NotificationMessage(
+                ServerMessage.ServerMessageType.NOTIFICATION,
+                "'" + newUsersName + "' has joined the game as: " + connectCommand.getPlayerType());
         for(PlayerInfo player: wsGameMap.get(connectCommand.getGameID())){
-            player.session.getRemote().sendString(
-                    newUsersName + " has joined the game as: " + connectCommand.getPlayerType());
+            player.session.getRemote().sendString(new Gson().toJson(notification));
         }
         wsGameMap.get(connectCommand.getGameID()).add(new PlayerInfo(
                 connectCommand.getAuthToken(),
                 newUsersName,
                 connectCommand.getPlayerType(),
                 session));
-        session.getRemote().sendString("TEST RESPONSE: joined game: " + connectCommand.getGameID());
+        notification = new NotificationMessage(
+                ServerMessage.ServerMessageType.NOTIFICATION,
+                "TEST RESPONSE: joined game"
+        );
+        LoadGameMessage loadGame = new LoadGameMessage(
+                ServerMessage.ServerMessageType.LOAD_GAME,
+                gameService.getBoard(connectCommand.getGameID())
+        );
+        session.getRemote().sendString(new Gson().toJson(loadGame));
+        session.getRemote().sendString(new Gson().toJson(notification));
 
     }
 
