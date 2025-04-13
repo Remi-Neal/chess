@@ -14,6 +14,7 @@ import websocket.commands.UserMoveCommand;
 import service.gameservice.GameService;
 import service.userservice.UserService;
 import websocket.commands.commandenums.PlayerTypes;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
@@ -51,19 +52,20 @@ public class WSHandler {
                 break;
             }
             case LEAVE -> {
-                leaveGame(session, message);
+                leaveGame(message);
                 // TODO: Implement leave
                 break;
             }
             case RESIGN -> {
-                resignFromGame(session, message);
+                resignFromGame(message);
                 // TODO: Implement resign
                 break;
             }
-            default -> session.getRemote().sendString("ERROR: Unknown command");
+            default -> session.getRemote().sendString(new Gson().toJson(new ErrorMessage(
+                    ServerMessage.ServerMessageType.ERROR,
+                    "ERROR: Unknown command"
+            )));
         }
-        System.out.printf("Received: %s", message);
-        session.getRemote().sendString("WebSocket response: " + message);
     }
 
     private void makeMove(Session session, UserMoveCommand moveCommand){
@@ -73,7 +75,10 @@ public class WSHandler {
     private void makeConnection(Session session, ConnectCommand connectCommand) throws DataAccessException, IOException {
         String newUsersName = userService.getUserName(connectCommand.getAuthToken());
         if(newUsersName == null){
-            session.getRemote().sendString("Unable to join game");
+            session.getRemote().sendString(new Gson().toJson(new ErrorMessage(
+                    ServerMessage.ServerMessageType.ERROR,
+                    "Error: Unable to join game"
+            )));
         }
         if(!wsGameMap.containsKey(connectCommand.getGameID())){
             addNewGame(connectCommand.getGameID());
@@ -102,7 +107,7 @@ public class WSHandler {
         session.getRemote().sendString(new Gson().toJson(loadGame));
     }
 
-    private void leaveGame(Session session, UserGameCommand userCommand) throws IOException, DataAccessException {
+    private void leaveGame(UserGameCommand userCommand) throws IOException, DataAccessException {
         String userName = userService.getUserName(userCommand.getAuthToken());
         String message = "'" + userName + "' left the game. GOODBYE!";
         NotificationMessage notification = new NotificationMessage(
@@ -115,12 +120,22 @@ public class WSHandler {
         gameService.removePlayer(userCommand.getGameID(),userName);
     }
 
-    private void resignFromGame(Session session, UserGameCommand userCommand){
-        System.out.println("NOTICE: resignFromGame not implemented");
+    private void resignFromGame(UserGameCommand userCommand) throws DataAccessException, IOException {
+        String userName = userService.getUserName(userCommand.getAuthToken());
+        String message = "'" + userName + "' resigned.";
+        NotificationMessage notification = new NotificationMessage(
+                ServerMessage.ServerMessageType.NOTIFICATION,
+                message);
+        for(PlayerInfo player: wsGameMap.get(userCommand.getGameID())){
+            player.session.getRemote().sendString(new Gson().toJson(notification));
+        }
+        removeSessions(userCommand.getGameID(), Collections.singletonList(userCommand.getAuthToken()));
+        gameService.removePlayer(userCommand.getGameID(),userName);
+        gameService.closeGame(userCommand.getGameID());
     }
 
     private void addNewGame(Integer gameID){
-        wsGameMap.put(gameID, new ArrayList<PlayerInfo>());
+        wsGameMap.put(gameID, new ArrayList<>());
     }
 
     private void removeSessions(Integer gameID, List<String> authTokens) throws IOException {

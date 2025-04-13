@@ -1,4 +1,4 @@
-package ui.clientstates.chessboard;
+package ui.renderingtools;
 
 import chess.ChessBoard;
 import websocket.commands.commandenums.PlayerTypes;
@@ -6,7 +6,6 @@ import websocket.commands.commandenums.PlayerTypes;
 public class Renderer {
     private ChessBoard activeBoard;
     public void loadBoard(ChessBoard board, PlayerTypes playerType){
-        System.out.println("RenderBoard: board loaded");
         this.activeBoard = board;
         // TODO: Render Board
         if(activeBoard == null){

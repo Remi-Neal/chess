@@ -46,7 +46,8 @@ public class SqlDAO implements DAO {
             try(var statement = conn.prepareStatement(
                     "CREATE TABLE IF NOT EXISTS %s ".formatted(GAME_TABLE_NAME) +
                             "(gameId INT NOT NULL, whiteUserName VARCHAR(255), " +
-                            "blackUserName VARCHAR(225), gameName VARCHAR(225) NOT NULL, chessGame text NOT NULL);"
+                            "blackUserName VARCHAR(225), gameName VARCHAR(225) NOT NULL, chessGame text NOT NULL," +
+                            "active BOOL NOT NULL);"
             )){
                 statement.executeUpdate();
             }

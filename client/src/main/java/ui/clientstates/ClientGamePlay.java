@@ -1,10 +1,8 @@
 package ui.clientstates;
 import ui.ClientMain;
 import ui.EventLoop;
-import ui.WebsocketFacade;
-import ui.clientstates.chessboard.Renderer;
+import ui.renderingtools.Renderer;
 import ui.responcerecord.GameDataResponse;
-import websocket.commands.commandenums.PlayerTypes;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -41,7 +39,7 @@ public class ClientGamePlay {
                 break;
             case "resign":
                 // TODO: remove player from the game and finalize the game
-                eventState = EventLoop.EventState.LOGGEDIN;
+                resignFromGame();
                 break;
             case "help":
             case "h":
@@ -56,8 +54,14 @@ public class ClientGamePlay {
 
     }
 
-    private static void resign(){
-
+    private static void resignFromGame(){
+        try {
+            ClientMain.websocketFacade.resignFromGame(ClientMain.authToken, ClientMain.activeGame);
+            eventState = EventLoop.EventState.LOGGEDIN;
+            ClientMain.activeGame = null;
+        } catch (IOException e) {
+            System.out.println("Error resigning from game.");
+        }
     }
 
     private static void leaveGame(){

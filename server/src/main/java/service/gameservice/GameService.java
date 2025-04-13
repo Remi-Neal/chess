@@ -58,7 +58,8 @@ public class GameService{
                     gameData.whiteUsername(),
                     null,
                     gameData.gameName(),
-                    gameData.chessGame()
+                    gameData.chessGame(),
+                    true
             ));
         } else if(Objects.equals(gameData.whiteUsername(), userName)){
             gameDAO.updateGameData(gameData, new GameDataType(
@@ -66,8 +67,20 @@ public class GameService{
                     null,
                     gameData.blackUsername(),
                     gameData.gameName(),
-                    gameData.chessGame()
+                    gameData.chessGame(),
+                    true
             ));
         }
+    }
+    public void closeGame(int gameID) throws DataAccessException {
+        GameDataType oldDate = gameDAO.findGame(gameID);
+        gameDAO.updateGameData(oldDate, new GameDataType(
+                oldDate.gameID(),
+                oldDate.whiteUsername(),
+                oldDate.blackUsername(),
+                oldDate.gameName(),
+                oldDate.chessGame(),
+                false
+        ));
     }
 }

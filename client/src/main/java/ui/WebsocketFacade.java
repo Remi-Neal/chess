@@ -2,7 +2,6 @@ package ui;
 
 import chess.ChessMove;
 import com.google.gson.Gson;
-import ui.clientstates.chessboard.Renderer;
 import websocket.commands.ConnectCommand;
 import websocket.commands.UserGameCommand;
 import websocket.commands.UserMoveCommand;
@@ -32,7 +31,7 @@ public class WebsocketFacade extends Endpoint {
         try {
             uri = new URI(wsUrl + "/ws");
         } catch (URISyntaxException e) {
-            System.out.println("Unable to connect to server. Please try again.");
+            System.out.println("Error: Unable to connect to server. Please try again.");
             return false;
         }
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
@@ -51,7 +50,7 @@ public class WebsocketFacade extends Endpoint {
                 }
             });
         }catch (Exception e){
-            System.out.println("Unable to connect to server. Please try again.");
+            System.out.println("Error: Unable to connect to server. Please try again.");
         return false;
         }
         return true;
@@ -60,6 +59,17 @@ public class WebsocketFacade extends Endpoint {
     public void leaveGame(String authToken, Integer gameID) throws IOException {
         writeCommand(
                 UserGameCommand.CommandType.LEAVE,
+                authToken,
+                gameID,
+                null,
+                null
+        );
+        session.close();
+    }
+
+    public void resignFromGame(String authToken, Integer gameID) throws IOException {
+        writeCommand(
+                UserGameCommand.CommandType.RESIGN,
                 authToken,
                 gameID,
                 null,
@@ -88,7 +98,6 @@ public class WebsocketFacade extends Endpoint {
         System.out.println(message.getNotification());
     }
     private static void handleLoadGame(LoadGameMessage message){
-        System.out.println("Load game called in wsFacade");
         ClientMain.renderer.loadBoard(message.getBoard(), ClientMain.playerType);
     }
     private static void handleError(ErrorMessage message){
@@ -100,7 +109,7 @@ public class WebsocketFacade extends Endpoint {
         if(playerType != null){
             // Create Connect command
             try {
-                ConnectCommand command = new ConnectCommand( // FIXME: This bit throws an error "Expected BEGIN_OBJECT but was STRING at line 1 column 1 path"
+                ConnectCommand command = new ConnectCommand(
                         commandType,
                         authToken,
                         gameID,

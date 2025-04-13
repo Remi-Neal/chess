@@ -26,7 +26,8 @@ public class GameSqlDAO implements GameDAO {
                     resultSet.getString("whiteUserName"),
                     resultSet.getString("blackUserName"),
                     resultSet.getString("gameName"),
-                    new ChessGame()
+                    new ChessGame(),
+                    true
             );
         } catch(SQLException e){
             throw new DataAccessException(e.getMessage());
@@ -60,7 +61,7 @@ public class GameSqlDAO implements GameDAO {
             var conn = SqlDAO.getConnection();
             try(var statement = conn.prepareStatement(
                     "INSERT INTO %s ".formatted(tableName) +
-                            "(gameId, whiteUserName, blackUserName, gameName, chessGame) VALUES (?,?,?,?,?)"
+                            "(gameId, whiteUserName, blackUserName, gameName, chessGame, active) VALUES (?,?,?,?,?,?)"
             )){
                 statement.setInt(1,gameData.gameID());
                 statement.setString(2, gameData.whiteUsername());
@@ -68,6 +69,7 @@ public class GameSqlDAO implements GameDAO {
                 statement.setString(4, gameData.gameName());
                 String chessGameJSON = new Gson().toJson(gameData.chessGame());
                 statement.setString(5, chessGameJSON);
+                statement.setBoolean(6, true);
                 statement.executeUpdate();
             }
         } catch(SQLException e) {
@@ -96,11 +98,15 @@ public class GameSqlDAO implements GameDAO {
         return gameData;
     }
 
-    private void createUpdateWithConn(Connection conn, String column, String updatedData, int id) throws DataAccessException {
+    private <T> void createUpdateWithConn(Connection conn, String column, T updatedData, int id) throws DataAccessException {
         try(var statement = conn.prepareStatement(
                 "UPDATE %s SET %s=? WHERE gameId=?".formatted(tableName, column)
         )){
-            statement.setString(1,updatedData);
+            if(updatedData instanceof Boolean){
+                statement.setBoolean(1, (Boolean) updatedData);
+            } else {
+                statement.setString(1, (String) updatedData);
+            }
             statement.setInt(2,id);
             statement.executeUpdate();
         } catch(SQLException e){
@@ -147,6 +153,14 @@ public class GameSqlDAO implements GameDAO {
                         conn,
                         "chessGame",
                         new Gson().toJson(newData.chessGame()),
+                        newData.gameID()
+                );
+            }
+            if(!newData.active()){
+                createUpdateWithConn(
+                        conn,
+                        "active",
+                        false,
                         newData.gameID()
                 );
             }

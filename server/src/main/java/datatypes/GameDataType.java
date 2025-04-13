@@ -3,7 +3,7 @@ package datatypes;
 import chess.ChessGame;
 
 public record GameDataType(
-        int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame chessGame) {
+        int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame chessGame, Boolean active) {
 
     @Override
     public String toString(){
