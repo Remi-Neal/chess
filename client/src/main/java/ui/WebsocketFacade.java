@@ -2,7 +2,7 @@ package ui;
 
 import chess.ChessMove;
 import com.google.gson.Gson;
-import ui.clientstates.chessboard.RenderBoard;
+import ui.clientstates.chessboard.Renderer;
 import websocket.commands.ConnectCommand;
 import websocket.commands.UserGameCommand;
 import websocket.commands.UserMoveCommand;

@@ -1,6 +1,6 @@
 package ui;
 
-import ui.clientstates.chessboard.RenderBoard;
+import ui.clientstates.chessboard.Renderer;
 import ui.responcerecord.GameDataResponse;
 import websocket.commands.commandenums.PlayerTypes;
 
@@ -14,7 +14,7 @@ public class ClientMain {
     public static String authToken;
     public static PlayerTypes playerType;
     public static int activeGame;
-    public static RenderBoard renderer;
+    public static Renderer renderer;
     public static ArrayList<GameDataResponse> currGameList;
 
     public ClientMain(int portNum){
@@ -29,7 +29,7 @@ public class ClientMain {
         url.append(port);
         serverFacade = new ServerFacade(url.toString());
         websocketFacade = new WebsocketFacade(url.toString());
-        renderer = new RenderBoard();
+        renderer = new Renderer();
         var eventLoop = new EventLoop();
         eventLoop.run();
     }

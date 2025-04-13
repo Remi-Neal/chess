@@ -100,11 +100,6 @@ public class WSHandler {
                 gameService.getBoard(connectCommand.getGameID())
         );
         session.getRemote().sendString(new Gson().toJson(loadGame));
-        notification = new NotificationMessage(
-                ServerMessage.ServerMessageType.NOTIFICATION,
-                "TEST RESPONSE: joined game"
-        );
-        session.getRemote().sendString(new Gson().toJson(notification));
     }
 
     private void leaveGame(Session session, UserGameCommand userCommand) throws IOException, DataAccessException {

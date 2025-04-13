@@ -2,7 +2,7 @@ package ui.clientstates;
 import ui.ClientMain;
 import ui.EventLoop;
 import ui.WebsocketFacade;
-import ui.clientstates.chessboard.RenderBoard;
+import ui.clientstates.chessboard.Renderer;
 import ui.responcerecord.GameDataResponse;
 import websocket.commands.commandenums.PlayerTypes;
 
@@ -15,7 +15,7 @@ import static ui.EventLoop.eventState;
 import static ui.EscapeSequences.*;
 
 public class ClientGamePlay {
-    private static RenderBoard renderer = new RenderBoard();
+    private static Renderer renderer = new Renderer();
     // TODO: take out any excessive System.out calls
     private enum Orientation{
         BLACK_VIEW, WHITE_VIEW

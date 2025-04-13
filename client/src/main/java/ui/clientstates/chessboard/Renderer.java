@@ -3,7 +3,7 @@ package ui.clientstates.chessboard;
 import chess.ChessBoard;
 import websocket.commands.commandenums.PlayerTypes;
 
-public class RenderBoard {
+public class Renderer {
     private ChessBoard activeBoard;
     public void loadBoard(ChessBoard board, PlayerTypes playerType){
         System.out.println("RenderBoard: board loaded");
@@ -15,10 +15,13 @@ public class RenderBoard {
             if (playerType == PlayerTypes.BLACK) {
                 // Render reversed board
             }
-            System.out.println(activeBoard);
+            System.out.println("\r" + activeBoard);
         }
     }
-    public String render(PlayerTypes playerTypes){
+    public String render(){
+        return "";
+    }
+    public String renderBoard(PlayerTypes playerTypes){
         return "";
     }
 }

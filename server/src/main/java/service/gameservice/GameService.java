@@ -12,6 +12,7 @@ import service.exceptions.Unauthorized;
 import service.userservice.methods.Authenticator;
 
 import java.util.List;
+import java.util.Objects;
 
 public class GameService{
     private final GameDAO gameDAO;
@@ -51,7 +52,7 @@ public class GameService{
     }
     public void removePlayer(int gameID, String userName) throws DataAccessException {
         GameDataType gameData = gameDAO.findGame(gameID);
-        if(gameData.blackUsername().equals(userName)){
+        if(Objects.equals(gameData.blackUsername(), userName)){
             gameDAO.updateGameData(gameData, new GameDataType(
                     gameData.gameID(),
                     gameData.whiteUsername(),
@@ -59,7 +60,7 @@ public class GameService{
                     gameData.gameName(),
                     gameData.chessGame()
             ));
-        } else if(gameData.whiteUsername().equals(userName)){
+        } else if(Objects.equals(gameData.whiteUsername(), userName)){
             gameDAO.updateGameData(gameData, new GameDataType(
                     gameData.gameID(),
                     null,
