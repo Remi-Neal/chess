@@ -125,15 +125,15 @@ public class ClientLoggedIn {
         if(ClientMain.authToken != null){
             try {
                 ClientMain.serverFacade.callJoinGame(ClientMain.authToken, new JoinRequest(color, gameID));
+                PlayerTypes playerType = color.equalsIgnoreCase("white") ? PlayerTypes.WHITE : PlayerTypes.BLACK;
+                if(connectToWebsocket(gameID, playerType)) {
+                    ClientMain.activeGame = gameID;
+                    ClientMain.playerType = playerType;
+                    getGameList();
+                    eventState = EventLoop.EventState.GAMEPLAY;
+                }
             } catch (ResponseException e) {
                 System.out.println("Unable to join game. Please try again");
-            }
-            PlayerTypes playerType = color.equalsIgnoreCase("white") ? PlayerTypes.WHITE : PlayerTypes.BLACK;
-            if(connectToWebsocket(gameID, playerType)) {
-                ClientMain.activeGame = gameID;
-                ClientMain.playerType = playerType;
-                getGameList();
-                eventState = EventLoop.EventState.GAMEPLAY;
             }
         }
     }

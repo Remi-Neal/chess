@@ -130,7 +130,6 @@ public class WSHandler {
             player.session.getRemote().sendString(new Gson().toJson(notification));
         }
         removeSessions(userCommand.getGameID(), Collections.singletonList(userCommand.getAuthToken()));
-        gameService.removePlayer(userCommand.getGameID(),userName);
         gameService.closeGame(userCommand.getGameID());
     }
 

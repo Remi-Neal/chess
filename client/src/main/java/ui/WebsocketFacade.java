@@ -11,6 +11,7 @@ import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 import websocket.messages.ServerMessage.*;
+import static ui.renderingtools.Renderer.render;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -95,13 +96,13 @@ public class WebsocketFacade extends Endpoint {
     }
 
     private static void handleNotification(NotificationMessage message){
-        System.out.println(message.getNotification());
+        render(message.getNotification());
     }
     private static void handleLoadGame(LoadGameMessage message){
         ClientMain.renderer.loadBoard(message.getBoard(), ClientMain.playerType);
     }
     private static void handleError(ErrorMessage message){
-        System.out.println(message.getErrorMessage());
+        render(message.getErrorMessage());
     }
 
     private static void writeCommand(UserGameCommand.CommandType commandType, String authToken, Integer gameID,
