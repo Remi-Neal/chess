@@ -18,14 +18,14 @@ import java.util.List;
  */
 public class ChessGame {
     private TeamColor teamTurn;
-    private ChessBoard gameBoard;
+    private ChessBoard game;
     private final ThreateningPieceFinder threatPieceFinder;
     private final FindPiecePosition findPiece;
     public ChessGame() {
         this.teamTurn = TeamColor.WHITE;
-        this.gameBoard = new ChessBoard();
-        this.gameBoard.resetBoard();
-        this.threatPieceFinder = new ThreateningPieceFinder(this.gameBoard);
+        this.game = new ChessBoard();
+        this.game.resetBoard();
+        this.threatPieceFinder = new ThreateningPieceFinder(this.game);
         this.findPiece = new FindPiecePosition();
     }
 
@@ -61,11 +61,11 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        ChessPiece selectedPiece = this.gameBoard.getPiece(startPosition);
-        List<ChessMove> moves = (List<ChessMove>) selectedPiece.pieceMoves(this.gameBoard, startPosition);
+        ChessPiece selectedPiece = this.game.getPiece(startPosition);
+        List<ChessMove> moves = (List<ChessMove>) selectedPiece.pieceMoves(this.game, startPosition);
         List<ChessMove> valid = new ArrayList<>();
         for(ChessMove move : moves){
-            ChessBoard newBoard = makeNewBoard(move,this.gameBoard);
+            ChessBoard newBoard = makeNewBoard(move,this.game);
             if(selectedPiece.getPieceType() == ChessPiece.PieceType.KING){
                 if(!threatPieceFinder.isThreatened(
                         selectedPiece.getTeamColor(),
@@ -91,7 +91,7 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void checkInvalidMoves(ChessMove move) throws InvalidMoveException{
-        ChessPiece movedPiece = this.gameBoard.getPiece(move.getStartPosition());
+        ChessPiece movedPiece = this.game.getPiece(move.getStartPosition());
         if(movedPiece == null){ throw new InvalidMoveException(); }
         if(teamTurn != movedPiece.getTeamColor()){ throw new InvalidMoveException(); }
         Collection<ChessMove> valid = validMoves(move.getStartPosition());
@@ -126,7 +126,7 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         checkInvalidMoves(move);
 
-        setBoard(makeNewBoard(move, this.gameBoard));
+        setBoard(makeNewBoard(move, this.game));
         this.teamTurn = this.teamTurn == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE;
     }
 
@@ -140,7 +140,7 @@ public class ChessGame {
         return !threatPieceFinder.findPieces(
                 teamColor,
                 findPiece.findPiece(
-                        this.gameBoard,
+                        this.game,
                         teamColor,
                         ChessPiece.PieceType.KING)).isEmpty();
     }
@@ -152,24 +152,24 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        ChessPosition kingPosition = findPiece.findPiece(this.gameBoard,teamColor, ChessPiece.PieceType.KING);
+        ChessPosition kingPosition = findPiece.findPiece(this.game,teamColor, ChessPiece.PieceType.KING);
         List<ChessPosition> threateningPieces =
                 threatPieceFinder.findPieces(
                         teamColor,
                         kingPosition,
-                        this.gameBoard);
+                        this.game);
         if(threateningPieces.isEmpty()){ return false; }// Not in check
 
         //Single threatening piece is threatened
         if(threateningPieces.size() == 1) {
             TeamColor opponentColor = teamColor == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE;
             List<ChessPosition> captureOutOfCheck =
-                    threatPieceFinder.findPieces(opponentColor, threateningPieces.getFirst(),this.gameBoard);
+                    threatPieceFinder.findPieces(opponentColor, threateningPieces.getFirst(),this.game);
 
             // Capture threatening piece
             if(captureOutOfCheck.size() == 1){
-                if(this.gameBoard.getPiece(captureOutOfCheck.getFirst()).getPieceType() == ChessPiece.PieceType.KING){
-                    if(threatPieceFinder.findPieces(teamColor,captureOutOfCheck.getFirst(),this.gameBoard).isEmpty()){
+                if(this.game.getPiece(captureOutOfCheck.getFirst()).getPieceType() == ChessPiece.PieceType.KING){
+                    if(threatPieceFinder.findPieces(teamColor,captureOutOfCheck.getFirst(),this.game).isEmpty()){
                         return false;
                     }
                 }
@@ -181,10 +181,10 @@ public class ChessGame {
             FindInterceptingMoves calcBlock = new FindInterceptingMoves();
             List<ChessMove> blockingMoves = calcBlock.findMoves(
                     threateningPieces.getFirst(),
-                    kingPosition,this.gameBoard);
+                    kingPosition,this.game);
             if(blockingMoves != null) {
                 for(ChessMove move : blockingMoves){
-                    ChessBoard newBoard = makeNewBoard(move, this.gameBoard);
+                    ChessBoard newBoard = makeNewBoard(move, this.game);
                     if(threatPieceFinder.findPieces(
                             teamColor,
                             findPiece.findPiece(newBoard,teamColor, ChessPiece.PieceType.KING),
@@ -199,10 +199,10 @@ public class ChessGame {
         // Test if king can move out of check
         BasicMovesCalc kingCalc = new KingMovesCalc();
         Collection<ChessMove> kingMoveOutOfCheck = kingCalc.getMoves(
-                this.gameBoard,findPiece.findPiece(this.gameBoard,teamColor, ChessPiece.PieceType.KING));
+                this.game,findPiece.findPiece(this.game,teamColor, ChessPiece.PieceType.KING));
         Collection<ChessBoard> testBoards = new ArrayList<>();
         for(ChessMove move : kingMoveOutOfCheck){
-            testBoards.add(makeNewBoard(move, this.gameBoard));
+            testBoards.add(makeNewBoard(move, this.game));
         }
         for(ChessBoard board : testBoards){
             if(threatPieceFinder.findPieces(
@@ -214,19 +214,19 @@ public class ChessGame {
     }
 
     private boolean checkSquareForLegalMove(TeamColor teamColor, int i, int j){
-        ChessPiece piece = gameBoard.getPiece(new ChessPosition(i,j));
+        ChessPiece piece = game.getPiece(new ChessPosition(i,j));
         if(piece == null){ return true; }
         if(piece.getTeamColor() != teamColor){ return true; }
 
         FindInterceptingMoves getCalc = new FindInterceptingMoves();
         BasicMovesCalc calc = getCalc.getCalc(piece);
-        List<ChessMove> moves = calc.getMoves(this.gameBoard, new ChessPosition(i,j));
+        List<ChessMove> moves = calc.getMoves(this.game, new ChessPosition(i,j));
         if(moves.isEmpty()){ return true; }
 
         // If King is it in check after moving
         if(piece.getPieceType() == ChessPiece.PieceType.KING){
             for(ChessMove move : moves){
-                ChessBoard newBoard = makeNewBoard(move, this.gameBoard);
+                ChessBoard newBoard = makeNewBoard(move, this.game);
                 if(threatPieceFinder.findPieces(teamColor,move.getEndPosition(),newBoard).isEmpty()){
                     return false;
                 }
@@ -235,7 +235,7 @@ public class ChessGame {
         }
 
         for(ChessMove move : moves){
-            ChessBoard newBoard = makeNewBoard(move, this.gameBoard);
+            ChessBoard newBoard = makeNewBoard(move, this.game);
             if(!threatPieceFinder.findPieces(
                     teamColor,
                     findPiece.findPiece(newBoard, teamColor, ChessPiece.PieceType.KING),
@@ -270,7 +270,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        this.gameBoard = board;
+        this.game = board;
         this.threatPieceFinder.setGameBoard(board);
     }
 
@@ -280,6 +280,6 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        return gameBoard;
+        return game;
     }
 }

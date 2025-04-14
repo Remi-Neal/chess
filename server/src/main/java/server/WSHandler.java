@@ -24,7 +24,7 @@ import java.util.*;
 
 @WebSocket
 public class WSHandler {
-    private record PlayerInfo(String authToken, String userName, PlayerTypes playerType, Session session){}
+    private record PlayerInfo(String authToken, String userName, Session session){}
     private HashMap<Integer, List<PlayerInfo>> wsGameMap;
     private UserService userService;
     private GameService gameService;
@@ -46,7 +46,7 @@ public class WSHandler {
                 break;
             }
             case CONNECT -> {
-                makeConnection(session, new Gson().fromJson(json, ConnectCommand.class));
+                makeConnection(session, new Gson().fromJson(json, UserGameCommand.class));
 
                 // TODO: Implement connect
                 break;
@@ -71,21 +71,27 @@ public class WSHandler {
     private void makeMove(Session session, UserMoveCommand moveCommand){
         System.out.println("NOTICE: makeMove not implemented");
     }
-
-    private void makeConnection(Session session, ConnectCommand connectCommand) throws DataAccessException, IOException {
+    private boolean badCommand(UserGameCommand command){
+        return !(
+                gameService.validateGameID(command.getGameID()) &
+                        userService.validateAuth(command.getAuthToken())
+                );
+    }
+    private void makeConnection(Session session, UserGameCommand connectCommand) throws DataAccessException, IOException {
         String newUsersName = userService.getUserName(connectCommand.getAuthToken());
-        if(newUsersName == null){
+        if(badCommand(connectCommand)){
             session.getRemote().sendString(new Gson().toJson(new ErrorMessage(
                     ServerMessage.ServerMessageType.ERROR,
                     "Error: Unable to join game"
             )));
+            return;
         }
         if(!wsGameMap.containsKey(connectCommand.getGameID())){
             addNewGame(connectCommand.getGameID());
         }
         NotificationMessage notification = new NotificationMessage(
                 ServerMessage.ServerMessageType.NOTIFICATION,
-                "'" + newUsersName + "' has joined the game as: " + connectCommand.getPlayerType());
+                "'" + newUsersName + "' has joined the game");
         List<String> disconnected = new ArrayList<>();
         for(PlayerInfo player: wsGameMap.get(connectCommand.getGameID())){
             if(!player.session.isOpen()){
@@ -98,8 +104,13 @@ public class WSHandler {
         wsGameMap.get(connectCommand.getGameID()).add(new PlayerInfo(
                 connectCommand.getAuthToken(),
                 newUsersName,
-                connectCommand.getPlayerType(),
                 session));
+        if(connectCommand.getGameID() == null){
+            session.getRemote().sendString(new Gson().toJson(new ErrorMessage(
+                    ServerMessage.ServerMessageType.ERROR,
+                    "Error: no game selected"
+            )));
+        }
         LoadGameMessage loadGame = new LoadGameMessage(
                 ServerMessage.ServerMessageType.LOAD_GAME,
                 gameService.getBoard(connectCommand.getGameID())
@@ -109,6 +120,8 @@ public class WSHandler {
 
     private void leaveGame(UserGameCommand userCommand) throws IOException, DataAccessException {
         String userName = userService.getUserName(userCommand.getAuthToken());
+        removeSessions(userCommand.getGameID(), Collections.singletonList(userCommand.getAuthToken()));
+        gameService.removePlayer(userCommand.getGameID(),userName);
         String message = "'" + userName + "' left the game. GOODBYE!";
         NotificationMessage notification = new NotificationMessage(
                 ServerMessage.ServerMessageType.NOTIFICATION,
@@ -116,8 +129,6 @@ public class WSHandler {
         for(PlayerInfo player: wsGameMap.get(userCommand.getGameID())){
             player.session.getRemote().sendString(new Gson().toJson(notification));
         }
-        removeSessions(userCommand.getGameID(), Collections.singletonList(userCommand.getAuthToken()));
-        gameService.removePlayer(userCommand.getGameID(),userName);
     }
 
     private void resignFromGame(UserGameCommand userCommand) throws DataAccessException, IOException {

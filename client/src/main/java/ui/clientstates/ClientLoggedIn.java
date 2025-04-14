@@ -126,7 +126,7 @@ public class ClientLoggedIn {
             try {
                 ClientMain.serverFacade.callJoinGame(ClientMain.authToken, new JoinRequest(color, gameID));
                 PlayerTypes playerType = color.equalsIgnoreCase("white") ? PlayerTypes.WHITE : PlayerTypes.BLACK;
-                if(connectToWebsocket(gameID, playerType)) {
+                if(connectToWebsocket(gameID)) {
                     ClientMain.activeGame = gameID;
                     ClientMain.playerType = playerType;
                     getGameList();
@@ -134,6 +134,13 @@ public class ClientLoggedIn {
                 }
             } catch (ResponseException e) {
                 System.out.println("Unable to join game. Please try again");
+            }
+            PlayerTypes playerType = color.equalsIgnoreCase("white") ? PlayerTypes.WHITE : PlayerTypes.BLACK;
+            if(connectToWebsocket(gameID)) {
+                ClientMain.activeGame = gameID;
+                ClientMain.playerType = playerType;
+                getGameList();
+                eventState = EventLoop.EventState.GAMEPLAY;
             }
         }
     }
@@ -160,15 +167,15 @@ public class ClientLoggedIn {
         } else {
             gameID = Integer.parseInt(line[1]);
         }
-        if(connectToWebsocket(gameID, PlayerTypes.OBSERVER)) { // This function outputs text to console
+        if(connectToWebsocket(gameID)) { // This function outputs text to console
             ClientMain.activeGame = gameID;
             ClientMain.playerType = PlayerTypes.OBSERVER;
             eventState = EventLoop.EventState.GAMEPLAY;
         }
     }
 
-    private static boolean connectToWebsocket(Integer gameID, PlayerTypes playerTypes){
-        return ClientMain.websocketFacade.connectToServer(ClientMain.authToken, gameID, playerTypes);
+    private static boolean connectToWebsocket(Integer gameID){
+        return ClientMain.websocketFacade.connectToServer(ClientMain.authToken, gameID);
     }
 
     private static void outputGameList(){

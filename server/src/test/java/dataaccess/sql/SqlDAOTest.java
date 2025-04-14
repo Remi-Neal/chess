@@ -212,7 +212,7 @@ class SqlDAOTest {
     void gameList() {
         String gameName = "game";
         int id = 1;
-        GameDataType gameData = new GameDataType(id, null, null, gameName);
+        GameDataType gameData = new GameDataType(id, null, null, gameName, new ChessGame(), true);
         GameSqlDAO gameSqlDAO = new GameSqlDAO(GAME_TABLE);
         // Negative
         assertDoesNotThrow(()->{
@@ -235,7 +235,7 @@ class SqlDAOTest {
     void newGame() {
         String gameName = "game";
         int id = 1;
-        GameDataType gameData = new GameDataType(id, null, null, gameName);
+        GameDataType gameData = new GameDataType(id, null, null, gameName, new ChessGame(), true);
         GameSqlDAO gameSqlDAO = new GameSqlDAO(GAME_TABLE);
         // Positive
         assertDoesNotThrow(()->{
@@ -244,14 +244,14 @@ class SqlDAOTest {
         });
         // Negative
         assertThrows(DataAccessException.class, ()-> gameSqlDAO.newGame(new GameDataType(
-                id, null, null, null)));
+                id, null, null, null, null, false)));
     }
 
     @Test
     void findGame() {
         String gameName = "game";
         int id = 1;
-        GameDataType gameData = new GameDataType(id, null, null, gameName);
+        GameDataType gameData = new GameDataType(id, null, null, gameName, new ChessGame(), true);
         GameSqlDAO gameSqlDAO = new GameSqlDAO(GAME_TABLE);
         // Positive
         assertDoesNotThrow(()->{
@@ -268,35 +268,35 @@ class SqlDAOTest {
     void updateGameData() {
         String gameName = "game";
         int id = 1;
-        GameDataType gameData = new GameDataType(id, null, null, gameName);
+        GameDataType gameData = new GameDataType(id, null, null, gameName, new ChessGame(), true);
         GameSqlDAO gameSqlDAO = new GameSqlDAO(GAME_TABLE);
         // Positive Update Players
         assertDoesNotThrow(()->{
            gameSqlDAO.newGame(gameData);
-           GameDataType newData = new GameDataType(id, "name", null, gameName);
+           GameDataType newData = new GameDataType(id, "name", null, gameName, new ChessGame(), true);
            gameSqlDAO.updateGameData(gameData,newData);
            assert gameSqlDAO.findGame(id).equals(newData);
         });
         assertDoesNotThrow(()->{
-            GameDataType newData = new GameDataType(id, "name", "other name", gameName);
+            GameDataType newData = new GameDataType(id, "name", "other name", gameName, new ChessGame(), true);
             gameSqlDAO.updateGameData(gameData,newData);
             assert gameSqlDAO.findGame(id).equals(newData);
         });
        // Negative Update Players
         String whiteName = "name";
         String blackName = "other name";
-        GameDataType currData = new GameDataType(id,whiteName,blackName,gameName);
+        GameDataType currData = new GameDataType(id,whiteName,blackName,gameName, new ChessGame(), true);
 
         GameDataType finalCurrData1 = currData;
         assertDoesNotThrow(()->{
-          GameDataType newData = new GameDataType(id, "new name", blackName, gameName);
+          GameDataType newData = new GameDataType(id, "new name", blackName, gameName, new ChessGame(), true);
           gameSqlDAO.updateGameData(finalCurrData1, newData);
           assert  gameSqlDAO.findGame(id).equals(finalCurrData1);
        });
 
         GameDataType finalCurrData = currData;
         assertDoesNotThrow(()->{
-            GameDataType newData = new GameDataType(id, whiteName, "new name", gameName);
+            GameDataType newData = new GameDataType(id, whiteName, "new name", gameName, new ChessGame(), true);
             gameSqlDAO.updateGameData(finalCurrData, newData);
             assert  gameSqlDAO.findGame(id).equals(finalCurrData);
         });
@@ -304,27 +304,25 @@ class SqlDAOTest {
         String newGameName = "new name";
         GameDataType finalCurrData2 = currData;
         assertDoesNotThrow(()->{
-            GameDataType newData = new GameDataType(id, whiteName, blackName, newGameName);
+            GameDataType newData = new GameDataType(id, whiteName, blackName, newGameName, new ChessGame(), true);
             gameSqlDAO.updateGameData(finalCurrData2, newData);
             assert  gameSqlDAO.findGame(id).equals(newData);
         });
-        currData = new GameDataType(id, whiteName,blackName,newGameName);
+        currData = new GameDataType(id, whiteName,blackName,newGameName, new ChessGame(), true);
         GameDataType finalCurrData3 = currData;
         assertDoesNotThrow(()->{
-            GameDataType newData = new GameDataType(id, whiteName,blackName,newGameName);
-            newData.setGameBoard(new ChessGame());
+            GameDataType newData = new GameDataType(id, whiteName,blackName,newGameName, new ChessGame(), true);
             gameSqlDAO.updateGameData(finalCurrData3, newData);
         });
         // Negative Update Game and Game Name
-        currData.setGameBoard(new ChessGame());
         GameDataType finalCurrData4 = currData;
         assertDoesNotThrow(()->{
-            GameDataType newGame = new GameDataType(id,whiteName,blackName,newGameName);
+            GameDataType newGame = new GameDataType(id,whiteName,blackName,newGameName, new ChessGame(), true);
             gameSqlDAO.updateGameData(finalCurrData4, newGame);
             assert gameSqlDAO.findGame(id).equals(finalCurrData4);
         });
         assertDoesNotThrow(()->{
-            GameDataType newGame = new GameDataType(id,whiteName,blackName,null);
+            GameDataType newGame = new GameDataType(id,whiteName,blackName,null, new ChessGame(), true);
             gameSqlDAO.updateGameData(finalCurrData4,newGame);
             assert gameSqlDAO.findGame(id).equals(finalCurrData4);
         });

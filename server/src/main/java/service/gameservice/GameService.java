@@ -83,4 +83,17 @@ public class GameService{
                 false
         ));
     }
+    public boolean validateGameID(int gameID) {
+        try {
+            List<GameDataType> gameList = ListGamesService.listGames(gameDAO);
+            for(GameDataType game : gameList){
+                if(game.gameID() == gameID){
+                    return true;
+                }
+            }
+        } catch (DataAccessException e) {
+            return false;
+        }
+        return false;
+    }
 }

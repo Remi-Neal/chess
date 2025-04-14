@@ -3,10 +3,10 @@ package websocket.messages;
 import chess.ChessBoard;
 
 public class LoadGameMessage extends ServerMessage{
-    ChessBoard board;
-    public LoadGameMessage(ServerMessageType type, ChessBoard board) {
+    ChessBoard game;
+    public LoadGameMessage(ServerMessageType type, ChessBoard game) {
         super(type);
-        this.board = board;
+        this.game = game;
     }
-    public ChessBoard getBoard(){ return this.board; }
+    public ChessBoard getBoard(){ return this.game; }
 }

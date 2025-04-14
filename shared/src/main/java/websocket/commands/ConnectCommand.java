@@ -9,4 +9,5 @@ public class ConnectCommand extends UserGameCommand {
         this.playerType = playerType;
     }
     public PlayerTypes getPlayerType(){ return this.playerType; }
+    public String playerTypeString(){ return this.playerType.toString(); }
 }

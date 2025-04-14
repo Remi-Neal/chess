@@ -6,6 +6,7 @@ import dataaccess.interfaces.UserDAO;
 import datatypes.AuthtokenDataType;
 import datatypes.UserDataType;
 import service.DAORecord;
+import service.userservice.methods.Authenticator;
 
 public class UserService {
     private final UserDAO userDAO;
@@ -35,6 +36,14 @@ public class UserService {
             return authData.username();
         } else {
             return null;
+        }
+    }
+
+    public boolean validateAuth(String authTokan){
+        try {
+            return Authenticator.validAuth(authDAO, authTokan);
+        } catch (DataAccessException e) {
+            return false;
         }
     }
 }

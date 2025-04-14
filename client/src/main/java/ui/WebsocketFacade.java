@@ -2,7 +2,6 @@ package ui;
 
 import chess.ChessMove;
 import com.google.gson.Gson;
-import websocket.commands.ConnectCommand;
 import websocket.commands.UserGameCommand;
 import websocket.commands.UserMoveCommand;
 import websocket.commands.commandenums.PlayerTypes;
@@ -27,7 +26,7 @@ public class WebsocketFacade extends Endpoint {
         session = null;
     }
 
-    public boolean connectToServer(String authToken, Integer gameID, PlayerTypes playerTypes){
+    public boolean connectToServer(String authToken, Integer gameID){
         URI uri;
         try {
             uri = new URI(wsUrl + "/ws");
@@ -42,7 +41,6 @@ public class WebsocketFacade extends Endpoint {
                     UserGameCommand.CommandType.CONNECT,
                     authToken,
                     gameID,
-                    playerTypes,
                     null
             );
             session.addMessageHandler(new MessageHandler.Whole<String>() {
@@ -62,7 +60,6 @@ public class WebsocketFacade extends Endpoint {
                 UserGameCommand.CommandType.LEAVE,
                 authToken,
                 gameID,
-                null,
                 null
         );
         session.close();
@@ -73,7 +70,6 @@ public class WebsocketFacade extends Endpoint {
                 UserGameCommand.CommandType.RESIGN,
                 authToken,
                 gameID,
-                null,
                 null
         );
         session.close();
@@ -106,21 +102,9 @@ public class WebsocketFacade extends Endpoint {
     }
 
     private static void writeCommand(UserGameCommand.CommandType commandType, String authToken, Integer gameID,
-                                     PlayerTypes playerType, ChessMove move){
-        if(playerType != null){
-            // Create Connect command
-            try {
-                ConnectCommand command = new ConnectCommand(
-                        commandType,
-                        authToken,
-                        gameID,
-                        playerType
-                );
-                session.getBasicRemote().sendText(new Gson().toJson(command));
-            } catch (Exception e) {
-                handleErrors(e);
-            }
-        } else if(move != null){
+                                     ChessMove move) {
+        // Create Connect command
+        if(move != null) {
             // Create move command
             try {
                 UserMoveCommand command = new UserMoveCommand(
@@ -129,22 +113,22 @@ public class WebsocketFacade extends Endpoint {
                         gameID,
                         move
                 );
-                session.getBasicRemote().sendObject( new Gson().toJson(command));
+                session.getBasicRemote().sendObject(new Gson().toJson(command));
             } catch (Exception e) {
                 handleErrors(e);
             }
-        } else {
-            // Create User Game command
-            try {
-                UserGameCommand command = new UserGameCommand(
-                        commandType,
-                        authToken,
-                        gameID
-                );
-                session.getBasicRemote().sendText( new Gson().toJson(command) );
-            } catch (Exception e) {
-                handleErrors(e);
-            }
+            return;
+        }
+        // Create User Game command
+        try {
+            UserGameCommand command = new UserGameCommand(
+                    commandType,
+                    authToken,
+                    gameID
+            );
+            session.getBasicRemote().sendText(new Gson().toJson(command));
+        } catch (Exception e) {
+            handleErrors(e);
         }
     }
 
