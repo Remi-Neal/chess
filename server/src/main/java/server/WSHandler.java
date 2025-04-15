@@ -13,6 +13,7 @@ import websocket.commands.UserGameCommand;
 import websocket.commands.UserMoveCommand;
 import service.gameservice.GameService;
 import service.userservice.UserService;
+import websocket.commands.commandenums.PlayerTypes;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
@@ -70,7 +71,7 @@ public class WSHandler {
         GameDataType game = gameService.getGame(moveCommand.getGameID());
         String username = userService.getUserName(moveCommand.getAuthToken());
         if(!game.active()){
-            moveError(session, "inactive");
+            moveError(session, "end of game");
             return;
         }
 
@@ -117,6 +118,23 @@ public class WSHandler {
             )));
         }
         removeSessions(moveCommand.getGameID(), disconnected);
+
+        game = gameService.getGame(moveCommand.getGameID());
+        String inCheckNotification = null;
+        if(game.chessGame().isInCheck(ChessGame.TeamColor.BLACK)){
+            inCheckNotification = "Black is in check";
+        }
+        if(game.chessGame().isInCheck(ChessGame.TeamColor.WHITE)){
+            inCheckNotification = "White is in check";
+        }
+        if(inCheckNotification != null){
+            for(PlayerInfo player: wsGameMap.get(moveCommand.getGameID())){
+                player.session.getRemote().sendString(new Gson().toJson(new NotificationMessage(
+                        ServerMessage.ServerMessageType.NOTIFICATION,
+                        inCheckNotification
+                )));
+            }
+        }
     }
 
     private boolean badCommand(UserGameCommand command){
@@ -155,7 +173,7 @@ public class WSHandler {
                 "'" + newUsersName + "' has joined the game");
         List<String> disconnected = new ArrayList<>();
         for(PlayerInfo player: wsGameMap.get(connectCommand.getGameID())){
-            if(player.userName.equals(userService.getUserName(player.authToken))){
+            if(player.userName.equals(userService.getUserName(connectCommand.getAuthToken()))){
                 continue;
             }
             if(!player.session.isOpen()){

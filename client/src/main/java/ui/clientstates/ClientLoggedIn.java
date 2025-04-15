@@ -135,13 +135,6 @@ public class ClientLoggedIn {
             } catch (ResponseException e) {
                 System.out.println("Unable to join game. Please try again");
             }
-            PlayerTypes playerType = color.equalsIgnoreCase("white") ? PlayerTypes.WHITE : PlayerTypes.BLACK;
-            if(connectToWebsocket(gameID)) {
-                ClientMain.activeGame = gameID;
-                ClientMain.playerType = playerType;
-                getGameList();
-                eventState = EventLoop.EventState.GAMEPLAY;
-            }
         }
     }
 

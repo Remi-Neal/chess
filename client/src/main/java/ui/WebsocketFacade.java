@@ -51,7 +51,7 @@ public class WebsocketFacade extends Endpoint {
             });
         }catch (Exception e){
             System.out.println("Error: Unable to connect to server. Please try again.");
-        return false;
+            return false;
         }
         return true;
     }
