@@ -1,9 +1,12 @@
 package ui.clientstates;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import ui.ClientMain;
 import ui.EventLoop;
 import ui.responcerecord.GameDataResponse;
 
 import java.io.IOException;
+import java.util.Scanner;
 
 import static ui.EventLoop.scanner;
 import static ui.EventLoop.eventState;
@@ -26,7 +29,7 @@ public class ClientGamePlay {
                 break;
             case "make":
                 // TODO: Call API to make move or not if invalid
-                //makeMove(scanner);
+                makeMove(scanner);
                 break;
             case "redraw":
                 renderGame(Orientation.WHITE_VIEW);
@@ -71,25 +74,13 @@ public class ClientGamePlay {
         }
     }
 
-    /* Implement later with UI gameplay
+
     private static void makeMove(Scanner scanner){
         String[] moves = scanner.nextLine().split(" ");
         ChessPosition start;
         ChessPosition end;
         ChessPiece.PieceType promotion;
-
-        try {
-            ClientMain.websocketFacade.makeMove(ClientMain.authToken, ClientMain.activeGame, new ChessMove(
-                    start,
-                    end,
-                    promotion
-            ));
-        } finally {
-
-        }
     }
-    */
-
 
     private static void renderGame(Orientation orientation){ // FIXME: Checkered pattern doesn't render properly on Black side
         StringBuilder strBuild = new StringBuilder();

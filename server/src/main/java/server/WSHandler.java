@@ -84,7 +84,7 @@ public class WSHandler {
             return;
         } else if(game.chessGame().getTeamTurn() == ChessGame.TeamColor.WHITE
                 & Objects.equals(username, game.blackUsername())){
-            moveError(session, "black tried to make move not on their turn. User name: " + username + " " + game.blackUsername() + " Team Turn: " + game.chessGame().getTeamTurn());
+            moveError(session, "black tried to make move not on their turn.");
             return;
         }
 
