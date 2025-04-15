@@ -46,6 +46,10 @@ public class ChessGame {
         return this.teamTurn;
     }
 
+    public ChessPiece getPiece(ChessPosition position){
+        return this.game.getPiece(position);
+    }
+
     /**
      * Set's which teams turn it is
      *

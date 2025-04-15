@@ -11,7 +11,7 @@ import websocket.messages.ServerMessage;
 import websocket.messages.ServerMessage.*;
 
 import static ui.ClientMain.*;
-import static ui.renderingtools.Renderer.render;
+import static ui.renderingtools.Renderer.renderText;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -44,7 +44,11 @@ public class WebsocketFacade extends Endpoint {
                     gameID,
                     null
             );
-            session.addMessageHandler((MessageHandler.Whole<String>) WebsocketFacade::readMessage);
+            session.addMessageHandler(new MessageHandler.Whole<String>() {
+                public void onMessage(String message) {
+                   readMessage(message);
+                }
+            });
         }catch (Exception e){
             System.out.println("Error: Unable to connect to server. Please try again.");
         return false;
@@ -92,13 +96,14 @@ public class WebsocketFacade extends Endpoint {
     }
 
     private static void handleNotification(NotificationMessage message){
-        render(message.getNotification());
+        renderText(message.getNotification());
     }
     private static void handleLoadGame(LoadGameMessage message){
+        activeBoard = message.getBoard();
         renderer.loadBoard(message.getBoard(), playerType);
     }
     private static void handleError(ErrorMessage message){
-        render(message.getErrorMessage());
+        renderText(message.getErrorMessage());
     }
 
     private static void writeCommand(UserGameCommand.CommandType commandType, String authToken, Integer gameID,

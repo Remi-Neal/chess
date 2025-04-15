@@ -1,10 +1,14 @@
 package ui.clientstates;
+import chess.ChessGame;
+import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import ui.ClientMain;
 import ui.EventLoop;
+import ui.renderingtools.Renderer;
 import ui.responcerecord.GameDataResponse;
 
+import javax.management.BadAttributeValueExpException;
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -20,11 +24,11 @@ public class ClientGamePlay {
     }
 
     public static void gameUI(){
-        System.out.print(SET_TEXT_COLOR_RED + "[Gameplay] >>> " + RESET_TEXT_COLOR);
         String command = scanner.next();
         switch(command.toLowerCase()){
             case "highlight":
                 // TODO: Call shared valid moves method and render
+                highlightMoves(scanner);
                 System.out.println("Hightlighting moves---DELETE ME");
                 break;
             case "make":
@@ -32,7 +36,7 @@ public class ClientGamePlay {
                 makeMove(scanner);
                 break;
             case "redraw":
-                renderGame();
+                Renderer.renderBoard(ClientMain.playerType, null);
                 break; // UI redraws board after every command so breaking works the same way as redrawing
             case "leave":
                 // TODO: remove payer name from the game
@@ -44,7 +48,7 @@ public class ClientGamePlay {
                 break;
             case "help":
             case "h":
-                System.out.println(GAMEPLAY_HELP_STRING);
+                Renderer.renderText(GAMEPLAY_HELP_STRING);
                 break;
             default:
                 System.out.println("Unknown command: " + command);
@@ -74,90 +78,91 @@ public class ClientGamePlay {
         }
     }
 
+    private static ChessPosition positionConverter(String alphaNum){
+        int row = Integer.parseInt(String.valueOf(alphaNum.charAt(1)));
+        switch(alphaNum.charAt(0)){
+            case 'a' -> {
+                return new ChessPosition(row, 1);
+            }
+            case 'b' ->{
+                return new ChessPosition(row, 2);
+            }
+            case 'c' -> {
+                return new ChessPosition(row, 3);
+            }
+            case 'd' -> {
+                return new ChessPosition(row, 4);
+            }
+            case 'e' -> {
+                return new ChessPosition(row, 5);
+            }
+            case 'f' -> {
+                return new ChessPosition(row, 6);
+            }
+            case 'g' -> {
+                return new ChessPosition(row, 7);
+            }
+            case 'h' -> {
+                return new ChessPosition(row, 8);
+            }
+            default -> {
+                return new ChessPosition(1,1);
+            }
+        }
+    }
+
+    private static ChessPiece.PieceType promotionGenerator(String piece){
+        switch(piece.toLowerCase()){
+            case "queen" -> {
+                return ChessPiece.PieceType.QUEEN;
+            }
+            case "bishop" -> {
+                return ChessPiece.PieceType.BISHOP;
+            }
+            case "rook" -> {
+                return ChessPiece.PieceType.ROOK;
+            }
+            case "knight" -> {
+                return ChessPiece.PieceType.KNIGHT;
+            }
+            default -> {
+                return null;
+            }
+        }
+    }
 
     private static void makeMove(Scanner scanner){
         String[] moves = scanner.nextLine().split(" ");
-        ChessPosition start;
-        ChessPosition end;
-        ChessPiece.PieceType promotion;
-    }
-
-    private static void renderGame(){
-        Orientation orientation = pickOrientation();
-        StringBuilder strBuild = new StringBuilder();
-        final int startIndex = orientation == Orientation.WHITE_VIEW ? 0 : 7;
-        final int increment = orientation == Orientation.WHITE_VIEW ? 1 : -1;
-        strBuild.append(SET_BG_COLOR_DARK_GREEN + "   ");
-        for(int i = startIndex; i < 8 & i > -1; i += increment){
-            strBuild.append(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_WHITE);
-            strBuild.append(TOP_BOTTOM_BAR[i]);
-        }
-        strBuild.append("   " + RESET_BG_COLOR + "\n");
-        for(int i = startIndex; i < 8 & i > -1; i+=increment){
-            // Create one side of the board for indexing
-            strBuild.append(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_WHITE);
-            strBuild.append(LEFT_RIGHT_BAR[i]);
-            strBuild.append(RESET_TEXT_COLOR);
-            for(int j = 0; j < 8; j++){
-                strBuild.append(i == 0 | i == 1 ? SET_TEXT_COLOR_BLUE : SET_TEXT_COLOR_RED);
-                strBuild.append((i - j) % 2 == 0 ? SET_BG_COLOR_BLACK : SET_BG_COLOR_WHITE);
-                strBuild.append(DEFAULT_BOARD[i][j]);
-                strBuild.append(RESET_BG_COLOR + RESET_TEXT_COLOR);
-            }
-            // Create other side of the board of indexing
-            strBuild.append(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_WHITE);
-            strBuild.append(LEFT_RIGHT_BAR[i]);
-            strBuild.append(RESET_TEXT_COLOR + RESET_BG_COLOR + "\n");
-        }
-        strBuild.append(SET_BG_COLOR_DARK_GREEN + "   ");
-        for(int i = startIndex; i < 8 & i > -1; i += increment){
-            strBuild.append(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_WHITE);
-            strBuild.append(TOP_BOTTOM_BAR[i]);
-        }
-        strBuild.append("   " + RESET_TEXT_COLOR + RESET_BG_COLOR);
-    }
-
-    private static Orientation pickOrientation(){
-        GameDataResponse currGameData = null;
-        for(GameDataResponse game : ClientMain.currGameList){
-            if(game.gameID() == ClientMain.activeGame){
-                currGameData =  game;
-                break;
+        ChessPosition start = positionConverter(moves[2]);
+        ChessPosition end = positionConverter(moves[3]);
+        ChessPiece.PieceType promotion = null;
+        if(moves.length == 5) {
+            try {
+                ChessPiece.PieceType buffer = promotionGenerator(moves[3]);
+                if(buffer != null) {
+                    promotion = promotionGenerator(moves[3]);
+                }
+            } catch (RuntimeException e) {
+                System.out.println(e.getMessage());
             }
         }
-        if(currGameData == null){
-            return null;
-        }
-        if(ClientMain.userName.equals(currGameData.whiteUsername())) {
-            return Orientation.WHITE_VIEW;
-        } else if(ClientMain.userName.equals(currGameData.blackUsername())){
-            return Orientation.BLACK_VIEW;
-        }
-        return Orientation.WHITE_VIEW;
+        ChessMove move = new ChessMove(start, end, promotion);
+        ClientMain.websocketFacade.makeMove(ClientMain.authToken, ClientMain.activeGame, move);
     }
 
-    private static final String[][] DEFAULT_BOARD = {
-            {BLACK_ROOK, BLACK_KNIGHT, BLACK_BISHOP, BLACK_QUEEN, BLACK_KING, BLACK_BISHOP, BLACK_KNIGHT, BLACK_ROOK},
-            {BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN,BLACK_PAWN,BLACK_PAWN,BLACK_PAWN,BLACK_PAWN},
-            {"   ","   ","   ","   ","   ","   ","   ","   "},
-            {"   ","   ","   ","   ","   ","   ","   ","   "},
-            {"   ","   ","   ","   ","   ","   ","   ","   "},
-            {"   ","   ","   ","   ","   ","   ","   ","   "},
-            {WHITE_PAWN,WHITE_PAWN,WHITE_PAWN,WHITE_PAWN,WHITE_PAWN,WHITE_PAWN,WHITE_PAWN,WHITE_PAWN,},
-            {WHITE_ROOK, WHITE_KNIGHT, WHITE_BISHOP, WHITE_QUEEN, WHITE_KING, WHITE_BISHOP, WHITE_KNIGHT, WHITE_ROOK}
-    };
-
-    private static final String[] TOP_BOTTOM_BAR = {" a ", " b ", " c ", " d ", " e ", " f ", " g ", " h "};
-    private static final String[] LEFT_RIGHT_BAR = { " 8 ", " 7 ", " 6 ", " 5 ", " 4 ", " 3 ", " 2 ", " 1 "};
+    private static void highlightMoves(Scanner scanner){
+        String[] piece = scanner.nextLine().split(" ");
+        Renderer.highlightBoard(ClientMain.playerType, positionConverter(piece[1]));
+    }
 
     static final String GAMEPLAY_HELP_STRING =
             SET_TEXT_COLOR_GREEN +
                     "redraw chess board" + RESET_TEXT_COLOR +  " - to redraw current chess board\n" +
                     SET_TEXT_COLOR_GREEN +
-                    "make move <START> <END>" + RESET_TEXT_COLOR + " - to make a move (i.e. make move b2 d2)\n" +
+                    "make move <START> <END>" + RESET_TEXT_COLOR + " - to make a move (e.x. make move b2 d2)\n" +
                     SET_TEXT_COLOR_GREEN +
                     "highlight legal moves <PIECE>" + RESET_TEXT_COLOR +
-                        " - to highlight valid move for a given piece\n" +
+                        " - to highlight valid move for a given piece (e.x. highlight legal moves b2)\n" +
                     SET_TEXT_COLOR_GREEN +
                     "resign" + RESET_TEXT_COLOR +  " - resign (forfeit) from the game\n" +
                     SET_TEXT_COLOR_GREEN +

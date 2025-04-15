@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessBoard;
 import ui.renderingtools.Renderer;
 import ui.responcerecord.GameDataResponse;
 import websocket.commands.commandenums.PlayerTypes;
@@ -14,6 +15,7 @@ public class ClientMain {
     public static String authToken;
     public static PlayerTypes playerType;
     public static Integer activeGame;
+    public static ChessBoard activeBoard;
     public static Renderer renderer;
     public static ArrayList<GameDataResponse> currGameList;
 

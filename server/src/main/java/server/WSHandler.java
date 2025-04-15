@@ -155,6 +155,9 @@ public class WSHandler {
                 "'" + newUsersName + "' has joined the game");
         List<String> disconnected = new ArrayList<>();
         for(PlayerInfo player: wsGameMap.get(connectCommand.getGameID())){
+            if(player.userName.equals(userService.getUserName(player.authToken))){
+                continue;
+            }
             if(!player.session.isOpen()){
                 disconnected.add(player.authToken);
                 continue;
