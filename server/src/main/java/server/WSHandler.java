@@ -1,19 +1,18 @@
 package server;
 
 import chess.ChessBoard;
+import chess.ChessGame;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import datatypes.GameDataType;
-import datatypes.UserDataType;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.*;
 import service.DAORecord;
-import websocket.commands.ConnectCommand;
 import websocket.commands.UserGameCommand;
 import websocket.commands.UserMoveCommand;
 import service.gameservice.GameService;
 import service.userservice.UserService;
-import websocket.commands.commandenums.PlayerTypes;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
@@ -25,9 +24,9 @@ import java.util.*;
 @WebSocket
 public class WSHandler {
     private record PlayerInfo(String authToken, String userName, Session session){}
-    private HashMap<Integer, List<PlayerInfo>> wsGameMap;
-    private UserService userService;
-    private GameService gameService;
+    private final HashMap<Integer, List<PlayerInfo>> wsGameMap;
+    private final UserService userService;
+    private final GameService gameService;
 
     public WSHandler(DAORecord daoRecord){
         this.userService = new UserService(daoRecord);
@@ -40,27 +39,10 @@ public class WSHandler {
     public void onMessage(Session session, String json) throws Exception{
         var message = new Gson().fromJson(json, UserGameCommand.class);
         switch (message.getCommandType()){
-            case MAKE_MOVE -> {
-                makeMove(session, new Gson().fromJson(json, UserMoveCommand.class));
-                // TODO: Implement make move command
-                break;
-            }
-            case CONNECT -> {
-                makeConnection(session, new Gson().fromJson(json, UserGameCommand.class));
-
-                // TODO: Implement connect
-                break;
-            }
-            case LEAVE -> {
-                leaveGame(message);
-                // TODO: Implement leave
-                break;
-            }
-            case RESIGN -> {
-                resignFromGame(message);
-                // TODO: Implement resign
-                break;
-            }
+            case MAKE_MOVE -> makeMove(session, new Gson().fromJson(json, UserMoveCommand.class));
+            case CONNECT -> makeConnection(session, new Gson().fromJson(json, UserGameCommand.class));
+            case LEAVE -> leaveGame(message);
+            case RESIGN -> resignFromGame(session, message);
             default -> session.getRemote().sendString(new Gson().toJson(new ErrorMessage(
                     ServerMessage.ServerMessageType.ERROR,
                     "ERROR: Unknown command"
@@ -68,9 +50,75 @@ public class WSHandler {
         }
     }
 
-    private void makeMove(Session session, UserMoveCommand moveCommand){
-        System.out.println("NOTICE: makeMove not implemented");
+    private void moveError(Session session, String extra) throws IOException {
+        session.getRemote().sendString(new Gson().toJson(new ErrorMessage(
+                ServerMessage.ServerMessageType.ERROR,
+                "Error: Unable to make move " + extra
+        )));
     }
+
+    private void makeMove(Session session, UserMoveCommand moveCommand) throws IOException, DataAccessException {
+        if(badCommand(moveCommand)){
+            moveError(session, "bad command");
+            return;
+        }
+        if(!wsGameMap.containsKey(moveCommand.getGameID())){
+            moveError(session, "no game with id");
+            return;
+        }
+
+        GameDataType game = gameService.getGame(moveCommand.getGameID());
+        String username = userService.getUserName(moveCommand.getAuthToken());
+        if(!game.active()){
+            moveError(session, "inactive");
+            return;
+        }
+
+        if(!(Objects.equals(username, game.blackUsername()) || Objects.equals(username, game.whiteUsername()))){
+            moveError(session, "observer tried to make move");
+            return;
+        }
+        if(game.chessGame().getTeamTurn() == ChessGame.TeamColor.BLACK
+                & Objects.equals(username, game.whiteUsername())){
+            moveError(session, "white tried to make move not on their turn");
+            return;
+        } else if(game.chessGame().getTeamTurn() == ChessGame.TeamColor.WHITE
+                & Objects.equals(username, game.blackUsername())){
+            moveError(session, "black tried to make move not on their turn. User name: " + username + " " + game.blackUsername() + " Team Turn: " + game.chessGame().getTeamTurn());
+            return;
+        }
+
+        ChessBoard newBoard;
+        try {
+            newBoard = gameService.makeMove(moveCommand.getGameID(), moveCommand.getAuthToken(), moveCommand.getChessMove());
+        } catch (InvalidMoveException e) {
+            session.getRemote().sendString(new Gson().toJson(new ErrorMessage(
+                    ServerMessage.ServerMessageType.ERROR,
+                    "Error: invalid move"
+            )));
+            return;
+        }
+
+        List<String> disconnected = new ArrayList<>();
+        for(PlayerInfo player: wsGameMap.get(moveCommand.getGameID())){
+            if(!player.session.isOpen()){
+                disconnected.add(player.authToken);
+                continue;
+            }
+            if(!player.userName.equals(username)) {
+                player.session.getRemote().sendString(new Gson().toJson(new NotificationMessage(
+                        ServerMessage.ServerMessageType.NOTIFICATION,
+                        username + " made a move"
+                )));
+            }
+            player.session.getRemote().sendString(new Gson().toJson(new LoadGameMessage(
+                    ServerMessage.ServerMessageType.LOAD_GAME,
+                    newBoard
+            )));
+        }
+        removeSessions(moveCommand.getGameID(), disconnected);
+    }
+
     private boolean badCommand(UserGameCommand command){
         return !(
                 gameService.validateGameID(command.getGameID()) &
@@ -88,6 +136,19 @@ public class WSHandler {
         }
         if(!wsGameMap.containsKey(connectCommand.getGameID())){
             addNewGame(connectCommand.getGameID());
+        }
+        try {
+            LoadGameMessage loadGame = new LoadGameMessage(
+                    ServerMessage.ServerMessageType.LOAD_GAME,
+                    gameService.getBoard(connectCommand.getGameID())
+            );
+            session.getRemote().sendString(new Gson().toJson(loadGame));
+        } catch (Exception e){
+            session.getRemote().sendString(new Gson().toJson(new ErrorMessage(
+                    ServerMessage.ServerMessageType.ERROR,
+                    "Error: error loading game"
+            )));
+            return;
         }
         NotificationMessage notification = new NotificationMessage(
                 ServerMessage.ServerMessageType.NOTIFICATION,
@@ -111,11 +172,6 @@ public class WSHandler {
                     "Error: no game selected"
             )));
         }
-        LoadGameMessage loadGame = new LoadGameMessage(
-                ServerMessage.ServerMessageType.LOAD_GAME,
-                gameService.getBoard(connectCommand.getGameID())
-        );
-        session.getRemote().sendString(new Gson().toJson(loadGame));
     }
 
     private void leaveGame(UserGameCommand userCommand) throws IOException, DataAccessException {
@@ -131,8 +187,35 @@ public class WSHandler {
         }
     }
 
-    private void resignFromGame(UserGameCommand userCommand) throws DataAccessException, IOException {
-        String userName = userService.getUserName(userCommand.getAuthToken());
+    private void genericError(Session session) throws IOException {
+        session.getRemote().sendString(new Gson().toJson(new ErrorMessage(
+                ServerMessage.ServerMessageType.ERROR,
+                "Error: Bad Command "
+        )));
+    }
+    private void resignFromGame(Session session, UserGameCommand userCommand) throws DataAccessException, IOException {
+        if(badCommand(userCommand)){
+            genericError(session);
+            return;
+        }
+        if(!wsGameMap.containsKey(userCommand.getGameID())){
+            genericError(session);;
+            return;
+        }
+
+        GameDataType game = gameService.getGame(userCommand.getGameID());
+        String username = userService.getUserName(userCommand.getAuthToken());
+        if(!game.active()){
+            genericError(session);
+            return;
+        }
+
+        if(!(Objects.equals(username, game.blackUsername()) || Objects.equals(username, game.whiteUsername()))) {
+            genericError(session);
+            return;
+        }
+
+            String userName = userService.getUserName(userCommand.getAuthToken());
         String message = "'" + userName + "' resigned.";
         NotificationMessage notification = new NotificationMessage(
                 ServerMessage.ServerMessageType.NOTIFICATION,
@@ -142,7 +225,9 @@ public class WSHandler {
         }
         removeSessions(userCommand.getGameID(), Collections.singletonList(userCommand.getAuthToken()));
         gameService.closeGame(userCommand.getGameID());
+
     }
+
 
     private void addNewGame(Integer gameID){
         wsGameMap.put(gameID, new ArrayList<>());

@@ -1,11 +1,9 @@
 package ui.clientstates;
 import ui.ClientMain;
 import ui.EventLoop;
-import ui.renderingtools.Renderer;
 import ui.responcerecord.GameDataResponse;
 
 import java.io.IOException;
-import java.util.Scanner;
 
 import static ui.EventLoop.scanner;
 import static ui.EventLoop.eventState;
@@ -13,7 +11,6 @@ import static ui.EventLoop.eventState;
 import static ui.EscapeSequences.*;
 
 public class ClientGamePlay {
-    private static Renderer renderer = new Renderer();
     // TODO: take out any excessive System.out calls
     private enum Orientation{
         BLACK_VIEW, WHITE_VIEW
@@ -29,9 +26,10 @@ public class ClientGamePlay {
                 break;
             case "make":
                 // TODO: Call API to make move or not if invalid
-                System.out.println("Making move---DELETE ME");
+                //makeMove(scanner);
                 break;
             case "redraw":
+                renderGame(Orientation.WHITE_VIEW);
                 break; // UI redraws board after every command so breaking works the same way as redrawing
             case "leave":
                 // TODO: remove payer name from the game
@@ -73,14 +71,30 @@ public class ClientGamePlay {
         }
     }
 
+    /* Implement later with UI gameplay
     private static void makeMove(Scanner scanner){
+        String[] moves = scanner.nextLine().split(" ");
+        ChessPosition start;
+        ChessPosition end;
+        ChessPiece.PieceType promotion;
 
+        try {
+            ClientMain.websocketFacade.makeMove(ClientMain.authToken, ClientMain.activeGame, new ChessMove(
+                    start,
+                    end,
+                    promotion
+            ));
+        } finally {
+
+        }
     }
+    */
 
-    private static String renderGame(Orientation orient){ // FIXME: Checkered pattern doesn't render properly on Black side
+
+    private static void renderGame(Orientation orientation){ // FIXME: Checkered pattern doesn't render properly on Black side
         StringBuilder strBuild = new StringBuilder();
-        final int startIndex = orient == Orientation.WHITE_VIEW ? 0 : 7;
-        final int increment = orient == Orientation.WHITE_VIEW ? 1 : -1;
+        final int startIndex = orientation == Orientation.WHITE_VIEW ? 0 : 7;
+        final int increment = orientation == Orientation.WHITE_VIEW ? 1 : -1;
         strBuild.append(SET_BG_COLOR_DARK_GREEN + "   ");
         for(int i = startIndex; i < 8 & i > -1; i += increment){
             strBuild.append(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_WHITE);
@@ -109,7 +123,6 @@ public class ClientGamePlay {
             strBuild.append(TOP_BOTTOM_BAR[i]);
         }
         strBuild.append("   " + RESET_TEXT_COLOR + RESET_BG_COLOR);
-        return strBuild.toString();
     }
 
     private static Orientation pickOrientation(){
@@ -149,7 +162,7 @@ public class ClientGamePlay {
             SET_TEXT_COLOR_GREEN +
                     "redraw chess board" + RESET_TEXT_COLOR +  " - to redraw current chess board\n" +
                     SET_TEXT_COLOR_GREEN +
-                    "make move <START> <END>" + RESET_TEXT_COLOR + " - to make a move\n" +
+                    "make move <START> <END>" + RESET_TEXT_COLOR + " - to make a move (i.e. make move b2 d2)\n" +
                     SET_TEXT_COLOR_GREEN +
                     "highlight legal moves <PIECE>" + RESET_TEXT_COLOR +
                         " - to highlight valid move for a given piece\n" +

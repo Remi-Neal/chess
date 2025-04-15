@@ -28,6 +28,16 @@ public class ChessGame {
         this.threatPieceFinder = new ThreateningPieceFinder(this.game);
         this.findPiece = new FindPiecePosition();
     }
+    public ChessGame(TeamColor teamColor, ChessBoard game){
+        this.teamTurn = teamColor;
+        this.game = game;
+        this.threatPieceFinder = new ThreateningPieceFinder(game);
+        this.findPiece = new FindPiecePosition();
+    }
+
+    public ChessGame copyChessGame(){
+        return new ChessGame(this.getTeamTurn(), this.game);
+    }
 
     /**
      * @return Which team's turn it is

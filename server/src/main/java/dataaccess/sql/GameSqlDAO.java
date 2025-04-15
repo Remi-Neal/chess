@@ -26,8 +26,8 @@ public class GameSqlDAO implements GameDAO {
                     resultSet.getString("whiteUserName"),
                     resultSet.getString("blackUserName"),
                     resultSet.getString("gameName"),
-                    new ChessGame(),
-                    true
+                    new Gson().fromJson(resultSet.getString("chessGame"), ChessGame.class),
+                    resultSet.getBoolean("active")
             );
         } catch(SQLException e){
             throw new DataAccessException(e.getMessage());
@@ -41,7 +41,7 @@ public class GameSqlDAO implements GameDAO {
         try{
             var conn = SqlDAO.getConnection();
             try(var statement = conn.prepareStatement(
-                    "SELECT gameName, gameId, whiteUserName, blackUserName FROM game"
+                    "SELECT gameName, gameId, whiteUserName, blackUserName, chessGame FROM game"
             )){
                 try(var resultSet = statement.executeQuery()){
                     while(resultSet.next()){
@@ -61,7 +61,8 @@ public class GameSqlDAO implements GameDAO {
             var conn = SqlDAO.getConnection();
             try(var statement = conn.prepareStatement(
                     "INSERT INTO %s ".formatted(tableName) +
-                            "(gameId, whiteUserName, blackUserName, gameName, chessGame, active) VALUES (?,?,?,?,?,?)"
+                            "(gameId, whiteUserName, blackUserName, gameName, chessGame, active) " +
+                            "VALUES (?,?,?,?,?,?)"
             )){
                 statement.setInt(1,gameData.gameID());
                 statement.setString(2, gameData.whiteUsername());
@@ -69,7 +70,7 @@ public class GameSqlDAO implements GameDAO {
                 statement.setString(4, gameData.gameName());
                 String chessGameJSON = new Gson().toJson(gameData.chessGame());
                 statement.setString(5, chessGameJSON);
-                statement.setBoolean(6, true);
+                statement.setBoolean(6, gameData.active());
                 statement.executeUpdate();
             }
         } catch(SQLException e) {
@@ -148,7 +149,14 @@ public class GameSqlDAO implements GameDAO {
                 if (newData.chessGame() == null) {
                     return;
                 }
-                if (oldData.chessGame().equals(newData.chessGame())) { return; }
+                createUpdateWithConn(
+                        conn,
+                        "chessGame",
+                        new Gson().toJson(newData.chessGame()),
+                        newData.gameID()
+                );
+            }
+            if(!Objects.equals(oldData, newData)){
                 createUpdateWithConn(
                         conn,
                         "chessGame",

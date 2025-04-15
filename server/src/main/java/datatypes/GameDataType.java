@@ -3,7 +3,12 @@ package datatypes;
 import chess.ChessGame;
 
 public record GameDataType(
-        int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame chessGame, Boolean active) {
+        int gameID,
+        String whiteUsername,
+        String blackUsername,
+        String gameName,
+        ChessGame chessGame,
+        Boolean active) {
 
     @Override
     public String toString(){
@@ -13,5 +18,8 @@ public record GameDataType(
                 "\r\t'blackUserName': " + blackUsername +
                 "\r\t'gameName': " + gameName +
                 "\n}";
+    }
+    public ChessGame copyChessGame(){
+        return chessGame.copyChessGame();
     }
 }

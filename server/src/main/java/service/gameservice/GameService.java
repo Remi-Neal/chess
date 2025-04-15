@@ -1,6 +1,8 @@
 package service.gameservice;
 
 import chess.ChessBoard;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import dataaccess.DataAccessException;
 import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.GameDAO;
@@ -50,6 +52,31 @@ public class GameService{
         GameDataType gameData = gameDAO.findGame(gameID);
         return gameData.chessGame().getBoard();
     }
+    public GameDataType getGame(int gameID) throws DataAccessException{
+        return gameDAO.findGame(gameID);
+    }
+    public ChessBoard makeMove(int gameID, String authToken, ChessMove move) throws DataAccessException, InvalidMoveException {
+        GameDataType gameData = gameDAO.findGame(gameID);
+        String userName = authDAO.getAuth(authToken).username();
+        if(!(gameData.blackUsername().equals(userName) || gameData.whiteUsername().equals(userName))){
+            throw new BadRequest();
+        }
+        try{
+            gameData.chessGame().makeMove(move);
+        } catch (InvalidMoveException e) {
+            throw new InvalidMoveException();
+        }
+        gameDAO.updateGameData(gameData, new GameDataType(
+                gameID,
+                gameData.whiteUsername(),
+                gameData.blackUsername(),
+                gameData.gameName(),
+                gameData.chessGame().copyChessGame(),
+                gameData.active()
+        ));
+        return gameData.chessGame().getBoard();
+    }
+
     public void removePlayer(int gameID, String userName) throws DataAccessException {
         GameDataType gameData = gameDAO.findGame(gameID);
         if(Objects.equals(gameData.blackUsername(), userName)){
@@ -72,6 +99,7 @@ public class GameService{
             ));
         }
     }
+
     public void closeGame(int gameID) throws DataAccessException {
         GameDataType oldDate = gameDAO.findGame(gameID);
         gameDAO.updateGameData(oldDate, new GameDataType(
@@ -83,17 +111,14 @@ public class GameService{
                 false
         ));
     }
+
     public boolean validateGameID(int gameID) {
         try {
-            List<GameDataType> gameList = ListGamesService.listGames(gameDAO);
-            for(GameDataType game : gameList){
-                if(game.gameID() == gameID){
-                    return true;
-                }
-            }
+            gameDAO.findGame(gameID);
+            return true;
         } catch (DataAccessException e) {
             return false;
         }
-        return false;
     }
+
 }

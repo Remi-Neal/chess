@@ -35,13 +35,26 @@ public class MemoryDatabaseTests {
     @Test
     public void assertGamePositive(){
         DataBase.GameDataBase gamedb = db.new GameDataBase();
-        GameDataType game = new GameDataType(1, null, null, "1", new ChessGame(), true);
+        GameDataType game = new GameDataType(
+                1,
+                null,
+                null,
+                "1",
+                new ChessGame(),
+                true
+);
         gamedb.addGameData(game);
         List<GameDataType> gameList = new ArrayList<>();
         gameList.add(game);
         assert gamedb.listGame() == gameList;
         assert gamedb.findGame(1) == game;
-        GameDataType updateedGame = new GameDataType(game.gameID(), "white", null, game.gameName(), game.chessGame(), true);
+        GameDataType updateedGame = new GameDataType(
+                game.gameID(),
+                "white",
+                null,
+                game.gameName(),
+                game.chessGame(),
+                true);
         gamedb.updateGameData(game, updateedGame);
         assert gamedb.listGame().isEmpty();
     }

@@ -4,12 +4,13 @@ import chess.ChessMove;
 import com.google.gson.Gson;
 import websocket.commands.UserGameCommand;
 import websocket.commands.UserMoveCommand;
-import websocket.commands.commandenums.PlayerTypes;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 import websocket.messages.ServerMessage.*;
+
+import static ui.ClientMain.*;
 import static ui.renderingtools.Renderer.render;
 
 import javax.websocket.*;
@@ -43,11 +44,7 @@ public class WebsocketFacade extends Endpoint {
                     gameID,
                     null
             );
-            session.addMessageHandler(new MessageHandler.Whole<String>() {
-                public void onMessage(String message) {
-                    readMessage(message);
-                }
-            });
+            session.addMessageHandler((MessageHandler.Whole<String>) WebsocketFacade::readMessage);
         }catch (Exception e){
             System.out.println("Error: Unable to connect to server. Please try again.");
         return false;
@@ -75,19 +72,22 @@ public class WebsocketFacade extends Endpoint {
         session.close();
     }
 
+    public void makeMove(String authToken, Integer gameID, ChessMove move){
+        writeCommand(
+                UserGameCommand.CommandType.MAKE_MOVE,
+                authToken,
+                gameID,
+                move
+        );
+    }
+
     private static void readMessage(String message){
         ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
         ServerMessage.ServerMessageType type = serverMessage.getServerMessageType();
         switch(type){
-            case ServerMessageType.NOTIFICATION ->{
-                handleNotification( new Gson().fromJson(message, NotificationMessage.class));
-            }
-            case ServerMessageType.LOAD_GAME -> {
-                handleLoadGame(new Gson().fromJson(message, LoadGameMessage.class));
-            }
-            case ServerMessageType.ERROR -> {
-                handleError(new Gson().fromJson(message, ErrorMessage.class));
-            }
+            case ServerMessageType.NOTIFICATION -> handleNotification( new Gson().fromJson(message, NotificationMessage.class));
+            case ServerMessageType.LOAD_GAME -> handleLoadGame(new Gson().fromJson(message, LoadGameMessage.class));
+            case ServerMessageType.ERROR -> handleError(new Gson().fromJson(message, ErrorMessage.class));
         }
     }
 
@@ -95,7 +95,7 @@ public class WebsocketFacade extends Endpoint {
         render(message.getNotification());
     }
     private static void handleLoadGame(LoadGameMessage message){
-        ClientMain.renderer.loadBoard(message.getBoard(), ClientMain.playerType);
+        renderer.loadBoard(message.getBoard(), playerType);
     }
     private static void handleError(ErrorMessage message){
         render(message.getErrorMessage());
