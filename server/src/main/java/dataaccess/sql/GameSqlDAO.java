@@ -41,7 +41,7 @@ public class GameSqlDAO implements GameDAO {
         try{
             var conn = SqlDAO.getConnection();
             try(var statement = conn.prepareStatement(
-                    "SELECT gameName, gameId, whiteUserName, blackUserName, chessGame FROM game"
+                    "SELECT * FROM game"
             )){
                 try(var resultSet = statement.executeQuery()){
                     while(resultSet.next()){
