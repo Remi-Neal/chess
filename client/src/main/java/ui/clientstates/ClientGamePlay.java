@@ -32,7 +32,7 @@ public class ClientGamePlay {
                 makeMove(scanner);
                 break;
             case "redraw":
-                renderGame(Orientation.WHITE_VIEW);
+                renderGame();
                 break; // UI redraws board after every command so breaking works the same way as redrawing
             case "leave":
                 // TODO: remove payer name from the game
@@ -82,7 +82,8 @@ public class ClientGamePlay {
         ChessPiece.PieceType promotion;
     }
 
-    private static void renderGame(Orientation orientation){ // FIXME: Checkered pattern doesn't render properly on Black side
+    private static void renderGame(){
+        Orientation orientation = pickOrientation();
         StringBuilder strBuild = new StringBuilder();
         final int startIndex = orientation == Orientation.WHITE_VIEW ? 0 : 7;
         final int increment = orientation == Orientation.WHITE_VIEW ? 1 : -1;
