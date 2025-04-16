@@ -6,9 +6,8 @@ import static ui.EventLoop.scanner;
 import static ui.EventLoop.eventState;
 import ui.EventLoop.EventState;
 import ui.requestrecords.RegistrationRequest;
-import java.util.Arrays;
 
-import static ui.EscapeSequences.*;
+import static ui.renderingtools.EscapeSequences.*;
 
 public class ClientLoggedOut {
 // TODO: take out any excessive System.out calls

@@ -1,8 +1,6 @@
 package server;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.InvalidMoveException;
+import chess.*;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import datatypes.GameDataType;
@@ -58,6 +56,20 @@ public class WSHandler {
         )));
     }
 
+    private String convertPositionToString(ChessPosition pos){
+        String col="";
+        switch(pos.getColumn()){
+            case 1 -> col = "a";
+            case 2 -> col = "b";
+            case 3 -> col = "c";
+            case 4 -> col = "d";
+            case 5 -> col = "e";
+            case 6 -> col = "f";
+            case 7 -> col = "g";
+            case 8 -> col = "h";
+        }
+        return col + (Integer) pos.getRow();
+    }
     private void makeMove(Session session, UserMoveCommand moveCommand) throws IOException, DataAccessException {
         if(badCommand(moveCommand)){
             moveError(session, "bad command");
@@ -109,7 +121,9 @@ public class WSHandler {
             if(!player.userName.equals(username)) {
                 player.session.getRemote().sendString(new Gson().toJson(new NotificationMessage(
                         ServerMessage.ServerMessageType.NOTIFICATION,
-                        username + " made a move"
+                        username + " made the move " +
+                                convertPositionToString(moveCommand.getChessMove().getStartPosition()) + " -> " +
+                                convertPositionToString(moveCommand.getChessMove().getEndPosition())
                 )));
             }
             player.session.getRemote().sendString(new Gson().toJson(new LoadGameMessage(
@@ -122,16 +136,32 @@ public class WSHandler {
         game = gameService.getGame(moveCommand.getGameID());
         String inCheckNotification = null;
         if(game.chessGame().isInCheck(ChessGame.TeamColor.BLACK)){
-            inCheckNotification = "Black is in check";
+            if(game.chessGame().isInCheckmate(ChessGame.TeamColor.BLACK)){
+                inCheckNotification = game.blackUsername() + " is in checkmate";
+            } else {
+                inCheckNotification = game.blackUsername() + " is in check";
+            }
         }
         if(game.chessGame().isInCheck(ChessGame.TeamColor.WHITE)){
-            inCheckNotification = "White is in check";
+            if(game.chessGame().isInCheckmate(ChessGame.TeamColor.WHITE)){
+                inCheckNotification = game.whiteUsername() + " is in checkmate";
+            } else {
+                inCheckNotification = game.whiteUsername() + " is in check";
+            }
         }
         if(inCheckNotification != null){
             for(PlayerInfo player: wsGameMap.get(moveCommand.getGameID())){
                 player.session.getRemote().sendString(new Gson().toJson(new NotificationMessage(
                         ServerMessage.ServerMessageType.NOTIFICATION,
                         inCheckNotification
+                )));
+            }
+        }
+        if(game.chessGame().isInStalemate(ChessGame.TeamColor.WHITE)){
+            for(PlayerInfo player: wsGameMap.get(moveCommand.getGameID())){
+                player.session.getRemote().sendString(new Gson().toJson(new NotificationMessage(
+                        ServerMessage.ServerMessageType.NOTIFICATION,
+                        "Game ends in stalemate"
                 )));
             }
         }
@@ -168,9 +198,19 @@ public class WSHandler {
             )));
             return;
         }
+
+        String playerColor = "";
+        if(Objects.equals(gameService.getGame(connectCommand.getGameID()).blackUsername(),
+                userService.getUserName(connectCommand.getAuthToken()))){
+            playerColor = " as black player";
+        } else if(Objects.equals(gameService.getGame(connectCommand.getGameID()).whiteUsername(),
+                userService.getUserName(connectCommand.getAuthToken()))){
+            playerColor = " as white player";
+        }
+
         NotificationMessage notification = new NotificationMessage(
                 ServerMessage.ServerMessageType.NOTIFICATION,
-                "'" + newUsersName + "' has joined the game");
+                "'" + newUsersName + "' has joined the game" + playerColor);
         List<String> disconnected = new ArrayList<>();
         for(PlayerInfo player: wsGameMap.get(connectCommand.getGameID())){
             if(player.userName.equals(userService.getUserName(connectCommand.getAuthToken()))){

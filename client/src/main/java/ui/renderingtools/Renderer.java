@@ -10,7 +10,7 @@ import java.util.List;
 
 import static chess.ChessGame.TeamColor.*;
 
-import static ui.EscapeSequences.*;
+import static ui.renderingtools.EscapeSequences.*;
 
 public class Renderer {
     private static ChessBoard activeBoard;
@@ -57,7 +57,7 @@ public class Renderer {
             for(int j = startIndex; j < 8 & j > -1; j+=increment){
                 strBuild.append((i - j) % 2 == 0 ? SET_BG_COLOR_WHITE : SET_BG_COLOR_BLACK);
                 if(highlight.contains(new ChessPosition(8-i,j+1))){
-                    strBuild.append(SET_BG_COLOR_YELLOW);
+                    strBuild.append(SET_BG_COLOR_GREEN);
                 }
                 strBuild.append(renderPiece(activeBoard.getPiece(new ChessPosition(8-i,j+1))));
                 strBuild.append(RESET_BG_COLOR + RESET_TEXT_COLOR);
@@ -82,6 +82,7 @@ public class Renderer {
         ChessGame game = new ChessGame(WHITE, activeBoard); // White is arbitrary
         Collection<ChessMove> moves = game.validMoves(position);
         List<ChessPosition> positions = new ArrayList<>();
+        positions.add(position);
         for(ChessMove move : moves){
             positions.add(move.getEndPosition());
         }

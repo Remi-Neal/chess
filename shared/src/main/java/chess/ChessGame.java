@@ -109,9 +109,30 @@ public class ChessGame {
         if(movedPiece == null){ throw new InvalidMoveException(); }
         if(teamTurn != movedPiece.getTeamColor()){ throw new InvalidMoveException(); }
         Collection<ChessMove> valid = validMoves(move.getStartPosition());
-        if(!valid.contains(move)){ throw new InvalidMoveException();}
-
-        if(isInCheck(teamTurn)){ throw new InvalidMoveException(); }
+        boolean validMove = false;
+        for(ChessMove validM : valid){
+            if(validM.getEndPosition().getRow() == move.getEndPosition().getRow() &&
+                validM.getEndPosition().getColumn() == move.getEndPosition().getColumn()){
+                validMove = true;
+                break;
+            }
+        }
+        if(!validMove){ throw new InvalidMoveException(); }
+        // Promotion Checks
+        if(move.getEndPosition().getRow() == 8 || move.getEndPosition().getRow() == 1){
+            if(game.getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.PAWN
+                    & move.getPromotionPiece() == null){
+                throw new InvalidMoveException();
+            }
+        }
+        if(move.getPromotionPiece() != null){
+            if(game.getPiece(move.getStartPosition()).getPieceType() != ChessPiece.PieceType.PAWN){
+                throw new InvalidMoveException();
+            }
+            if(move.getEndPosition().getRow() != 8 & move.getEndPosition().getRow() != 1){
+                throw new InvalidMoveException();
+            }
+        }
     }
 
     /**

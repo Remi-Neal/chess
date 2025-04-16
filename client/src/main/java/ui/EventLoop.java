@@ -6,7 +6,7 @@ import ui.clientstates.ClientLoggedOut;
 
 import java.util.Scanner;
 
-import static ui.EscapeSequences.*;
+import static ui.renderingtools.EscapeSequences.*;
 
 public class EventLoop {
     public static Scanner scanner;

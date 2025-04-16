@@ -12,18 +12,18 @@ public class UserSqlDAO implements UserDAO {
 
     @Override
     public UserDataType getUser(String name) throws DataAccessException {
-        UserDataType user = null; try{
+        UserDataType user = null;
+        try(
             var conn = SqlDAO.getConnection();
-            try(var statement = conn.prepareStatement(
+            var statement = conn.prepareStatement(
                     "SELECT * FROM %s WHERE name = ?".formatted(tableName))){
-                statement.setString(1, name);
-                try(var resultSet = statement.executeQuery()){
-                    if(resultSet.next()) {
-                        user = new UserDataType(
-                                resultSet.getString("name"),
-                                resultSet.getString("password"),
-                                resultSet.getString("email"));
-                    }
+            statement.setString(1, name);
+            try(var resultSet = statement.executeQuery()){
+                if(resultSet.next()) {
+                    user = new UserDataType(
+                            resultSet.getString("name"),
+                            resultSet.getString("password"),
+                            resultSet.getString("email"));
                 }
             }
         } catch(SQLException e){
@@ -34,15 +34,14 @@ public class UserSqlDAO implements UserDAO {
 
     @Override
     public void createUser(UserDataType userData) throws DataAccessException {
-        try{
+        try(
             var conn = SqlDAO.getConnection();
-            try(var statement = conn.prepareStatement(
+            var statement = conn.prepareStatement(
                     "INSERT INTO %s (name, password, email) values (?,?,?)".formatted(tableName))) {
-                statement.setString(1, userData.getUserName());
-                statement.setString(2, userData.getPassword());
-                statement.setString(3, userData.getEmail());
-                statement.executeUpdate();
-            }
+            statement.setString(1, userData.getUserName());
+            statement.setString(2, userData.getPassword());
+            statement.setString(3, userData.getEmail());
+            statement.executeUpdate();
         } catch (SQLException e){
             throw new DataAccessException(e.getMessage());
         }

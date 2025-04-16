@@ -1,21 +1,19 @@
 package ui.clientstates;
-import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import ui.ClientMain;
 import ui.EventLoop;
 import ui.renderingtools.Renderer;
-import ui.responcerecord.GameDataResponse;
 
-import javax.management.BadAttributeValueExpException;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Scanner;
 
 import static ui.EventLoop.scanner;
 import static ui.EventLoop.eventState;
 
-import static ui.EscapeSequences.*;
+import static ui.renderingtools.EscapeSequences.*;
 
 public class ClientGamePlay {
     // TODO: take out any excessive System.out calls
@@ -29,7 +27,6 @@ public class ClientGamePlay {
             case "highlight":
                 // TODO: Call shared valid moves method and render
                 highlightMoves(scanner);
-                System.out.println("Hightlighting moves---DELETE ME");
                 break;
             case "make":
                 // TODO: Call API to make move or not if invalid
@@ -37,14 +34,14 @@ public class ClientGamePlay {
                 break;
             case "redraw":
                 Renderer.renderBoard(ClientMain.playerType, null);
-                break; // UI redraws board after every command so breaking works the same way as redrawing
+                break;
             case "leave":
                 // TODO: remove payer name from the game
                 leaveGame();
                 break;
             case "resign":
                 // TODO: remove player from the game and finalize the game
-                resignFromGame();
+                resignFromGame(scanner);
                 break;
             case "help":
             case "h":
@@ -59,14 +56,17 @@ public class ClientGamePlay {
 
     }
 
-    private static void resignFromGame(){
-        try {
-            ClientMain.websocketFacade.resignFromGame(ClientMain.authToken, ClientMain.activeGame);
-            eventState = EventLoop.EventState.LOGGEDIN;
-            ClientMain.activeGame = null;
-        } catch (IOException e) {
-            System.out.println("Error resigning from game.");
+    private static void resignFromGame(Scanner scanner){
+        System.out.print(SET_TEXT_COLOR_RED + "Are you sure? Y|n >> ");
+        String responce = scanner.next();
+        if(Objects.equals(responce, "Y")){
+            try {
+                ClientMain.websocketFacade.resignFromGame(ClientMain.authToken, ClientMain.activeGame);
+            } catch (IOException e) {
+                System.out.println("Error resigning from game.");
+            }
         }
+        Renderer.renderText("Ok");
     }
 
     private static void leaveGame(){
@@ -126,7 +126,7 @@ public class ClientGamePlay {
                 return ChessPiece.PieceType.KNIGHT;
             }
             default -> {
-                return null;
+                throw new RuntimeException("Unknown piece type: " + piece);
             }
         }
     }
@@ -138,9 +138,9 @@ public class ClientGamePlay {
         ChessPiece.PieceType promotion = null;
         if(moves.length == 5) {
             try {
-                ChessPiece.PieceType buffer = promotionGenerator(moves[3]);
+                ChessPiece.PieceType buffer = promotionGenerator(moves[4]);
                 if(buffer != null) {
-                    promotion = promotionGenerator(moves[3]);
+                    promotion = promotionGenerator(moves[4]);
                 }
             } catch (RuntimeException e) {
                 System.out.println(e.getMessage());
@@ -152,7 +152,7 @@ public class ClientGamePlay {
 
     private static void highlightMoves(Scanner scanner){
         String[] piece = scanner.nextLine().split(" ");
-        Renderer.highlightBoard(ClientMain.playerType, positionConverter(piece[1]));
+        Renderer.highlightBoard(ClientMain.playerType, positionConverter(piece[piece.length - 1]));
     }
 
     static final String GAMEPLAY_HELP_STRING =

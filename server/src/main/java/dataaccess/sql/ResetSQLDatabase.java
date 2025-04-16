@@ -19,13 +19,12 @@ public class ResetSQLDatabase implements ResetDAO {
 
     @Override
     public void deleteUsers() throws DataAccessException {
-        try{
+        try(
             var conn = SqlDAO.getConnection();
-            try(var statement = conn.prepareStatement(
+            var statement = conn.prepareStatement(
                     "TRUNCATE %s".formatted(userTableName)
             )){
-                statement.executeUpdate();
-            }
+            statement.executeUpdate();
         } catch(SQLException e){
             throw new DataAccessException(e.getMessage());
         }
@@ -33,13 +32,12 @@ public class ResetSQLDatabase implements ResetDAO {
 
     @Override
     public void deleteAuth() throws DataAccessException {
-        try{
+        try(
             var conn = SqlDAO.getConnection();
-            try(var statement = conn.prepareStatement(
+            var statement = conn.prepareStatement(
                     "TRUNCATE %s".formatted(authTableName)
             )){
-                statement.executeUpdate();
-            }
+            statement.executeUpdate();
         } catch(SQLException e){
             throw new DataAccessException(e.getMessage());
         }
@@ -47,13 +45,12 @@ public class ResetSQLDatabase implements ResetDAO {
 
     @Override
     public void deleteGames() throws DataAccessException {
-        try{
+        try(
             var conn = SqlDAO.getConnection();
-            try(var statement = conn.prepareStatement(
+            var statement = conn.prepareStatement(
                     "TRUNCATE %s".formatted(gameTableName)
             )){
-                statement.executeUpdate();
-            }
+            statement.executeUpdate();
         } catch(SQLException e){
             throw new DataAccessException(e.getMessage());
         }

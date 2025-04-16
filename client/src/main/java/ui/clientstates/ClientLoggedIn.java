@@ -10,7 +10,7 @@ import websocket.commands.commandenums.PlayerTypes;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ui.EscapeSequences.*;
+import static ui.renderingtools.EscapeSequences.*;
 
 import static ui.EventLoop.scanner;
 import static ui.EventLoop.eventState;

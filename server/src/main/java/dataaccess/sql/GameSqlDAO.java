@@ -38,17 +38,12 @@ public class GameSqlDAO implements GameDAO {
     @Override
     public List<GameDataType> gameList() throws DataAccessException {
         List<GameDataType> listOfGames = new ArrayList<>();
-        try{
-            var conn = SqlDAO.getConnection();
-            try(var statement = conn.prepareStatement(
-                    "SELECT * FROM game"
-            )){
-                try(var resultSet = statement.executeQuery()){
+        try(var conn = SqlDAO.getConnection();
+            var statement = conn.prepareStatement("SELECT * FROM game");
+            var resultSet = statement.executeQuery()){
                     while(resultSet.next()){
                         listOfGames.add(createGameFromResultSet(resultSet));
                     }
-                }
-            }
         } catch(SQLException e){
             throw new DataAccessException(e.getMessage());
         }
@@ -57,9 +52,9 @@ public class GameSqlDAO implements GameDAO {
 
     @Override
     public void newGame(GameDataType gameData) throws DataAccessException {
-        try{
+        try(
             var conn = SqlDAO.getConnection();
-            try(var statement = conn.prepareStatement(
+            var statement = conn.prepareStatement(
                     "INSERT INTO %s ".formatted(tableName) +
                             "(gameId, whiteUserName, blackUserName, gameName, chessGame, active) " +
                             "VALUES (?,?,?,?,?,?)"
@@ -72,7 +67,6 @@ public class GameSqlDAO implements GameDAO {
                 statement.setString(5, chessGameJSON);
                 statement.setBoolean(6, gameData.active());
                 statement.executeUpdate();
-            }
         } catch(SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
@@ -81,18 +75,15 @@ public class GameSqlDAO implements GameDAO {
     @Override
     public GameDataType findGame(int gameId) throws DataAccessException {
         GameDataType gameData = null;
-        try{
+        try(
             var conn = SqlDAO.getConnection();
-            try(var statement = conn.prepareStatement(
-                    "SELECT * FROM %s WHERE gameId = ?".formatted(tableName)
-            )){
-                statement.setInt(1, gameId);
-                try(var resultSet = statement.executeQuery()){
-                    if(resultSet.next()) {
-                        gameData = createGameFromResultSet(resultSet);
-                    }
-                }
-            }
+            var statement = conn.prepareStatement("SELECT * FROM %s WHERE gameId = ?".formatted(tableName));
+        ){
+            statement.setInt(1, gameId);
+            var resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                 gameData = createGameFromResultSet(resultSet);
+        }
         } catch(SQLException e){
             throw new DataAccessException(e.getMessage());
         }
@@ -117,8 +108,7 @@ public class GameSqlDAO implements GameDAO {
 
     @Override
     public void updateGameData(GameDataType oldData, GameDataType newData) throws DataAccessException {
-        try{
-            var conn = SqlDAO.getConnection();
+        try(var conn = SqlDAO.getConnection()){
             if(!Objects.equals(oldData.whiteUsername(), newData.whiteUsername())) {
                 createUpdateWithConn(
                         conn,
@@ -172,7 +162,7 @@ public class GameSqlDAO implements GameDAO {
                         newData.gameID()
                 );
             }
-        } catch(DataAccessException e){
+        } catch(DataAccessException | SQLException e){
             throw new DataAccessException(e.getMessage());
         }
     }

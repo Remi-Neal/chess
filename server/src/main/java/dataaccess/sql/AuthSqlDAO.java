@@ -15,15 +15,14 @@ public class AuthSqlDAO implements AuthDAO {
 
     @Override
     public void createAuth(AuthtokenDataType auth) throws DataAccessException {
-        try{
+        try(
             var conn = SqlDAO.getConnection();
-            try( var statement = conn.prepareStatement(
+            var statement = conn.prepareStatement(
                     "INSERT INTO %s (name, auth) VALUES (?,?)".formatted(tableName)
             )){
-                statement.setString(1, auth.username());
-                statement.setString(2, auth.authToken());
-                statement.executeUpdate();
-            }
+            statement.setString(1, auth.username());
+            statement.setString(2, auth.authToken());
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
@@ -31,14 +30,13 @@ public class AuthSqlDAO implements AuthDAO {
 
     @Override
     public void removeAuth(String token) throws DataAccessException {
-        try{
+        try(
             var conn = SqlDAO.getConnection();
-            try(var statement = conn.prepareStatement(
+            var statement = conn.prepareStatement(
                     "DELETE FROM %s WHERE auth = ?".formatted(tableName)
             )){
-                statement.setString(1, token);
-                statement.executeUpdate();
-            }
+            statement.setString(1, token);
+            statement.executeUpdate();
         } catch(SQLException e){
             throw new DataAccessException(e.getMessage());
         }
@@ -47,19 +45,18 @@ public class AuthSqlDAO implements AuthDAO {
     @Override
     public AuthtokenDataType getAuth(String token) throws DataAccessException {
         AuthtokenDataType authData = null;
-        try{
+        try(
             var conn = SqlDAO.getConnection();
-            try(var statement = conn.prepareStatement(
+            var statement = conn.prepareStatement(
                     "SELECT * FROM %s WHERE auth = ?".formatted(tableName)
             )){
-                statement.setString(1, token);
-                try(var resultSet = statement.executeQuery()){
-                    if(resultSet.next()){
-                        authData = new AuthtokenDataType(
-                                resultSet.getString("auth"),
-                                resultSet.getString("name")
-                        );
-                    }
+            statement.setString(1, token);
+            try(var resultSet = statement.executeQuery()){
+                if(resultSet.next()){
+                    authData = new AuthtokenDataType(
+                            resultSet.getString("auth"),
+                            resultSet.getString("name")
+                    );
                 }
             }
         } catch(SQLException e){
