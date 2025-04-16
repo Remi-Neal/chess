@@ -78,7 +78,7 @@ public class ClientGamePlay {
         }
     }
 
-    private static ChessPosition positionConverter(String alphaNum){
+    private static ChessPosition positionConverter(String alphaNum) throws NumberFormatException{
         int row = Integer.parseInt(String.valueOf(alphaNum.charAt(1)));
         switch(alphaNum.charAt(0)){
             case 'a' -> {
@@ -133,8 +133,15 @@ public class ClientGamePlay {
 
     private static void makeMove(Scanner scanner){
         String[] moves = scanner.nextLine().split(" ");
-        ChessPosition start = positionConverter(moves[2]);
-        ChessPosition end = positionConverter(moves[3]);
+        ChessPosition start;
+        ChessPosition end;
+        try {
+            start = positionConverter(moves[2]);
+            end = positionConverter(moves[3]);
+        } catch (NumberFormatException e) {
+            Renderer.renderText("Error: board index format should be in letter-number (a1) format");
+            return;
+        }
         ChessPiece.PieceType promotion = null;
         if(moves.length == 5) {
             try {

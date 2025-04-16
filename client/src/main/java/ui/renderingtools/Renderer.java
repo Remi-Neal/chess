@@ -80,7 +80,13 @@ public class Renderer {
 
     public static void highlightBoard(PlayerTypes playerTypes, ChessPosition position){
         ChessGame game = new ChessGame(WHITE, activeBoard); // White is arbitrary
-        Collection<ChessMove> moves = game.validMoves(position);
+        Collection<ChessMove> moves;
+        try {
+            moves = game.validMoves(position);
+        } catch (Exception e) {
+            renderText("Error: Please select valid piece location");
+            return;
+        }
         List<ChessPosition> positions = new ArrayList<>();
         positions.add(position);
         for(ChessMove move : moves){
